@@ -9,7 +9,7 @@ buildscript {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
   }
   dependencies {
-    classpath "com.android.tools.build:gradle:8.5.2"
+    classpath 'com.android.tools.build:gradle:8.8.0'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
   }
@@ -58,7 +58,7 @@ configure(subprojects - project(':android')) {
   }
   compileKotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
   compileTestKotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
-  
+
 }
 
 subprojects {
