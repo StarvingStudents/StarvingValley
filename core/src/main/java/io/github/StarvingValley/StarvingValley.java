@@ -2,7 +2,7 @@ package io.github.StarvingValley;
 
 import com.badlogic.gdx.Game;
 
-import io.github.StarvingValley.view.GameScreen;
+import io.github.StarvingValley.views.GameScreen;
 
 public class StarvingValley extends Game {
     @Override

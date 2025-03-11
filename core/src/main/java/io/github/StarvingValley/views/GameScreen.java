@@ -1,4 +1,4 @@
-package io.github.StarvingValley.view;
+package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.github.StarvingValley.controller.InputController;
+import io.github.StarvingValley.controllers.InputController;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;

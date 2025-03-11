@@ -1,4 +1,4 @@
-package io.github.StarvingValley.controller;
+package io.github.StarvingValley.controllers;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.InputAdapter;
