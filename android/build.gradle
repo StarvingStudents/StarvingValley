@@ -8,6 +8,8 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+apply plugin: 'com.google.gms.google-services'
+
 android {
   namespace "io.github.StarvingValley"
   compileSdk 34
@@ -51,7 +53,7 @@ android {
   }
 
   kotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
-  
+
 }
 
 repositories {
@@ -71,6 +73,8 @@ dependencies {
   natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
   natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
 
+  implementation platform('com.google.firebase:firebase-bom:31.2.3')
+  implementation 'com.google.firebase:firebase-database'
 }
 
 // Called every time gradle gets executed, takes the native dependencies of
