@@ -7,54 +7,62 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.controllers.InputController;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.entities.PlayerFactory;
+import io.github.StarvingValley.models.entities.PotatoFactory;
+import io.github.StarvingValley.models.entities.TomatoFactory;
+import io.github.StarvingValley.models.systems.CropGrowthSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 
 public class GameScreen extends ScreenAdapter {
-    private Engine engine;
-    private SpriteBatch batch;
-    private OrthographicCamera camera;
-    private Entity player;
+  IFirebaseRepository _firebaseRepository;
+  private Engine engine;
+  private SpriteBatch batch;
+  private OrthographicCamera camera;
+  private Entity player;
+  private Entity tomato;
+  private Entity potato;
 
-    IFirebaseRepository _firebaseRepository;
+  public GameScreen(IFirebaseRepository firebaseRepository) {
+    _firebaseRepository = firebaseRepository;
+  }
 
-    public GameScreen(IFirebaseRepository firebaseRepository) {
-        _firebaseRepository = firebaseRepository;
-    }
+  @Override
+  public void show() {
+    batch = new SpriteBatch();
+    camera = new OrthographicCamera();
+    camera.setToOrtho(false, 800, 480);
 
-    @Override
-    public void show() {
-        batch = new SpriteBatch();
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+    engine = new Engine();
 
-        engine = new Engine();
+    player = PlayerFactory.createPlayer(400, 240);
+    tomato = TomatoFactory.createTomato(400, 240);
+    potato = PotatoFactory.createPotato(300, 100);
+    //    engine.addEntity(player);
+    engine.addEntity(tomato);
+    engine.addEntity(potato);
+    engine.addSystem(new MovementSystem());
+    engine.addSystem(new RenderSystem(batch));
+    engine.addSystem(new CropGrowthSystem());
 
-        player = PlayerFactory.createPlayer(400, 240);
-        engine.addEntity(player);
-        engine.addSystem(new MovementSystem());
-        engine.addSystem(new RenderSystem(batch));
+    Gdx.input.setInputProcessor(new InputController(player));
+  }
 
-        Gdx.input.setInputProcessor(new InputController(player));
-    }
+  @Override
+  public void render(float delta) {
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    Gdx.gl.glClearColor(0, 0, 0, 1);
 
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+    batch.setProjectionMatrix(camera.combined);
+    batch.begin();
+    engine.update(delta);
+    batch.end();
+  }
 
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        engine.update(delta);
-        batch.end();
-    }
-
-    @Override
-    public void dispose() {
-        batch.dispose();
-    }
+  @Override
+  public void dispose() {
+    batch.dispose();
+  }
 }
