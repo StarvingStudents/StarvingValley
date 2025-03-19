@@ -48,7 +48,7 @@ public class GameScreen extends ScreenAdapter {
 
     engine = new Engine();
 
-    player = PlayerFactory.createPlayer(500, 500, 84, 100, "FarmerFrog.png");
+    player = PlayerFactory.createPlayer(500, 500, 84, 100, 200, "FarmerFrog.png");
     engine.addEntity(player);
     engine.addSystem(new MovementSystem());
     engine.addSystem(new RenderSystem(batch));
