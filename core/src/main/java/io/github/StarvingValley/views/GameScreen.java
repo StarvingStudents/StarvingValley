@@ -5,14 +5,16 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.CameraFollowComponent;
+import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
+import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 
@@ -20,8 +22,8 @@ public class GameScreen extends ScreenAdapter {
   IFirebaseRepository _firebaseRepository;
   private Engine engine;
   private SpriteBatch batch;
-  private OrthographicCamera camera;
   private Entity player;
+  private Entity camera;
   private Texture backgroundTexture;
 
   private JoystickOverlay joystickOverlay;
@@ -30,27 +32,24 @@ public class GameScreen extends ScreenAdapter {
     _firebaseRepository = firebaseRepository;
   }
 
-  private void updateCamera() {
-    PositionComponent position = player.getComponent(PositionComponent.class);
-
-    if (position != null) {
-      camera.position.set(position.position.x, position.position.y, 0f);
-
-      camera.update();
-    }
-  }
-
   @Override
   public void show() {
     batch = new SpriteBatch();
-    camera = new OrthographicCamera();
-    camera.setToOrtho(false, 800, 480);
+
+    camera = CameraFactory.createCamera(400, 800);
+
+    CameraFollowComponent cameraFollowComponent = new CameraFollowComponent();
+    cameraFollowComponent.targetCamera = camera;
 
     engine = new Engine();
 
     player = PlayerFactory.createPlayer(500, 500, 84, 100, 200, "FarmerFrog.png");
+    player.add(cameraFollowComponent);
+
     engine.addEntity(player);
+    engine.addEntity(camera);
     engine.addSystem(new MovementSystem());
+    engine.addSystem(new CameraSystem());
     engine.addSystem(new RenderSystem(batch));
 
     JoystickController joystickController = new JoystickController();
@@ -64,12 +63,13 @@ public class GameScreen extends ScreenAdapter {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     Gdx.gl.glClearColor(0, 0, 0, 1);
 
-    updateCamera();
-
-    batch.setProjectionMatrix(camera.combined);
     batch.begin();
 
-    batch.setProjectionMatrix(camera.combined);
+    CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
+    if (cameraComponent != null) {
+      batch.setProjectionMatrix(cameraComponent.camera.combined);
+    }
+
     batch.draw(backgroundTexture, 0, 0, 2000, 1000);
 
     engine.update(delta);
