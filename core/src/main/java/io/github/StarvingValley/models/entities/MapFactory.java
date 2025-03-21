@@ -16,12 +16,12 @@ public class MapFactory {
         tiledMap.tiledMap = new TmxMapLoader().load(tmxFilePath);
 
         MapRenderComponent mapRenderer = new MapRenderComponent();
-
         mapRenderer.mapRenderer = new OrthogonalTiledMapRenderer(tiledMap.tiledMap, unitScale);
 
         entity.add(tiledMap);
         entity.add(mapRenderer);
         entity.add(camera);
+
         return entity;
     }
 }

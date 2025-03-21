@@ -12,13 +12,16 @@ import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
+import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.systems.CameraSystem;
+import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.utils.MapUtils;
 
 public class GameScreen extends ScreenAdapter {
@@ -28,7 +31,6 @@ public class GameScreen extends ScreenAdapter {
   private Entity player;
   private Entity camera;
   private Entity map;
-  private float unitScale;
 
   private JoystickOverlay joystickOverlay;
 
@@ -40,8 +42,6 @@ public class GameScreen extends ScreenAdapter {
   public void show() {
     batch = new SpriteBatch();
 
-    unitScale = 1 / Config.PIXELS_PER_TILE;
-
     int tilesWide = 14;
     int tilesHigh = MapUtils.calculateVerticalTileCount(tilesWide);
 
@@ -52,23 +52,28 @@ public class GameScreen extends ScreenAdapter {
 
     CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
 
-    map = MapFactory.CreateMap("FarmMap.tmx", unitScale, cameraComponent);
+    map = MapFactory.CreateMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
 
     engine = new Engine();
 
-    player = PlayerFactory.createPlayer(30, 15, 1, 1, 5f, "DogBasic.png");
+    player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png");
     player.add(cameraFollowComponent);
 
     engine.addEntity(player);
     engine.addEntity(camera);
     engine.addEntity(map);
     engine.addSystem(new MapRenderSystem());
+    engine.addSystem(new VelocitySystem());
+    engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem());
     engine.addSystem(new CameraSystem());
     engine.addSystem(new RenderSystem(batch));
 
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);
+
+    TiledMapComponent tiledMap = map.getComponent(TiledMapComponent.class);
+    MapUtils.loadCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
   }
 
   @Override
