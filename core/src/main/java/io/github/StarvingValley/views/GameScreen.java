@@ -5,16 +5,18 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.systems.CameraSystem;
+import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 
@@ -24,7 +26,8 @@ public class GameScreen extends ScreenAdapter {
   private SpriteBatch batch;
   private Entity player;
   private Entity camera;
-  private Texture backgroundTexture;
+  private Entity map;
+  private float unitScale;
 
   private JoystickOverlay joystickOverlay;
 
@@ -36,26 +39,39 @@ public class GameScreen extends ScreenAdapter {
   public void show() {
     batch = new SpriteBatch();
 
-    camera = CameraFactory.createCamera(400, 800);
+    int screenWidth = Gdx.graphics.getWidth();
+    int screenHeight = Gdx.graphics.getHeight();
+
+    int tilesWide = 14;
+    int tileSize = screenWidth / tilesWide;
+    float tilesHigh = screenHeight / (float) tileSize;
+
+    unitScale = 1 / Config.PIXELS_PER_TILE;
+
+    camera = CameraFactory.createCamera(tilesWide, tilesHigh);
 
     CameraFollowComponent cameraFollowComponent = new CameraFollowComponent();
     cameraFollowComponent.targetCamera = camera;
 
+    CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
+
+    map = MapFactory.CreateMap("FarmMap.tmx", unitScale, cameraComponent);
+
     engine = new Engine();
 
-    player = PlayerFactory.createPlayer(500, 500, 84, 100, 200, "FarmerFrog.png");
+    player = PlayerFactory.createPlayer(30, 15, 1, 1, 5f, "DogBasic.png");
     player.add(cameraFollowComponent);
 
     engine.addEntity(player);
     engine.addEntity(camera);
+    engine.addEntity(map);
+    engine.addSystem(new MapRenderSystem());
     engine.addSystem(new MovementSystem());
     engine.addSystem(new CameraSystem());
     engine.addSystem(new RenderSystem(batch));
 
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);
-
-    backgroundTexture = new Texture("TempBackground.gif");
   }
 
   @Override
@@ -69,8 +85,6 @@ public class GameScreen extends ScreenAdapter {
     if (cameraComponent != null) {
       batch.setProjectionMatrix(cameraComponent.camera.combined);
     }
-
-    batch.draw(backgroundTexture, 0, 0, 2000, 1000);
 
     engine.update(delta);
     batch.end();
