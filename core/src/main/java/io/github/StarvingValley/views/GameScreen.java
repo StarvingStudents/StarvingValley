@@ -19,6 +19,7 @@ import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.utils.MapUtils;
 
 public class GameScreen extends ScreenAdapter {
   IFirebaseRepository _firebaseRepository;
@@ -39,14 +40,10 @@ public class GameScreen extends ScreenAdapter {
   public void show() {
     batch = new SpriteBatch();
 
-    int screenWidth = Gdx.graphics.getWidth();
-    int screenHeight = Gdx.graphics.getHeight();
+    unitScale = 1 / Config.PIXELS_PER_TILE;
 
     int tilesWide = 14;
-    int tileSize = screenWidth / tilesWide;
-    float tilesHigh = screenHeight / (float) tileSize;
-
-    unitScale = 1 / Config.PIXELS_PER_TILE;
+    int tilesHigh = MapUtils.calculateVerticalTileCount(tilesWide);
 
     camera = CameraFactory.createCamera(tilesWide, tilesHigh);
 

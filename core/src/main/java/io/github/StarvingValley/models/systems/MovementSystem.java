@@ -23,20 +23,12 @@ public class MovementSystem extends IteratingSystem {
     VelocityComponent velocity = entity.getComponent(VelocityComponent.class);
     SpeedComponent speed = entity.getComponent(SpeedComponent.class);
 
-    Vector2 direction = new Vector2(0, 0);
-
-    if (InputState.isMovingRight)
-      direction.x += 1;
-    if (InputState.isMovingLeft)
-      direction.x -= 1;
-    if (InputState.isMovingUp)
-      direction.y += 1;
-    if (InputState.isMovingDown)
-      direction.y -= 1;
+    Vector2 direction = InputState.movingDirection.cpy();
+    float speedMultiplier = direction.len();
 
     direction.nor();
 
-    velocity.velocity.set(direction.scl(speed.speed * deltaTime));
+    velocity.velocity.set(direction.scl(speed.speed * speedMultiplier * deltaTime));
     position.position.add(velocity.velocity);
   }
 }

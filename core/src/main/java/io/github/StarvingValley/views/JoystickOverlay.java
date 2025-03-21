@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -21,7 +22,7 @@ public class JoystickOverlay extends ScreenAdapter {
     private float knobRadius = 50;
     private JoystickController controller;
     private Color backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.3f);
-    private Color knobColor = new Color(0.7f, 0.7f, 0.7f, 0.8f);
+    private Color knobColor = new Color(0.7f, 0.7f, 0.7f, 0.9f);
     private float minDragStartDistance = 250;
     private boolean isJoystickActive = false;
 
@@ -60,12 +61,16 @@ public class JoystickOverlay extends ScreenAdapter {
         }
 
         Vector2 touchPos = ScreenUtils.convertTouchCoordinatesToRenderCoordinates(screenX, screenY);
-        Vector2 direction = new Vector2(touchPos.x - joystickCenter.x, touchPos.y - joystickCenter.y);
 
-        if (direction.len() > joystickRadius) {
-            direction.setLength(joystickRadius);
-        }
-        knobPosition.set(joystickCenter.x + direction.x, joystickCenter.y + direction.y);
+        Vector2 delta = new Vector2(touchPos.x - joystickCenter.x, touchPos.y - joystickCenter.y);
+        delta.setLength(Math.min(delta.len(), joystickRadius));
+
+        float distance = delta.len();
+        float dragAmount = distance / joystickRadius;
+
+        knobPosition.set(joystickCenter.x + delta.x, joystickCenter.y + delta.y);
+
+        Vector2 direction = delta.nor().scl(dragAmount);
 
         controller.handleJoystickDrag(direction);
     }
@@ -90,12 +95,18 @@ public class JoystickOverlay extends ScreenAdapter {
     public void render() {
         stage.act();
         stage.draw();
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(backgroundColor);
         shapeRenderer.circle(joystickCenter.x, joystickCenter.y, joystickRadius);
         shapeRenderer.setColor(knobColor);
         shapeRenderer.circle(knobPosition.x, knobPosition.y, knobRadius);
         shapeRenderer.end();
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     @Override
