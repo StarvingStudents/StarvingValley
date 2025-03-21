@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.JoystickController;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
@@ -50,7 +51,7 @@ public class GameScreen extends ScreenAdapter {
     CameraFollowComponent cameraFollowComponent = new CameraFollowComponent();
     cameraFollowComponent.targetCamera = camera;
 
-    CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
+    CameraComponent cameraComponent = Mappers.camera.get(camera);
 
     map = MapFactory.CreateMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
 
@@ -72,7 +73,7 @@ public class GameScreen extends ScreenAdapter {
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);
 
-    TiledMapComponent tiledMap = map.getComponent(TiledMapComponent.class);
+    TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
     MapUtils.loadCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
   }
 
@@ -83,7 +84,7 @@ public class GameScreen extends ScreenAdapter {
 
     batch.begin();
 
-    CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
+    CameraComponent cameraComponent = Mappers.camera.get(camera);
     if (cameraComponent != null) {
       batch.setProjectionMatrix(cameraComponent.camera.combined);
     }

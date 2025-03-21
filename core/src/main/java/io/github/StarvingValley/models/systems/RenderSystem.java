@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
@@ -19,9 +20,9 @@ public class RenderSystem extends IteratingSystem {
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
-    PositionComponent position = entity.getComponent(PositionComponent.class);
-    SpriteComponent sprite = entity.getComponent(SpriteComponent.class);
-    SizeComponent size = entity.getComponent(SizeComponent.class);
+    PositionComponent position = Mappers.position.get(entity);
+    SpriteComponent sprite = Mappers.sprite.get(entity);
+    SizeComponent size = Mappers.size.get(entity);
 
     sprite.sprite.setPosition(position.position.x, position.position.y);
     sprite.sprite.setSize(size.width, size.height);
