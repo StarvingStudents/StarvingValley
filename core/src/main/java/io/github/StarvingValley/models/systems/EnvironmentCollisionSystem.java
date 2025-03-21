@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Rectangle;
 
+import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
@@ -25,10 +26,13 @@ public class EnvironmentCollisionSystem extends IteratingSystem {
         SizeComponent size = Mappers.size.get(entity);
         VelocityComponent velocity = Mappers.velocity.get(entity);
 
-        Rectangle nextPosXRect = new Rectangle(
-                position.position.x + velocity.velocity.x, position.position.y, size.width, size.height);
-        Rectangle nextPosYRect = new Rectangle(
-                position.position.x, position.position.y + velocity.velocity.y, size.width, size.height);
+        // Allow some overlap without collisions on top part of collidables
+        float boundsCollidableHeight = size.height * Config.BOUNDS_BOTTOM_COLLISION_RATIO;
+
+        Rectangle futureBoundsX = new Rectangle(
+                position.position.x + velocity.velocity.x, position.position.y, size.width, boundsCollidableHeight);
+        Rectangle futureBoundsY = new Rectangle(
+                position.position.x, position.position.y + velocity.velocity.y, size.width, boundsCollidableHeight);
 
         boolean isBlockedX = false;
         boolean isBlockedY = false;
@@ -47,17 +51,16 @@ public class EnvironmentCollisionSystem extends IteratingSystem {
                     envCollidableSize.width,
                     envCollidableSize.height);
 
-            // TODO: Just check bottom of player when comparing with environment collidables
-
-            if (nextPosXRect.overlaps(envCollidableRect)) {
+            if (futureBoundsX.overlaps(envCollidableRect)) {
                 isBlockedX = true;
             }
-            if (nextPosYRect.overlaps(envCollidableRect)) {
+            if (futureBoundsY.overlaps(envCollidableRect)) {
                 isBlockedY = true;
             }
         }
 
-        // TODO: Slide over small bumps
+        // Maybe add sliding over small bumps to make moving against uneven collision
+        // objects more smooth
         if (isBlockedX)
             velocity.velocity.x = 0;
         if (isBlockedY)
