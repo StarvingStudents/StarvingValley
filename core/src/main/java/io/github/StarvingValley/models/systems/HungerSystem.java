@@ -16,9 +16,9 @@ public class HungerSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         HungerComponent hunger = entity.getComponent(HungerComponent.class);
 
-        hunger.hunger_points -= hunger.decay_rate * deltaTime;
-        if (hunger.hunger_points < 0) {
-            hunger.hunger_points = 0;
+        hunger.hungerPoints -= hunger.decayRate * deltaTime;
+        if (hunger.hungerPoints < 0) {
+            hunger.hungerPoints = 0;
         }        
     }
 }

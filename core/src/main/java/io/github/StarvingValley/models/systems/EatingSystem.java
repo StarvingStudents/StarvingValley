@@ -17,6 +17,6 @@ public class EatingSystem extends IteratingSystem {
         HungerComponent hunger = entity.getComponent(HungerComponent.class);
         EatingComponent eating = entity.getComponent(EatingComponent.class);
 
-        hunger.hunger_points = Math.min(hunger.max_hunger_points, hunger.hunger_points + eating.food_points); 
+        hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.foodPoints); 
     }
 }
