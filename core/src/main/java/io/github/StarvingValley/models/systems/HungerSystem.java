@@ -1,43 +1,24 @@
 package io.github.StarvingValley.models.systems;
 
-public class HungerSystem {
-    private int hungerPoints; 
-    private int maxHungerPoints; 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
 
-    public HungerSystem(int maxHungerPoints) {
-        this.maxHungerPoints = maxHungerPoints; 
-        this.hungerPoints = maxHungerPoints; 
+import io.github.StarvingValley.models.components.HungerComponent;
+
+public class HungerSystem extends IteratingSystem {
+
+    public HungerSystem() {
+        super(Family.all(HungerComponent.class).get());
     }
 
-    public int getHungerPoints() {
-        return hungerPoints;
-    }
+    @Override
+    protected void processEntity(Entity entity, float deltaTime) {
+        HungerComponent hunger = entity.getComponent(HungerComponent.class);
 
-    public void setHungerPoints(int hungerPoints) {
-        if (hungerPoints < 0) {
-            this.hungerPoints = 0; 
-        }
-        else if (hungerPoints > maxHungerPoints) {
-            this.hungerPoints = maxHungerPoints; 
-        }
-        else {
-            this.hungerPoints = hungerPoints;
-        }
-    }
-
-    public int getMaxHungerPoints() {
-        return maxHungerPoints;
-    }
-
-    public void setMaxHungerPoints(int maxHungerPoints) {
-        this.maxHungerPoints = maxHungerPoints;
-    }
-
-    public void decreaseHungerPoints(int amount) {
-        setHungerPoints(getHungerPoints() - amount); 
-    }
-
-    public void increaseHungerPoints(int amount) {
-        setHungerPoints(getHungerPoints() + amount);
+        hunger.hunger_points -= hunger.decay_rate * deltaTime;
+        if (hunger.hunger_points < 0) {
+            hunger.hunger_points = 0;
+        }        
     }
 }
