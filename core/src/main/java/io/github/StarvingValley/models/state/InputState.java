@@ -1,8 +1,7 @@
 package io.github.StarvingValley.models.state;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class InputState {
-    public static boolean isMovingRight;
-    public static boolean isMovingLeft;
-    public static boolean isMovingUp;
-    public static boolean isMovingDown;
+    public static Vector2 movingDirection = new Vector2();
 }

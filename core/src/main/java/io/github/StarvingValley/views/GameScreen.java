@@ -5,18 +5,25 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.JoystickController;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
+import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.systems.CameraSystem;
+import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
+import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.models.systems.VelocitySystem;
+import io.github.StarvingValley.utils.MapUtils;
 
 public class GameScreen extends ScreenAdapter {
   IFirebaseRepository _firebaseRepository;
@@ -24,7 +31,7 @@ public class GameScreen extends ScreenAdapter {
   private SpriteBatch batch;
   private Entity player;
   private Entity camera;
-  private Texture backgroundTexture;
+  private Entity map;
 
   private JoystickOverlay joystickOverlay;
 
@@ -36,18 +43,29 @@ public class GameScreen extends ScreenAdapter {
   public void show() {
     batch = new SpriteBatch();
 
-    camera = CameraFactory.createCamera(400, 800);
+    int tilesWide = 14;
+    int tilesHigh = MapUtils.calculateVerticalTileCount(tilesWide);
+
+    camera = CameraFactory.createCamera(tilesWide, tilesHigh);
 
     CameraFollowComponent cameraFollowComponent = new CameraFollowComponent();
     cameraFollowComponent.targetCamera = camera;
 
+    CameraComponent cameraComponent = Mappers.camera.get(camera);
+
+    map = MapFactory.CreateMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
+
     engine = new Engine();
 
-    player = PlayerFactory.createPlayer(500, 500, 84, 100, 200, "FarmerFrog.png");
+    player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png");
     player.add(cameraFollowComponent);
 
     engine.addEntity(player);
     engine.addEntity(camera);
+    engine.addEntity(map);
+    engine.addSystem(new MapRenderSystem());
+    engine.addSystem(new VelocitySystem());
+    engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem());
     engine.addSystem(new CameraSystem());
     engine.addSystem(new RenderSystem(batch));
@@ -55,7 +73,8 @@ public class GameScreen extends ScreenAdapter {
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);
 
-    backgroundTexture = new Texture("TempBackground.gif");
+    TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
+    MapUtils.loadCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
   }
 
   @Override
@@ -65,12 +84,10 @@ public class GameScreen extends ScreenAdapter {
 
     batch.begin();
 
-    CameraComponent cameraComponent = camera.getComponent(CameraComponent.class);
+    CameraComponent cameraComponent = Mappers.camera.get(camera);
     if (cameraComponent != null) {
       batch.setProjectionMatrix(cameraComponent.camera.combined);
     }
-
-    batch.draw(backgroundTexture, 0, 0, 2000, 1000);
 
     engine.update(delta);
     batch.end();

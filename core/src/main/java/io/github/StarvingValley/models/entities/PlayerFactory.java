@@ -1,7 +1,9 @@
 package io.github.StarvingValley.models.entities;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Vector2;
 
+import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
@@ -13,17 +15,14 @@ public class PlayerFactory {
       float x, float y, float width, float height, float speed, String spritePath) {
 
       Entity entity = new Entity();
-      PositionComponent position = new PositionComponent();
-      position.position.set(x, y);
-
-      SpeedComponent speedComponent = new SpeedComponent();
-      speedComponent.speed = speed;
-
-      entity.add(position);
-      entity.add(speedComponent);
-      entity.add(new VelocityComponent());
+      
+      entity.add(new PositionComponent(x, y));
+      entity.add(new SpeedComponent(speed));
+      entity.add(new VelocityComponent(new Vector2()));
       entity.add(new SpriteComponent(spritePath));
       entity.add(new SizeComponent(width, height));
+      entity.add(new CollidableComponent());
+      
       return entity;
     }
 }

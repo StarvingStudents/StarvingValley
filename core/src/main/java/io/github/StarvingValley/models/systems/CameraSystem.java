@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -15,14 +16,14 @@ public class CameraSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        CameraFollowComponent followComponent = entity.getComponent(CameraFollowComponent.class);
-        PositionComponent position = entity.getComponent(PositionComponent.class);
+        CameraFollowComponent followComponent = Mappers.cameraFollow.get(entity);
+        PositionComponent position = Mappers.position.get(entity);
 
         if (followComponent.targetCamera == null) {
             return;
         }
 
-        CameraComponent cameraComponent = followComponent.targetCamera.getComponent(CameraComponent.class);
+        CameraComponent cameraComponent = Mappers.camera.get(followComponent.targetCamera);
         if (cameraComponent == null) {
             return;
         }
