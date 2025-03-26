@@ -31,7 +31,7 @@ public class DurabilityRenderSystem extends IteratingSystem {
         if (durabilityComponent == null || position == null)
             return;
 
-        if (durabilityComponent.health <= 0) {
+        if (durabilityComponent.getHealth() <= 0) {
             engine.removeEntity(entity);
             return;
         }
