@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
+import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.MapRenderComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -26,4 +27,5 @@ public class Mappers {
     public static final ComponentMapper<SpeedComponent> speed = ComponentMapper.getFor(SpeedComponent.class);
     public static final ComponentMapper<SpriteComponent> sprite = ComponentMapper.getFor(SpriteComponent.class);
     public static final ComponentMapper<TiledMapComponent> tiledMap = ComponentMapper.getFor(TiledMapComponent.class);
+    public static final ComponentMapper<DurabilityComponent> durability = ComponentMapper.getFor(DurabilityComponent.class);
 }
