@@ -18,6 +18,7 @@ public class RenderSystem extends IteratingSystem {
     this.batch = batch;
   }
 
+  // TODO: Change to entitysystem to call batch.begin once each frame
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
     PositionComponent position = Mappers.position.get(entity);
@@ -26,6 +27,10 @@ public class RenderSystem extends IteratingSystem {
 
     sprite.sprite.setPosition(position.position.x, position.position.y);
     sprite.sprite.setSize(size.width, size.height);
+
+    if (Mappers.hidden.has(entity)) {
+      return;
+    }
 
     batch.begin();
 

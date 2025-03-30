@@ -5,12 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
+import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
+import io.github.StarvingValley.models.components.WorldLayerComponent;
+import io.github.StarvingValley.models.types.WorldLayer;
 
 public class PlayerFactory {
   public static Entity createPlayer(
@@ -26,6 +29,8 @@ public class PlayerFactory {
       entity.add(new CollidableComponent());
       entity.add(new HungerComponent()); 
       entity.add(new TileOverlapComponent());
+      entity.add(new TileOccupierComponent());
+      entity.add(new WorldLayerComponent(WorldLayer.CHARACTER));
       
       return entity;
     }
