@@ -12,12 +12,12 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
+import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.CropFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
-import io.github.StarvingValley.models.entities.PotatoFactory;
-import io.github.StarvingValley.models.entities.TomatoFactory;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.CropGrowthSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
@@ -39,6 +39,7 @@ public class GameScreen extends ScreenAdapter {
   private Entity camera;
   private Entity map;
   private Entity tomato;
+  private Entity tomato2;
   private Entity potato;
 
   private JoystickOverlay joystickOverlay;
@@ -67,12 +68,16 @@ public class GameScreen extends ScreenAdapter {
 
     player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png");
     player.add(cameraFollowComponent);
-    tomato = TomatoFactory.createTomato(33, 17);
-    potato = PotatoFactory.createPotato(33, 15);
+    tomato = CropFactory.createCrop(33, 17, CropTypeComponent.CropType.TOMATO);
+    tomato2 = CropFactory.createCrop(33, 16, CropTypeComponent.CropType.TOMATO);
+    potato = CropFactory.createCrop(33, 15, CropTypeComponent.CropType.POTATO);
 
     engine.addEntity(player);
     engine.addEntity(camera);
     engine.addEntity(map);
+    engine.addEntity(tomato);
+    engine.addEntity(tomato2);
+    engine.addEntity(potato);
     engine.addSystem(new MapRenderSystem());
     engine.addSystem(new VelocitySystem());
     engine.addSystem(new EnvironmentCollisionSystem());
@@ -82,8 +87,6 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new DurabilityRenderSystem(engine, batch));
     engine.addSystem(new HungerSystem());
     engine.addSystem(new HungerRenderSystem(engine, batch));
-    engine.addEntity(tomato);
-    engine.addEntity(potato);
     engine.addSystem(new CropGrowthSystem());
     engine.addSystem(new HarvestingSystem(player));
 

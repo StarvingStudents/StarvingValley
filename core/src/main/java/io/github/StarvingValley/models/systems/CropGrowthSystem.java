@@ -7,11 +7,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
+import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 
 public class CropGrowthSystem extends IteratingSystem {
-
   private Texture growingTomato;
   private Texture matureTomato;
   private Texture growingPotato;
@@ -23,7 +23,8 @@ public class CropGrowthSystem extends IteratingSystem {
                 TimeToGrowComponent.class,
                 GrowthStageComponent.class,
                 SpriteComponent.class,
-                CropTypeComponent.class)
+                CropTypeComponent.class,
+                SizeComponent.class)
             .get());
 
     growingTomato = new Texture("tomato2.png");
@@ -38,6 +39,7 @@ public class CropGrowthSystem extends IteratingSystem {
     GrowthStageComponent growthStage = cropEntity.getComponent(GrowthStageComponent.class);
     SpriteComponent spriteComponent = cropEntity.getComponent(SpriteComponent.class);
     CropTypeComponent cropType = cropEntity.getComponent(CropTypeComponent.class);
+    SizeComponent sizeComponent = cropEntity.getComponent(SizeComponent.class);
 
     growthTime.accumulateGrowth(deltaTime);
 
@@ -55,11 +57,13 @@ public class CropGrowthSystem extends IteratingSystem {
           spriteComponent.setSprite(new Sprite(growingTomato));
         } else if (cropType.cropType == CropTypeComponent.CropType.POTATO) {
           spriteComponent.setSprite(new Sprite(growingPotato));
+          sizeComponent.height = 2f;
         }
         break;
       case 2:
         if (cropType.cropType == CropTypeComponent.CropType.TOMATO) {
           spriteComponent.setSprite(new Sprite(matureTomato));
+          sizeComponent.height = 2f;
         } else if (cropType.cropType == CropTypeComponent.CropType.POTATO) {
           spriteComponent.setSprite(new Sprite(maturePotato));
         }
@@ -67,13 +71,5 @@ public class CropGrowthSystem extends IteratingSystem {
       default:
         break;
     }
-
-    //    Sprite sprite = spriteComponent.getSprite();
-    //    float originalWidth = sprite.getWidth();
-    //    float originalHeight = sprite.getHeight();
-    //
-    //    float desiredWidth = 128f;
-    //    float desiredHeight = (desiredWidth / originalWidth) * originalHeight;
-    //    sprite.setSize(desiredWidth, desiredHeight);
   }
 }

@@ -19,7 +19,6 @@ public class HarvestingSystem extends EntitySystem {
   private Entity player;
 
   public HarvestingSystem(Entity player) {
-    super(0);
     this.player = player;
   }
 
@@ -65,7 +64,7 @@ public class HarvestingSystem extends EntitySystem {
             && timeToGrowComponent.isMature()
             && harvestingComponent.canHarvest
             && !harvestingComponent.isHarvested) {
-          if (isPlayerNearCrop(playerPos, cropPos, harvestingComponent.interactionRadius)
+          if (isPlayerNearCrop(playerPos, cropPos)
               && isClickNearCrop(worldCoordinates.x, worldCoordinates.y, cropPos)) {
             harvestCrop(crop, harvestingComponent);
           }
@@ -74,14 +73,13 @@ public class HarvestingSystem extends EntitySystem {
     }
   }
 
-  private boolean isPlayerNearCrop(
-      PositionComponent playerPos, PositionComponent cropPos, float interactionRadius) {
+  private boolean isPlayerNearCrop(PositionComponent playerPos, PositionComponent cropPos) {
     float distance = playerPos.position.dst(cropPos.position);
-    return distance < interactionRadius;
+    return distance < 2f;
   }
 
   private boolean isClickNearCrop(float mouseX, float mouseY, PositionComponent cropPos) {
-    float clickThreshold = 2.0f;
+    float clickThreshold = 0.7f;
     float distance = new Vector2(mouseX, mouseY).dst(cropPos.position.x, cropPos.position.y);
     return distance < clickThreshold;
   }
@@ -90,6 +88,7 @@ public class HarvestingSystem extends EntitySystem {
     harvestingComponent.isHarvested = true;
 
     getEngine().removeEntity(crop);
+    // should be added to inventory when it exists
 
     System.out.println("Crop harvested");
   }
