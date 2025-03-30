@@ -18,6 +18,5 @@ public class MovementSystem extends IteratingSystem {
     VelocityComponent velocity = Mappers.velocity.get(entity);
 
     position.position.add(velocity.velocity);
-    System.out.println("Player Position: X=" + position.position.x + " Y=" + position.position.y);
   }
 }
