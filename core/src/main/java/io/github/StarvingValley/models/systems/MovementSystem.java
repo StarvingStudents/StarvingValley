@@ -3,16 +3,13 @@ package io.github.StarvingValley.models.systems;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 
 public class MovementSystem extends IteratingSystem {
   public MovementSystem() {
-    super(
-        Family.all(PositionComponent.class, VelocityComponent.class)
-            .get());
+    super(Family.all(PositionComponent.class, VelocityComponent.class).get());
   }
 
   @Override
@@ -21,5 +18,6 @@ public class MovementSystem extends IteratingSystem {
     VelocityComponent velocity = Mappers.velocity.get(entity);
 
     position.position.add(velocity.velocity);
+    System.out.println("Player Position: X=" + position.position.x + " Y=" + position.position.y);
   }
 }

@@ -6,18 +6,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.JoystickController;
-import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
+import io.github.StarvingValley.models.entities.PotatoFactory;
+import io.github.StarvingValley.models.entities.TomatoFactory;
 import io.github.StarvingValley.models.systems.CameraSystem;
+import io.github.StarvingValley.models.systems.CropGrowthSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
@@ -35,6 +37,8 @@ public class GameScreen extends ScreenAdapter {
   private Entity player;
   private Entity camera;
   private Entity map;
+  private Entity tomato;
+  private Entity potato;
 
   private JoystickOverlay joystickOverlay;
 
@@ -62,6 +66,8 @@ public class GameScreen extends ScreenAdapter {
 
     player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png");
     player.add(cameraFollowComponent);
+    tomato = TomatoFactory.createTomato(33, 17);
+    potato = PotatoFactory.createPotato(33, 15);
 
     engine.addEntity(player);
     engine.addEntity(camera);
@@ -75,6 +81,9 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new DurabilityRenderSystem(engine, batch));
     engine.addSystem(new HungerSystem());
     engine.addSystem(new HungerRenderSystem(engine, batch));
+    engine.addEntity(tomato);
+    engine.addEntity(potato);
+    engine.addSystem(new CropGrowthSystem());
 
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);

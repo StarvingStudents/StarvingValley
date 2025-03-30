@@ -68,12 +68,12 @@ public class CropGrowthSystem extends IteratingSystem {
         break;
     }
 
-    Sprite sprite = spriteComponent.getSprite();
-    float originalWidth = sprite.getWidth();
-    float originalHeight = sprite.getHeight();
-
-    float desiredWidth = 128f;
-    float desiredHeight = (desiredWidth / originalWidth) * originalHeight;
-    sprite.setSize(desiredWidth, desiredHeight);
+    //    Sprite sprite = spriteComponent.getSprite();
+    //    float originalWidth = sprite.getWidth();
+    //    float originalHeight = sprite.getHeight();
+    //
+    //    float desiredWidth = 128f;
+    //    float desiredHeight = (desiredWidth / originalWidth) * originalHeight;
+    //    sprite.setSize(desiredWidth, desiredHeight);
   }
 }
