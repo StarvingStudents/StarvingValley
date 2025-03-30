@@ -21,7 +21,7 @@ public class PlayerFactory {
 
       Entity entity = new Entity();
       
-      entity.add(new PositionComponent(x, y));
+      entity.add(new PositionComponent(x, y, 100));
       entity.add(new SpeedComponent(speed));
       entity.add(new VelocityComponent(new Vector2()));
       entity.add(new SpriteComponent(spritePath));
