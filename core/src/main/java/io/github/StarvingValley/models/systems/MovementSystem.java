@@ -7,6 +7,7 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
+import io.github.StarvingValley.utils.TileUtils;
 
 public class MovementSystem extends IteratingSystem {
   public MovementSystem() {
@@ -21,5 +22,7 @@ public class MovementSystem extends IteratingSystem {
     VelocityComponent velocity = Mappers.velocity.get(entity);
 
     position.position.add(velocity.velocity);
+
+    TileUtils.updateOverlappingTiles(entity);
   }
 }

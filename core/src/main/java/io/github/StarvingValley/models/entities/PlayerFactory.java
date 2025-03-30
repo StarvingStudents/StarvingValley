@@ -9,6 +9,7 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 
 public class PlayerFactory {
@@ -24,6 +25,7 @@ public class PlayerFactory {
       entity.add(new SizeComponent(width, height));
       entity.add(new CollidableComponent());
       entity.add(new HungerComponent()); 
+      entity.add(new TileOverlapComponent());
       
       return entity;
     }

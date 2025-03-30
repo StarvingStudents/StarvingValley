@@ -27,6 +27,10 @@ public class RenderSystem extends IteratingSystem {
     sprite.sprite.setPosition(position.position.x, position.position.y);
     sprite.sprite.setSize(size.width, size.height);
 
+    batch.begin();
+
     sprite.sprite.draw(batch);
+
+    batch.end();
   }
 }

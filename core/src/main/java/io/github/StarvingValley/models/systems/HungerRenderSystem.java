@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.utils.TextureUtils;
 
+//TODO: Use shaperenderer instead and switch to entitysystem
 public class HungerRenderSystem extends IteratingSystem {
     private final Engine engine; 
     private final SpriteBatch batch;
@@ -34,11 +35,15 @@ public class HungerRenderSystem extends IteratingSystem {
         float barX = position.position.x;
         float barY = position.position.y + 1f;
 
+        batch.begin();
+        
         Texture pxl = TextureUtils.createWhitePixel();
         batch.setColor(Color.BROWN);
         batch.draw(pxl, barX, barY, 1 , 0.2f);
         batch.setColor(Color.GOLD);
         batch.draw(pxl, barX, barY, 1 * HungerComponent.hungerPoints / HungerComponent.maxHungerPoints, 0.2f);
         batch.setColor(Color.WHITE);
+
+        batch.end();
     }    
 }

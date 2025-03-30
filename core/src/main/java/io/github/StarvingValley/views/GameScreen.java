@@ -25,9 +25,11 @@ import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.models.systems.TileOverlapSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.utils.MapUtils;
 
+//TODO: Maybe move logic to a controller and rename to FarmScreen/FarmView
 public class GameScreen extends ScreenAdapter {
   IFirebaseRepository _firebaseRepository;
   private Engine engine;
@@ -67,6 +69,7 @@ public class GameScreen extends ScreenAdapter {
     engine.addEntity(camera);
     engine.addEntity(map);
     engine.addSystem(new MapRenderSystem());
+engine.addSystem(new TileOverlapSystem());
     engine.addSystem(new VelocitySystem());
     engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem());
@@ -85,10 +88,11 @@ public class GameScreen extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
+Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    Gdx.gl.glClearColor(0, 0, 0, 1);
-
-    batch.begin();
+    
+    Gdx.gl.glEnable(GL20.GL_BLEND);
+    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
     CameraComponent cameraComponent = Mappers.camera.get(camera);
     if (cameraComponent != null) {
@@ -96,8 +100,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     engine.update(delta);
-    batch.end();
-
+    
     joystickOverlay.render();
   }
 

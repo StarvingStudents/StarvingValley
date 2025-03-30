@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 
@@ -28,6 +29,8 @@ public class Mappers {
     public static final ComponentMapper<SpeedComponent> speed = ComponentMapper.getFor(SpeedComponent.class);
     public static final ComponentMapper<SpriteComponent> sprite = ComponentMapper.getFor(SpriteComponent.class);
     public static final ComponentMapper<TiledMapComponent> tiledMap = ComponentMapper.getFor(TiledMapComponent.class);
+    public static final ComponentMapper<TileOverlapComponent> tileOccupancy = ComponentMapper
+                    .getFor(TileOverlapComponent.class);
     public static final ComponentMapper<HungerComponent> hunger = ComponentMapper.getFor(HungerComponent.class);
     public static final ComponentMapper<DurabilityComponent> durability = ComponentMapper.getFor(DurabilityComponent.class);
 }
