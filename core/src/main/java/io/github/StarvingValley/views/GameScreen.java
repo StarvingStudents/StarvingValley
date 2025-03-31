@@ -52,7 +52,7 @@ import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.MapUtils;
 
-//TODO: Maybe move logic to a controller and rename to FarmScreen/FarmView
+// TODO: Maybe move logic to a controller and rename to FarmScreen/FarmView
 public class GameScreen extends ScreenAdapter {
   IFirebaseRepository _firebaseRepository;
   private Engine engine;
@@ -60,10 +60,6 @@ public class GameScreen extends ScreenAdapter {
   private Entity player;
   private Entity camera;
   private Entity map;
-  private Entity tomato;
-  private Entity tomato2;
-  private Entity potato;
-
   private JoystickOverlay joystickOverlay;
   private InputAdapter inputAdapter;
   private InputAdapter tapInputAdapter;
@@ -74,48 +70,83 @@ public class GameScreen extends ScreenAdapter {
     // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
     // with BuildableComponent. Use BuildUtils.isBuildable
-    inputAdapter = new InputAdapter() {
-      Texture dogTexture = new Texture("DogBasic.png");
+    inputAdapter =
+        new InputAdapter() {
+          Texture dogTexture = new Texture("DogBasic.png");
+          Texture tomatoTexture = new Texture("tomato1.png");
+          Texture potatoTexture = new Texture("potato1.png");
 
-      @Override
-      public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.C) {
-          BuildUtils.toggleBuildPreview(
-              dogTexture,
-              engine,
-              new IBuildableEntityFactory() {
-                @Override
-                public Entity createAt(GridPoint2 tile) {
-                  WorldObjectConfig config = new WorldObjectConfig();
-                  config.blocksMovement = true;
-                  config.blocksPlacement = true;
-                  config.worldLayer = WorldLayer.CROP;
-                  config.texture = dogTexture;
+          @Override
+          public boolean keyDown(int keycode) {
+            if (keycode == Input.Keys.C) {
+              BuildUtils.toggleBuildPreview(
+                  dogTexture,
+                  engine,
+                  new IBuildableEntityFactory() {
+                    @Override
+                    public Entity createAt(GridPoint2 tile) {
+                      WorldObjectConfig config = new WorldObjectConfig();
+                      config.blocksMovement = true;
+                      config.blocksPlacement = true;
+                      config.worldLayer = WorldLayer.CROP;
+                      config.texture = dogTexture;
 
-                  return WorldObjectFactory.createWorldObject(
-                      new Rectangle(tile.x, tile.y, 1, 1),
-                      config);
-                }
+                      return WorldObjectFactory.createWorldObject(
+                          new Rectangle(tile.x, tile.y, 1, 1), config);
+                    }
 
-                @Override
-                public WorldLayer getWorldLayer() {
-                  return WorldLayer.CROP;
-                }
-              });
-        }
-        return true;
-      }
-    };
+                    @Override
+                    public WorldLayer getWorldLayer() {
+                      return WorldLayer.CROP;
+                    }
+                  });
+            } else if (keycode == Input.Keys.D) {
+              BuildUtils.toggleBuildPreview(
+                  tomatoTexture,
+                  engine,
+                  new IBuildableEntityFactory() {
+                    @Override
+                    public Entity createAt(GridPoint2 tile) {
+                      return CropFactory.createCrop(
+                          tile.x, tile.y, CropTypeComponent.CropType.TOMATO);
+                    }
 
-    tapInputAdapter = new TapInputAdapter(() -> {
-      ImmutableArray<Entity> previews = engine.getEntitiesFor(
-          Family.all(BuildPreviewComponent.class).get());
+                    @Override
+                    public WorldLayer getWorldLayer() {
+                      return WorldLayer.CROP;
+                    }
+                  });
+            } else if (keycode == Input.Keys.E) {
+              BuildUtils.toggleBuildPreview(
+                  potatoTexture,
+                  engine,
+                  new IBuildableEntityFactory() {
+                    @Override
+                    public Entity createAt(GridPoint2 tile) {
+                      return CropFactory.createCrop(
+                          tile.x, tile.y, CropTypeComponent.CropType.POTATO);
+                    }
 
-      for (Entity preview : previews) {
-        if (!Mappers.placeRequest.has(preview))
-          preview.add(new PlaceRequestComponent());
-      }
-    });
+                    @Override
+                    public WorldLayer getWorldLayer() {
+                      return WorldLayer.CROP;
+                    }
+                  });
+            }
+            return true;
+          }
+        };
+
+    tapInputAdapter =
+        new TapInputAdapter(
+            () -> {
+              ImmutableArray<Entity> previews =
+                  engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
+
+              for (Entity preview : previews) {
+                if (!Mappers.placeRequest.has(preview)) preview.add(new PlaceRequestComponent());
+              }
+            });
   }
 
   @Override
@@ -138,16 +169,10 @@ public class GameScreen extends ScreenAdapter {
 
     player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png");
     player.add(cameraFollowComponent);
-    tomato = CropFactory.createCrop(33, 17, CropTypeComponent.CropType.TOMATO);
-    tomato2 = CropFactory.createCrop(33, 16, CropTypeComponent.CropType.TOMATO);
-    potato = CropFactory.createCrop(33, 15, CropTypeComponent.CropType.POTATO);
 
     engine.addEntity(player);
     engine.addEntity(camera);
     engine.addEntity(map);
-    engine.addEntity(tomato);
-    engine.addEntity(tomato2);
-    engine.addEntity(potato);
     engine.addSystem(new MapRenderSystem());
     engine.addSystem(new TileOverlapSystem());
     engine.addSystem(new BuildPreviewSystem(cameraComponent.camera));
@@ -171,7 +196,8 @@ public class GameScreen extends ScreenAdapter {
     TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
 
     MapUtils.loadCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
-    MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
+    MapUtils.loadPlacementBlockers(
+        tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
     InputAdapter joystickInputAdapter = joystickOverlay.getInputAdapter();
 

@@ -3,6 +3,7 @@ package io.github.StarvingValley.models.systems;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,6 +25,17 @@ public class HarvestingSystem extends EntitySystem {
 
   @Override
   public void update(float deltaTime) {
+
+    ImmutableArray<Entity> crops =
+        getEngine()
+            .getEntitiesFor(
+                Family.all(
+                        GrowthStageComponent.class,
+                        TimeToGrowComponent.class,
+                        PositionComponent.class,
+                        HarvestingComponent.class)
+                    .get());
+
     PositionComponent playerPos = Mappers.position.get(player);
 
     Entity cameraEntity =
@@ -45,16 +57,7 @@ public class HarvestingSystem extends EntitySystem {
 
       Vector3 worldCoordinates = camera.unproject(new Vector3(mouseX, mouseY, 0));
 
-      for (Entity crop :
-          getEngine()
-              .getEntitiesFor(
-                  Family.all(
-                          GrowthStageComponent.class,
-                          TimeToGrowComponent.class,
-                          PositionComponent.class,
-                          HarvestingComponent.class)
-                      .get())) {
-
+      for (Entity crop : crops) {
         GrowthStageComponent growthStageComponent = Mappers.growthStage.get(crop);
         TimeToGrowComponent timeToGrowComponent = Mappers.timeToGrow.get(crop);
         PositionComponent cropPos = Mappers.position.get(crop);
@@ -64,9 +67,12 @@ public class HarvestingSystem extends EntitySystem {
             && timeToGrowComponent.isMature()
             && harvestingComponent.canHarvest
             && !harvestingComponent.isHarvested) {
+
           if (isPlayerNearCrop(playerPos, cropPos)
               && isClickNearCrop(worldCoordinates.x, worldCoordinates.y, cropPos)) {
             harvestCrop(crop, harvestingComponent);
+          } else {
+            System.out.println("Click was too far from crop.");
           }
         }
       }
@@ -75,11 +81,11 @@ public class HarvestingSystem extends EntitySystem {
 
   private boolean isPlayerNearCrop(PositionComponent playerPos, PositionComponent cropPos) {
     float distance = playerPos.position.dst(cropPos.position);
-    return distance < 2f;
+    return distance < 100.03f; // need to test what works best, kinda wonky
   }
 
   private boolean isClickNearCrop(float mouseX, float mouseY, PositionComponent cropPos) {
-    float clickThreshold = 0.7f;
+    float clickThreshold = 0.5f;
     float distance = new Vector2(mouseX, mouseY).dst(cropPos.position.x, cropPos.position.y);
     return distance < clickThreshold;
   }

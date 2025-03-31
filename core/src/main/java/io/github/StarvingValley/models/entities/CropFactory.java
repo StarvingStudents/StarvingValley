@@ -15,7 +15,7 @@ public class CropFactory {
   public static Entity createCrop(float x, float y, CropTypeComponent.CropType cropType) {
     Entity entity = new Entity();
     PositionComponent position = new PositionComponent(x, y);
-    position.position.set(x, y);
+    position.position.set(x, y, 0);
     entity.add(position);
 
     switch (cropType) {
@@ -63,7 +63,7 @@ public class CropFactory {
       createSprite("tomato"),
       createGrowthStage(),
       new SizeComponent(1, 1),
-      createTimeToGrow(6), // 6 secs
+      createTimeToGrow(20), // very short growth time for now, just for testing :3
       createHarvestingComponent(),
       createCropType(CropTypeComponent.CropType.TOMATO)
     };
@@ -74,7 +74,7 @@ public class CropFactory {
       createSprite("potato"),
       createGrowthStage(),
       new SizeComponent(1, 1),
-      createTimeToGrow(8), // 8 secs
+      createTimeToGrow(40),
       createHarvestingComponent(),
       createCropType(CropTypeComponent.CropType.POTATO)
     };
