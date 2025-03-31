@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 
+//TODO: Maybe switch to entitysystem to only fetch envcollidables once each frame, and maybe use spatial hashing (?) for performance
 public class EnvironmentCollisionSystem extends IteratingSystem {
     public EnvironmentCollisionSystem() {
         super(Family

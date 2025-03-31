@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.utils.TextureUtils;
 
+//TODO: Use shaperenderer instead and switch to entitysystem
 public class DurabilityRenderSystem extends IteratingSystem {
     private final Engine engine;
     private final SpriteBatch batch;
@@ -36,6 +37,8 @@ public class DurabilityRenderSystem extends IteratingSystem {
             return;
         }
 
+        batch.begin();
+
         float barX = position.position.x;
         float barY = position.position.y + 1;
 
@@ -45,5 +48,7 @@ public class DurabilityRenderSystem extends IteratingSystem {
         batch.setColor(Color.GREEN);
         batch.draw(pxl, barX, barY, 1 * durabilityComponent.getHealthPercentage(), 0.2f);
         batch.setColor(Color.WHITE);
+
+        batch.end();
     }
 }

@@ -11,6 +11,10 @@ public class SpriteComponent implements Component {
     this.sprite = new Sprite(new Texture(texturePath));
   }
 
+  public SpriteComponent(Texture texture) {
+    this.sprite = new Sprite(texture);
+  }
+
   public Sprite getSprite() {
     return sprite;
   }

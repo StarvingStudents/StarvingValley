@@ -1,6 +1,8 @@
 package io.github.StarvingValley.models;
 
 import com.badlogic.ashley.core.ComponentMapper;
+import io.github.StarvingValley.models.components.BuildPreviewComponent;
+import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
@@ -8,17 +10,24 @@ import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
+import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.MapRenderComponent;
+import io.github.StarvingValley.models.components.PlaceRequestComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.components.PulseAlphaComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.TileOccupierComponent;
+import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
+import io.github.StarvingValley.models.components.WorldLayerComponent;
 
 public class Mappers {
+
   public static final ComponentMapper<PositionComponent> position =
       ComponentMapper.getFor(PositionComponent.class);
   public static final ComponentMapper<VelocityComponent> velocity =
@@ -45,6 +54,21 @@ public class Mappers {
       ComponentMapper.getFor(HungerComponent.class);
   public static final ComponentMapper<DurabilityComponent> durability =
       ComponentMapper.getFor(DurabilityComponent.class);
+    public static final ComponentMapper<TileOverlapComponent> tileOccupancy = ComponentMapper
+            .getFor(TileOverlapComponent.class);
+    public static final ComponentMapper<TileOccupierComponent> placementOccupied = ComponentMapper
+                    .getFor(TileOccupierComponent.class);
+    public static final ComponentMapper<BuildPreviewComponent> buildPreview = ComponentMapper
+                    .getFor(BuildPreviewComponent.class);
+    public static final ComponentMapper<HiddenComponent> hidden = ComponentMapper.getFor(HiddenComponent.class);
+    public static final ComponentMapper<PulseAlphaComponent> pulseAlpha = ComponentMapper
+                    .getFor(PulseAlphaComponent.class);
+    public static final ComponentMapper<PlaceRequestComponent> placeRequest = ComponentMapper
+                    .getFor(PlaceRequestComponent.class);
+    public static final ComponentMapper<WorldLayerComponent> worldLayer = ComponentMapper
+                    .getFor(WorldLayerComponent.class);
+    public static final ComponentMapper<BuildableComponent> buildable = ComponentMapper
+                    .getFor(BuildableComponent.class);
   public static ComponentMapper<GrowthStageComponent> growthStage =
       ComponentMapper.getFor(GrowthStageComponent.class);
   public static ComponentMapper<TimeToGrowComponent> timeToGrow =

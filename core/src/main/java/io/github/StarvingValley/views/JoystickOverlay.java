@@ -25,15 +25,6 @@ public class JoystickOverlay extends ScreenAdapter {
     private Color knobColor = new Color(0.7f, 0.7f, 0.7f, 0.9f);
     private float minDragStartDistance = 250;
     private boolean isJoystickActive = false;
-
-    public JoystickOverlay(JoystickController controller) {
-        this.controller = controller;
-        this.stage = new Stage(new ScreenViewport());
-        this.knobPosition = new Vector2(joystickCenter);
-
-        Gdx.input.setInputProcessor(inputAdapter);
-    }
-
     private InputAdapter inputAdapter = new InputAdapter() {
         @Override
         public boolean touchDragged(int screenX, int screenY, int pointer) {
@@ -54,6 +45,16 @@ public class JoystickOverlay extends ScreenAdapter {
             return true;
         }
     };
+
+    public JoystickOverlay(JoystickController controller) {
+        this.controller = controller;
+        this.stage = new Stage(new ScreenViewport());
+        this.knobPosition = new Vector2(joystickCenter);
+    }
+
+    public InputAdapter getInputAdapter() {
+        return inputAdapter;
+    }
 
     public void handleDrag(int screenX, int screenY) {
         if (!isJoystickActive) {
@@ -105,8 +106,6 @@ public class JoystickOverlay extends ScreenAdapter {
         shapeRenderer.setColor(knobColor);
         shapeRenderer.circle(knobPosition.x, knobPosition.y, knobRadius);
         shapeRenderer.end();
-
-        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     @Override
