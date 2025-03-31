@@ -54,8 +54,7 @@ public class GameScreen extends ScreenAdapter {
   IFirebaseRepository _firebaseRepository;
   private Engine engine;
   private SpriteBatch batch;
-  private Entity player;
-  private Entity camera;
+    private Entity camera;
   private Entity map;
   private JoystickOverlay joystickOverlay;
   private InputAdapter inputAdapter;

@@ -1,6 +1,5 @@
 package io.github.StarvingValley.models.systems;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -15,12 +14,10 @@ import io.github.StarvingValley.utils.TextureUtils;
 
 //TODO: Use shaperenderer instead and switch to entitysystem
 public class HungerRenderSystem extends IteratingSystem {
-    private final Engine engine; 
     private final SpriteBatch batch;
 
-    public HungerRenderSystem(Engine engine, SpriteBatch batch) {
+    public HungerRenderSystem(SpriteBatch batch) {
         super(Family.all(HungerComponent.class, PositionComponent.class).get());
-        this.engine = engine;
         this.batch = batch;
     }
 

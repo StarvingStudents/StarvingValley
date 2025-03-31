@@ -14,4 +14,5 @@ public class Config {
     public static final float BUILD_GRID_LINE_THICKNESS = 1f / Config.PIXELS_PER_TILE;
     public static final float MAX_TAP_DISTANCE = 20f;
     public static final float MAX_TAP_DURATION = 0.4f;
+    public static final float COLLISION_MARGIN = 0.1f;
 }

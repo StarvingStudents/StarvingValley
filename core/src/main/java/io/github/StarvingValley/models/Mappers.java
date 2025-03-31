@@ -34,6 +34,7 @@ public class Mappers {
     public static final ComponentMapper<CameraFollowComponent> cameraFollow = ComponentMapper.getFor(CameraFollowComponent.class);
     public static final ComponentMapper<MapRenderComponent> mapRender = ComponentMapper.getFor(MapRenderComponent.class);
     public static final ComponentMapper<SpeedComponent> speed = ComponentMapper.getFor(SpeedComponent.class);
+        public static final ComponentMapper<InputComponent> input = ComponentMapper.getFor(InputComponent.class);
     public static final ComponentMapper<SpriteComponent> sprite = ComponentMapper.getFor(SpriteComponent.class);
     public static final ComponentMapper<TiledMapComponent> tiledMap = ComponentMapper.getFor(TiledMapComponent.class);
     public static final ComponentMapper<TileOverlapComponent> tileOccupancy = ComponentMapper
