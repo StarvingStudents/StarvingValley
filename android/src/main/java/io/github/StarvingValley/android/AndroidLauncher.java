@@ -14,6 +14,8 @@ public class AndroidLauncher extends AndroidApplication {
         AndroidApplicationConfiguration configuration = new AndroidApplicationConfiguration();
         configuration.useImmersiveMode = true; // Recommended, but not required.
 
+        DeviceIdManager.context = this;
+
         initialize(new StarvingValley(new FirebaseRepository()), configuration);
     }
 }

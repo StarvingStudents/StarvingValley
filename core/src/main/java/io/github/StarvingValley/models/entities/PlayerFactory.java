@@ -12,6 +12,7 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
@@ -35,6 +36,8 @@ public class PlayerFactory {
       entity.add(new TileOccupierComponent());
       entity.add(new InputComponent());
       entity.add(new WorldLayerComponent(WorldLayer.CHARACTER));
+      entity.add(new SyncComponent());
+      entity.add(new PlayerComponent());
 
       CameraFollowComponent cameraFollowComponent = new CameraFollowComponent(camera);
       cameraFollowComponent.targetCamera = camera;

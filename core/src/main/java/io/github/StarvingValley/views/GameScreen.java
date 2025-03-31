@@ -14,24 +14,21 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Rectangle;
-
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.input.TapInputAdapter;
-import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IBuildableEntityFactory;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.components.CameraFollowComponent;
+import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.PlaceRequestComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
-import io.github.StarvingValley.models.dto.WorldObjectConfig;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
-import io.github.StarvingValley.models.entities.PlayerFactory;
-import io.github.StarvingValley.models.entities.WorldObjectFactory;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
 import io.github.StarvingValley.models.systems.BuildPlacementSystem;
@@ -39,6 +36,7 @@ import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
+import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
@@ -51,13 +49,13 @@ import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.MapUtils;
 
-//TODO: Maybe move logic to a controller and rename to FarmScreen/FarmView
+// TODO: Maybe move logic to a controller and rename to FarmScreen/FarmView
 public class GameScreen extends ScreenAdapter {
-public AssetManager assetManager;
+  public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
   private Engine engine;
   private SpriteBatch batch;
-    private Entity camera;
+  private Entity camera;
   private Entity map;
   private JoystickOverlay joystickOverlay;
   private InputAdapter inputAdapter;
@@ -74,12 +72,12 @@ public AssetManager assetManager;
     // should only be possible on entities
     // with BuildableComponent. Use BuildUtils.isBuildable
     inputAdapter = new InputAdapter() {
-            @Override
+      @Override
       public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.C) {
           BuildUtils.toggleBuildPreview(
               "DogBasic.png",
-              engine,
+                      engine,
               new IBuildableEntityFactory() {
                 @Override
                 public Entity createAt(GridPoint2 tile) {
@@ -101,14 +99,14 @@ public AssetManager assetManager;
     };
 
     tapInputAdapter = new TapInputAdapter(() -> {
-      ImmutableArray<Entity> previews = engine.getEntitiesFor(
-          Family.all(BuildPreviewComponent.class).get());
+          ImmutableArray<Entity> previews = engine.getEntitiesFor(
+            Family.all(BuildPreviewComponent.class).get());
 
-      for (Entity preview : previews) {
-        if (!Mappers.placeRequest.has(preview))
-          preview.add(new PlaceRequestComponent());
-      }
-    });
+          for (Entity preview : previews) {
+            if (!Mappers.placeRequest.has(preview))
+              preview.add(new PlaceRequestComponent());
+          }
+        });
   }
 
   @Override
@@ -126,10 +124,6 @@ public AssetManager assetManager;
 
     engine = new Engine();
 
-    player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png");
-    player.add(cameraFollowComponent);
-
-    engine.addEntity(player);
     engine.addEntity(camera);
     engine.addEntity(map);
     engine.addSystem(new MapRenderSystem());
@@ -141,12 +135,13 @@ public AssetManager assetManager;
     engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem());
     engine.addSystem(new CameraSystem());
-        engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
-engine.addSystem(new HungerSystem());
+    engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
+    engine.addSystem(new HungerSystem());
     engine.addSystem(new SpriteSystem(assetManager));
     engine.addSystem(new RenderSystem(batch));
     engine.addSystem(new HungerRenderSystem(batch));
     engine.addSystem(new DurabilityRenderSystem(engine, batch));
+    engine.addSystem(new FirebaseSyncSystem(_firebaseRepository));
 
     JoystickController joystickController = new JoystickController(engine);
     joystickOverlay = new JoystickOverlay(joystickController);
@@ -164,11 +159,24 @@ engine.addSystem(new HungerSystem());
     multiplexer.addProcessor(joystickInputAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
+
+    _firebaseRepository.registerOrSignInWithDeviceId(new AuthCallback() {
+      @Override
+      public void onSuccess() {
+        MapUtils.loadSyncedEntities(_firebaseRepository, engine, camera);
+      }
+
+      @Override
+      public void onFailure(String errorMessage) {
+        // TODO: Fail gracefully
+        throw new RuntimeException("Authentication failed: " + errorMessage);
+      }
+    });
   }
 
   @Override
   public void render(float delta) {
-assetManager.update();
+    assetManager.update();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

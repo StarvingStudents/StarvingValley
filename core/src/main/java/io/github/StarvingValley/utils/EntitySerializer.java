@@ -1,0 +1,216 @@
+package io.github.StarvingValley.utils;
+
+import java.util.UUID;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Vector3;
+
+import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.BuildableComponent;
+import io.github.StarvingValley.models.components.CameraFollowComponent;
+import io.github.StarvingValley.models.components.CollidableComponent;
+import io.github.StarvingValley.models.components.DurabilityComponent;
+import io.github.StarvingValley.models.components.EatingComponent;
+import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
+import io.github.StarvingValley.models.components.HiddenComponent;
+import io.github.StarvingValley.models.components.HungerComponent;
+import io.github.StarvingValley.models.components.InputComponent;
+import io.github.StarvingValley.models.components.PlayerComponent;
+import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.components.PulseAlphaComponent;
+import io.github.StarvingValley.models.components.SizeComponent;
+import io.github.StarvingValley.models.components.SpeedComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.SyncComponent;
+import io.github.StarvingValley.models.components.TileOccupierComponent;
+import io.github.StarvingValley.models.components.TileOverlapComponent;
+import io.github.StarvingValley.models.components.VelocityComponent;
+import io.github.StarvingValley.models.components.WorldLayerComponent;
+import io.github.StarvingValley.models.dto.SyncEntity;
+
+public class EntitySerializer {
+
+  public static SyncEntity serialize(Entity entity) {
+    SyncEntity dto = new SyncEntity();
+
+    // Sync ID
+    SyncComponent sync = Mappers.sync.get(entity);
+    if (sync != null) {
+      dto.id = sync.id;
+      dto.shouldSync = true;
+    }
+
+    // Position
+    PositionComponent position = Mappers.position.get(entity);
+    if (position != null) {
+      Vector3 pos = position.position;
+      dto.x = pos.x;
+      dto.y = pos.y;
+      dto.z = pos.z;
+    }
+
+    // Speed
+    SpeedComponent speed = Mappers.speed.get(entity);
+    if (speed != null) {
+      dto.speed = speed.speed;
+    }
+
+    // Size
+    SizeComponent size = Mappers.size.get(entity);
+    if (size != null) {
+      dto.width = size.width;
+      dto.height = size.height;
+    }
+
+    // Durability
+    DurabilityComponent durability = Mappers.durability.get(entity);
+    if (durability != null) {
+      dto.health = durability.health;
+      dto.maxHealth = durability.maxHealth;
+    }
+
+    // PulseAlpha
+    PulseAlphaComponent pulse = Mappers.pulseAlpha.get(entity);
+    if (pulse != null) {
+      dto.pulseBaseAlpha = pulse.baseAlpha;
+      dto.pulseAmplitude = pulse.amplitude;
+      dto.pulseSpeed = pulse.speed;
+    }
+
+    // Hunger
+    HungerComponent hunger = Mappers.hunger.get(entity);
+    if (hunger != null) {
+      dto.hungerPoints = hunger.hungerPoints;
+      dto.maxHungerPoints = hunger.maxHungerPoints;
+      dto.hungerDecayRate = hunger.decayRate;
+    }
+
+    // Eating
+    EatingComponent eating = Mappers.eating.get(entity);
+    if (eating != null) {
+      dto.foodPoints = eating.foodPoints;
+    }
+
+    // Texture
+    SpriteComponent sprite = Mappers.sprite.get(entity);
+    if (sprite != null) {
+      dto.texture = sprite.getTexturePath();
+    }
+
+    // Layer
+    WorldLayerComponent layer = Mappers.worldLayer.get(entity);
+    if (layer != null) {
+      dto.worldLayer = layer.layer;
+    }
+
+    dto.isBuildable = Mappers.buildable.has(entity);
+    dto.isCollidable = Mappers.collidable.has(entity);
+    dto.isEnvironmentCollidable = Mappers.environmentCollider.has(entity);
+    dto.isHidden = Mappers.hidden.has(entity);
+    dto.occupiesTiles = Mappers.tileOccupancy.has(entity);
+    dto.isPlayer = Mappers.player.has(entity);
+    dto.hasInput = Mappers.input.has(entity);
+    dto.cameraShouldFollow = Mappers.cameraFollow.has(entity);
+    dto.hasVelocity = Mappers.velocity.has(entity);
+
+    return dto;
+  }
+
+  public static Entity deserialize(SyncEntity dto, Entity camera) {
+    Entity entity = new Entity();
+
+    // All synced entities should store overlap
+    entity.add(new TileOverlapComponent());
+
+    // Position
+    if (dto.x != null && dto.y != null) {
+      PositionComponent position = new PositionComponent(dto.x, dto.y, dto.z != null ? dto.z : 0f);
+      entity.add(position);
+    }
+
+    // Speed
+    if (dto.speed != null) {
+      SpeedComponent speed = new SpeedComponent(dto.speed);
+      entity.add(speed);
+    }
+
+    // Size
+    if (dto.width != null && dto.height != null) {
+      SizeComponent size = new SizeComponent(dto.width, dto.height);
+      entity.add(size);
+    }
+
+    // Durability
+    if (dto.health != null && dto.maxHealth != null) {
+      DurabilityComponent durability = new DurabilityComponent();
+      durability.health = dto.health;
+      durability.maxHealth = dto.maxHealth;
+      entity.add(durability);
+    }
+
+    // PulseAlpha
+    if (dto.pulseBaseAlpha != null && dto.pulseAmplitude != null && dto.pulseSpeed != null) {
+      PulseAlphaComponent pulse = new PulseAlphaComponent();
+      pulse.baseAlpha = dto.pulseBaseAlpha;
+      pulse.amplitude = dto.pulseAmplitude;
+      pulse.speed = dto.pulseSpeed;
+      entity.add(pulse);
+    }
+
+    // Hunger
+    if (dto.hungerPoints != null) {
+      HungerComponent hunger = new HungerComponent();
+      hunger.hungerPoints = dto.hungerPoints;
+      hunger.maxHungerPoints = dto.maxHungerPoints != null ? dto.maxHungerPoints : 0f;
+      hunger.decayRate = dto.hungerDecayRate != null ? dto.hungerDecayRate : 0f;
+      entity.add(hunger);
+    }
+
+    // Eating
+    if (dto.foodPoints != null) {
+      EatingComponent eating = new EatingComponent(dto.foodPoints);
+      entity.add(eating);
+    }
+
+    // Texture / Sprite
+    if (dto.texture != null) {
+      SpriteComponent sprite = new SpriteComponent(dto.texture);
+      entity.add(sprite);
+    }
+
+    // Layer
+    if (dto.worldLayer != null) {
+      WorldLayerComponent layer = new WorldLayerComponent(dto.worldLayer);
+      entity.add(layer);
+    }
+
+    // Sync
+    if (dto.shouldSync != null && dto.shouldSync) {
+      SyncComponent sync = new SyncComponent();
+      sync.id = dto.id != null ? dto.id : UUID.randomUUID().toString();
+      entity.add(sync);
+    }
+
+    // Boolean tags
+    if (Boolean.TRUE.equals(dto.isBuildable))
+      entity.add(new BuildableComponent());
+    if (Boolean.TRUE.equals(dto.isCollidable))
+      entity.add(new CollidableComponent());
+    if (Boolean.TRUE.equals(dto.isEnvironmentCollidable))
+      entity.add(new EnvironmentCollidableComponent());
+    if (Boolean.TRUE.equals(dto.isHidden))
+      entity.add(new HiddenComponent());
+    if (Boolean.TRUE.equals(dto.occupiesTiles))
+      entity.add(new TileOccupierComponent());
+    if (Boolean.TRUE.equals(dto.isPlayer))
+      entity.add(new PlayerComponent());
+    if (Boolean.TRUE.equals(dto.hasInput))
+      entity.add(new InputComponent());
+    if (Boolean.TRUE.equals(dto.cameraShouldFollow))
+      entity.add(new CameraFollowComponent(camera));
+    if (Boolean.TRUE.equals(dto.hasVelocity))
+      entity.add(new VelocityComponent());
+
+    return entity;
+  }
+}

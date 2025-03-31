@@ -35,6 +35,7 @@ public class SpriteSystem extends IteratingSystem {
             spriteComponent.sprite = new Sprite(assetManager.get(texturePath, Texture.class));
             spriteComponent.textureChanged = false;
 
+            SyncUtils.markUnsyncedIfChanged(entity, texturePath, spriteComponent.previousTexturePath);
 
         } else {
             assetManager.load(texturePath, Texture.class);

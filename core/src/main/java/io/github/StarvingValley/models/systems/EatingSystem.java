@@ -6,6 +6,7 @@ import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
+import io.github.StarvingValley.utils.SyncUtils;
 
 public class EatingSystem extends IteratingSystem {
     public EatingSystem() {
@@ -17,6 +18,10 @@ public class EatingSystem extends IteratingSystem {
         HungerComponent hunger = entity.getComponent(HungerComponent.class);
         EatingComponent eating = entity.getComponent(EatingComponent.class);
 
+        float oldHunger = hunger.hungerPoints;
+
         hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.foodPoints); 
+
+        SyncUtils.markUnsyncedIfChanged(entity, hunger.hungerPoints, oldHunger);
     }
 }
