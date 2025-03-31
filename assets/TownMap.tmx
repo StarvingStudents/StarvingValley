@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="37" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="325">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="37" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="331">
  <tileset firstgid="1" source="Water.tsx"/>
  <tileset firstgid="5" source="Hills.tsx"/>
  <tileset firstgid="82" source="Wood_Bridge.tsx"/>
@@ -16,6 +16,11 @@
  <tileset firstgid="433" source="Fences.tsx"/>
  <tileset firstgid="449" source="GreenHouse.tsx"/>
  <tileset firstgid="465" source="PurpleHouse1.tsx"/>
+ <tileset firstgid="494" source="DogBasic.tsx"/>
+ <tileset firstgid="495" source="FoxBasic.tsx"/>
+ <tileset firstgid="496" source="PinkCharacter.tsx"/>
+ <tileset firstgid="497" source="OrangeCharacter.tsx"/>
+ <tileset firstgid="498" source="Bear.tsx"/>
  <layer id="2" name="base" width="37" height="30">
   <data encoding="base64" compression="zlib">
    eJztw0ENAAAMA6Grf9PTsD8krJqqqqqq7we19wRX
@@ -34,6 +39,11 @@
  <layer id="4" name="decoración" width="37" height="30">
   <data encoding="base64" compression="zlib">
    eJzVl1eP1DAURm2JKlElqui9919ElYamfUKwYh+G0HvvvXcQ2n1BSIjehl6GDo/Ab6AdM7FiTJxMMsmu+DRHTu5cX9+JfT2OEP+/6qHO0baEPH/8sLYl1OC33+EH/IRfyiD5yL99mlutGL81tIG20A7ay+YbfwbMtK47MH5H6ASdoQt0leG+WasI82C+dd2N8btDD+gJvaC3DPct5pCXS2rdlKEk8llDKmZBVOoniVQ+5ezT+aOvBt8S9Cv5uFRkPpeAB0sT1oB6TrNEsOepVq/RqH1Qz51Ly8hjOayAlSnrUueh5lGv0Wkw3eEfN3eryGM1rIG1KXPSeZi5zYG5MDVFvHXksR42wMYa9q96IzelOp/Z6UOmkjk/h/g9h+EIHHX8tj7Y+0I/6A8DHH6bsG+GLbA14XPS86N0jL7H4QScDImzGAZiHwSDYQgMlRW7rW3Yt8MO2FnD3J2i72k4A2f9OPb+MAz7cBgBI2GUNd4Xv92FfTfsgb0Jc1LrRc/fOfqehwtw0RFnNPYxMBbGwXiH3z7s++EAHEzxnMz5i9ME4k+ESTAZpuRwJjDrPG7vDVs3Lns19eKSWedZ7L1acfUSJ/3/m8XeqxVWL9XKPH+59t6nXD+D5/DCin+N++twA24a31VTLy7pfTvqrPKSmK+gDK+t+Le4vw134G7G631hxHdvGOstvIP31rj3uL8PD6CUQw2aukT8qz4f4CN8gs/QKAOfh/AIHsMTo09jDvk1ycp72yLxb9skAx99RvVE8L5XMHzC3hcKNeQUlo9n5eSJIC+dj+mj16vpoxR1NnPpsjEPNldk9T46D/N5LRDJ/jvykn5eUbWk9RuU37OJ
+  </data>
+ </layer>
+ <layer id="8" name="characters" width="37" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt08kJACAQA8C1/169KrACP4J4MFNBSEgEsFNPpxPAm7LvfKHZ8SrVHsuK7gCYGHpLBLY=
   </data>
  </layer>
  <objectgroup id="6" name="colisiones">
@@ -176,5 +186,10 @@
   <object id="322" x="590" y="448.364" width="1.45455" height="31.0909"/>
   <object id="323" x="0" y="174" width="2" height="305"/>
   <object id="324" x="-0.5" y="47.5" width="3" height="81.5"/>
+  <object id="325" x="516" y="88.25" width="8.25" height="8"/>
+  <object id="326" x="324.25" y="233.5" width="7.5" height="5.75"/>
+  <object id="327" x="273.75" y="183.75" width="12.75" height="8"/>
+  <object id="328" x="225.25" y="311" width="13" height="9.25"/>
+  <object id="329" x="145.5" y="279.25" width="12.5" height="9"/>
  </objectgroup>
 </map>
