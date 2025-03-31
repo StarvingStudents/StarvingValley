@@ -12,21 +12,19 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 
+import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.dto.WorldObjectConfig;
 import io.github.StarvingValley.models.entities.WorldObjectFactory;
 import io.github.StarvingValley.models.types.WorldLayer;
+import io.github.StarvingValley.models.entities.MapFactory;
 
 public class MapUtils {
-    public static void loadCollidables(TiledMap map, float unitScale, Engine engine) {
+    public static void loadEnvCollidables(TiledMap map, float unitScale, Engine engine) {
         List<Rectangle> scaledHitboxes = getScaledHitboxes(map, Config.MAP_COLLISION_LAYER_NAME, unitScale, engine);
         for (Rectangle scaledHitbox : scaledHitboxes) {
-            WorldObjectConfig config = new WorldObjectConfig();
-            config.blocksMovement = true;
-            config.blocksPlacement = false;
-            config.worldLayer = WorldLayer.TERRAIN;
-
-            engine.addEntity(WorldObjectFactory.createWorldObject(scaledHitbox, config));
+                        engine.addEntity(MapFactory.createEnvCollidable(scaledHitbox));
         }
     }
 
@@ -34,14 +32,9 @@ public class MapUtils {
             Engine engine) {
         List<Rectangle> scaledHitboxes = getScaledHitboxes(map, Config.MAP_NON_PLACEMENT_LAYER_NAME, unitScale, engine);
         for (Rectangle scaledHitbox : scaledHitboxes) {
-            WorldObjectConfig config = new WorldObjectConfig();
-            config.blocksMovement = false;
-            config.blocksPlacement = true;
-            config.worldLayer = layerTypeToApply;
-
-            Entity entity = WorldObjectFactory.createWorldObject(scaledHitbox, config);
-
+                        Entity entity = MapFactory.createEnvPlacementBlocker(scaledHitbox);
             engine.addEntity(entity);
+
             TileUtils.updateOverlappingTiles(entity);
         }
     }

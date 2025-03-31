@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -43,6 +44,7 @@ import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.TileOverlapSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -51,6 +53,7 @@ import io.github.StarvingValley.utils.MapUtils;
 
 //TODO: Maybe move logic to a controller and rename to FarmScreen/FarmView
 public class GameScreen extends ScreenAdapter {
+public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
   private Engine engine;
   private SpriteBatch batch;
@@ -63,30 +66,28 @@ public class GameScreen extends ScreenAdapter {
   public GameScreen(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
 
+    // TODO: Here we can pre-load some assets that we know we always need. Potentially add assetManager.finishLoading(); to wait
+    assetManager = new AssetManager();
+    assetManager.load("DogBasic.png", Texture.class);
+
     // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
     // with BuildableComponent. Use BuildUtils.isBuildable
     inputAdapter = new InputAdapter() {
-      Texture dogTexture = new Texture("DogBasic.png");
-
-      @Override
+            @Override
       public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.C) {
           BuildUtils.toggleBuildPreview(
-              dogTexture,
+              "DogBasic.png",
               engine,
               new IBuildableEntityFactory() {
                 @Override
                 public Entity createAt(GridPoint2 tile) {
-                  WorldObjectConfig config = new WorldObjectConfig();
-                  config.blocksMovement = true;
-                  config.blocksPlacement = true;
-                  config.worldLayer = WorldLayer.CROP;
-                  config.texture = dogTexture;
+                  Entity entity = MapFactory.createEnvPlacementBlocker(tile.x, tile.y, 1, 1);
+                  entity.add(new SpriteComponent("DogBasic.png"));
+                  entity.add(new EnvironmentCollidableComponent());
 
-                  return WorldObjectFactory.createWorldObject(
-                      new Rectangle(tile.x, tile.y, 1, 1),
-                      config);
+                  return entity;
                 }
 
                 @Override
@@ -119,12 +120,9 @@ public class GameScreen extends ScreenAdapter {
 
     camera = CameraFactory.createCamera(tilesWide, tilesHigh);
 
-    CameraFollowComponent cameraFollowComponent = new CameraFollowComponent();
-    cameraFollowComponent.targetCamera = camera;
-
     CameraComponent cameraComponent = Mappers.camera.get(camera);
 
-    map = MapFactory.CreateMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
+    map = MapFactory.createMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
 
     engine = new Engine();
 
@@ -143,18 +141,19 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem());
     engine.addSystem(new CameraSystem());
+        engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
+engine.addSystem(new HungerSystem());
+    engine.addSystem(new SpriteSystem(assetManager));
     engine.addSystem(new RenderSystem(batch));
-    engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
+    engine.addSystem(new HungerRenderSystem(batch));
     engine.addSystem(new DurabilityRenderSystem(engine, batch));
-    engine.addSystem(new HungerSystem());
-    engine.addSystem(new HungerRenderSystem(engine, batch));
 
-    JoystickController joystickController = new JoystickController();
+    JoystickController joystickController = new JoystickController(engine);
     joystickOverlay = new JoystickOverlay(joystickController);
 
     TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
 
-    MapUtils.loadCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
+    MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
     MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
     InputAdapter joystickInputAdapter = joystickOverlay.getInputAdapter();
@@ -169,6 +168,8 @@ public class GameScreen extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
+assetManager.update();
+
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 

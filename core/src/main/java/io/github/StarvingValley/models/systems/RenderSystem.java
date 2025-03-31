@@ -49,6 +49,10 @@ public class RenderSystem extends EntitySystem {
       SpriteComponent sprite = Mappers.sprite.get(entity);
       SizeComponent size = Mappers.size.get(entity);
 
+      if (sprite.sprite.getTexture() == null) {
+        continue;
+      }
+
       sprite.sprite.setPosition(pos.position.x, pos.position.y);
       sprite.sprite.setSize(size.width, size.height);
       sprite.sprite.draw(batch);
