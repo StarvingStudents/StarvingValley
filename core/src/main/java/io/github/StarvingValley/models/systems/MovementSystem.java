@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector3;
-
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
@@ -12,9 +11,7 @@ import io.github.StarvingValley.utils.TileUtils;
 
 public class MovementSystem extends IteratingSystem {
   public MovementSystem() {
-    super(
-        Family.all(PositionComponent.class, VelocityComponent.class)
-            .get());
+    super(Family.all(PositionComponent.class, VelocityComponent.class).get());
   }
 
   @Override
