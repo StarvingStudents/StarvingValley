@@ -16,7 +16,16 @@ public class EatingSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         HungerComponent hunger = entity.getComponent(HungerComponent.class);
         EatingComponent eating = entity.getComponent(EatingComponent.class);
-
-        hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.foodPoints); 
+        
+        if (eating.isEating) {
+            if (eating.foodPoints - eating.eatingSpeed * deltaTime <= 0) {
+                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.foodPoints);
+                eating.foodPoints = 0;
+                eating.isEating = false;
+            } else {
+                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.eatingSpeed * deltaTime);
+                eating.foodPoints -= eating.eatingSpeed * deltaTime;
+            }
+        }
     }
 }
