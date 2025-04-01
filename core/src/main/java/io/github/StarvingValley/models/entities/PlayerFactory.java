@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.StarvingValley.models.components.CollidableComponent;
+import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -31,6 +32,7 @@ public class PlayerFactory {
       entity.add(new TileOverlapComponent());
       entity.add(new TileOccupierComponent());
       entity.add(new WorldLayerComponent(WorldLayer.CHARACTER));
+      entity.add(new EatingComponent()); 
       
       return entity;
     }
