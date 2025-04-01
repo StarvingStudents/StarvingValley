@@ -182,13 +182,13 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem());
     engine.addSystem(new CameraSystem());
+    engine.addSystem(new CropGrowthSystem());
+    engine.addSystem(new HarvestingSystem(player));
     engine.addSystem(new RenderSystem(batch));
     engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
     engine.addSystem(new DurabilityRenderSystem(engine, batch));
     engine.addSystem(new HungerSystem());
     engine.addSystem(new HungerRenderSystem(engine, batch));
-    engine.addSystem(new CropGrowthSystem());
-    engine.addSystem(new HarvestingSystem(player));
 
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);

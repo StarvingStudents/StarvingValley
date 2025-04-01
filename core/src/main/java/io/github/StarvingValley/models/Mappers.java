@@ -6,6 +6,7 @@ import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
+import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
@@ -54,25 +55,28 @@ public class Mappers {
       ComponentMapper.getFor(HungerComponent.class);
   public static final ComponentMapper<DurabilityComponent> durability =
       ComponentMapper.getFor(DurabilityComponent.class);
-    public static final ComponentMapper<TileOverlapComponent> tileOccupancy = ComponentMapper
-            .getFor(TileOverlapComponent.class);
-    public static final ComponentMapper<TileOccupierComponent> placementOccupied = ComponentMapper
-                    .getFor(TileOccupierComponent.class);
-    public static final ComponentMapper<BuildPreviewComponent> buildPreview = ComponentMapper
-                    .getFor(BuildPreviewComponent.class);
-    public static final ComponentMapper<HiddenComponent> hidden = ComponentMapper.getFor(HiddenComponent.class);
-    public static final ComponentMapper<PulseAlphaComponent> pulseAlpha = ComponentMapper
-                    .getFor(PulseAlphaComponent.class);
-    public static final ComponentMapper<PlaceRequestComponent> placeRequest = ComponentMapper
-                    .getFor(PlaceRequestComponent.class);
-    public static final ComponentMapper<WorldLayerComponent> worldLayer = ComponentMapper
-                    .getFor(WorldLayerComponent.class);
-    public static final ComponentMapper<BuildableComponent> buildable = ComponentMapper
-                    .getFor(BuildableComponent.class);
-  public static ComponentMapper<GrowthStageComponent> growthStage =
+  public static final ComponentMapper<TileOverlapComponent> tileOccupancy =
+      ComponentMapper.getFor(TileOverlapComponent.class);
+  public static final ComponentMapper<TileOccupierComponent> placementOccupied =
+      ComponentMapper.getFor(TileOccupierComponent.class);
+  public static final ComponentMapper<BuildPreviewComponent> buildPreview =
+      ComponentMapper.getFor(BuildPreviewComponent.class);
+  public static final ComponentMapper<HiddenComponent> hidden =
+      ComponentMapper.getFor(HiddenComponent.class);
+  public static final ComponentMapper<PulseAlphaComponent> pulseAlpha =
+      ComponentMapper.getFor(PulseAlphaComponent.class);
+  public static final ComponentMapper<PlaceRequestComponent> placeRequest =
+      ComponentMapper.getFor(PlaceRequestComponent.class);
+  public static final ComponentMapper<WorldLayerComponent> worldLayer =
+      ComponentMapper.getFor(WorldLayerComponent.class);
+  public static final ComponentMapper<BuildableComponent> buildable =
+      ComponentMapper.getFor(BuildableComponent.class);
+  public static final ComponentMapper<GrowthStageComponent> growthStage =
       ComponentMapper.getFor(GrowthStageComponent.class);
-  public static ComponentMapper<TimeToGrowComponent> timeToGrow =
+  public static final ComponentMapper<TimeToGrowComponent> timeToGrow =
       ComponentMapper.getFor(TimeToGrowComponent.class);
-  public static ComponentMapper<HarvestingComponent> harvesting =
+  public static final ComponentMapper<HarvestingComponent> harvesting =
       ComponentMapper.getFor(HarvestingComponent.class);
+  public static final ComponentMapper<CropTypeComponent> cropType =
+      ComponentMapper.getFor(CropTypeComponent.class);
 }

@@ -9,6 +9,8 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.models.components.WorldLayerComponent;
+import io.github.StarvingValley.models.types.WorldLayer;
 
 public class CropFactory {
 
@@ -17,6 +19,9 @@ public class CropFactory {
     PositionComponent position = new PositionComponent(x, y);
     position.position.set(x, y, 0);
     entity.add(position);
+
+    WorldLayerComponent layer = new WorldLayerComponent(WorldLayer.CROP);
+    entity.add(layer);
 
     switch (cropType) {
       case TOMATO:
