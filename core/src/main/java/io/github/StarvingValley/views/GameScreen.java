@@ -3,6 +3,7 @@ package io.github.StarvingValley.views;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -28,6 +29,12 @@ import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.utils.MapUtils;
 
+import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
+import io.github.StarvingValley.models.systems.InventorySystem;
+
 public class GameScreen extends ScreenAdapter {
   IFirebaseRepository _firebaseRepository;
   private Engine engine;
@@ -35,11 +42,18 @@ public class GameScreen extends ScreenAdapter {
   private Entity player;
   private Entity camera;
   private Entity map;
+  private InventorySystem inventorySystem;
 
   private JoystickOverlay joystickOverlay;
 
+    private boolean isInventoryVisible = false;
+    private InventoryOverlay inventoryOverlay;
+    private Viewport viewport; // Add a viewport
+
   public GameScreen(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
+      viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Initialize viewport
+      inventoryOverlay = new InventoryOverlay(viewport);
   }
 
   @Override
@@ -76,6 +90,9 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new HungerSystem());
     engine.addSystem(new HungerRenderSystem(engine, batch));
 
+    inventorySystem = new InventorySystem();
+    engine.addSystem(new InventorySystem());
+
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);
 
@@ -88,6 +105,11 @@ public class GameScreen extends ScreenAdapter {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     Gdx.gl.glClearColor(0, 0, 0, 1);
 
+      // Toggle inventory visibility
+      if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+          isInventoryVisible = !isInventoryVisible;
+      }
+
     batch.begin();
 
     CameraComponent cameraComponent = Mappers.camera.get(camera);
@@ -99,7 +121,16 @@ public class GameScreen extends ScreenAdapter {
     batch.end();
 
     joystickOverlay.render();
+      // Render inventory overlay if visible
+      if (isInventoryVisible) {
+          inventoryOverlay.render(inventorySystem, player);
+      }
   }
+
+    @Override
+    public void resize(int width, int height) {
+      viewport.update(width, height, true);
+    }
 
   @Override
   public void dispose() {
