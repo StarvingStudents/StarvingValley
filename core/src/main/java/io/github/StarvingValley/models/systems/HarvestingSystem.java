@@ -18,6 +18,7 @@ import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.utils.SyncUtils;
 
 public class HarvestingSystem extends EntitySystem {
   @Override
@@ -93,8 +94,11 @@ public class HarvestingSystem extends EntitySystem {
   }
 
   private void harvestCrop(Entity crop, HarvestingComponent harvestingComponent) {
-    getEngine().removeEntity(crop);//TODO: We need to sync the removal of this somehow
-    // should be added to inventory when it exists
+    Engine engine = getEngine();
+
+    SyncUtils.markForSyncRemoval(crop, engine);
+    engine.removeEntity(crop);
+    // TODO: should be added to inventory when it exists
 
     System.out.println("Crop harvested");
   }

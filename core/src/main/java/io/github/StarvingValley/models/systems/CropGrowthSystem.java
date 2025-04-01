@@ -34,6 +34,14 @@ public class CropGrowthSystem extends IteratingSystem {
 
     growthTime.accumulateGrowth(deltaTime);
 
+    // TODO: Maybe instead of accumulation growth, we can store planting-datetime
+    // and just check time-diff? Then we don't need to sync any of this
+
+    // Don't sync fully-grown crops
+    if (growthStage.growthStage < 2) {
+      SyncUtils.markUnsynced(cropEntity);
+    }
+
     if (growthTime.growthProgress >= growthTime.timeToGrow) {
       growthStage.growthStage = 2; // mature
     } else if (growthTime.growthProgress >= growthTime.timeToGrow * 0.50) {
@@ -62,7 +70,5 @@ public class CropGrowthSystem extends IteratingSystem {
       default:
         break;
     }
-
-    SyncUtils.markUnsynced(cropEntity);
   }
 }

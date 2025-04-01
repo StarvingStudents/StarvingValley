@@ -25,6 +25,7 @@ import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
+import io.github.StarvingValley.models.components.SyncDeletionRequestComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
@@ -83,4 +84,7 @@ public class Mappers {
     public static final ComponentMapper<HarvestingComponent> harvesting = ComponentMapper
             .getFor(HarvestingComponent.class);
     public static final ComponentMapper<CropTypeComponent> cropType = ComponentMapper.getFor(CropTypeComponent.class);
+    public static final ComponentMapper<SyncDeletionRequestComponent> syncDeletionRequest = ComponentMapper
+                    .getFor(SyncDeletionRequestComponent.class);
+
 }
