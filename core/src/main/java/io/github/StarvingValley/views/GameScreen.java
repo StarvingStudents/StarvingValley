@@ -24,6 +24,8 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
+import io.github.StarvingValley.models.components.EatingComponent;
+import io.github.StarvingValley.models.components.FoodItemComponent;
 import io.github.StarvingValley.models.components.PlaceRequestComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.dto.WorldObjectConfig;
@@ -37,6 +39,7 @@ import io.github.StarvingValley.models.systems.BuildPlacementSystem;
 import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
+import io.github.StarvingValley.models.systems.EatingSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
@@ -96,6 +99,12 @@ public class GameScreen extends ScreenAdapter {
                 }
               });
         }
+
+        if (keycode == Input.Keys.E) {
+          FoodItemComponent heldFood = new FoodItemComponent(5);
+          EatingComponent eating = new EatingComponent(heldFood.foodPoints);
+          player.add(eating); 
+        }
         return true;
       }
     };
@@ -149,6 +158,7 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new DurabilityRenderSystem(engine, batch));
     engine.addSystem(new HungerSystem());
     engine.addSystem(new HungerRenderSystem(engine, batch));
+    engine.addSystem(new EatingSystem());
 
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);
