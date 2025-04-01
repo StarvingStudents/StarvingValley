@@ -8,6 +8,7 @@ import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
+import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
@@ -53,4 +54,5 @@ public class Mappers {
                     .getFor(BuildableComponent.class);
     public static final ComponentMapper<HungerComponent> hunger = ComponentMapper.getFor(HungerComponent.class);
     public static final ComponentMapper<DurabilityComponent> durability = ComponentMapper.getFor(DurabilityComponent.class);
+    public static final ComponentMapper<EatingComponent> eating = ComponentMapper.getFor(EatingComponent.class);
 }
