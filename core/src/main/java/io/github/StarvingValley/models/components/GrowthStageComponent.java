@@ -8,4 +8,8 @@ public class GrowthStageComponent implements Component {
   public GrowthStageComponent() {
     this.growthStage = 0; // sprout (should maybe be seed?)
   }
+
+  public GrowthStageComponent(int growthStage) {
+    this.growthStage = growthStage;
+  }
 }

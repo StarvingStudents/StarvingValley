@@ -14,8 +14,8 @@ import io.github.StarvingValley.models.types.WorldLayer;
 
 public class PlacementRules {
 
-  public static boolean canPlace(GridPoint2 targetTile, WorldLayer targetWorldLayer,
-      ImmutableArray<Entity> blockingEntities) {
+  public static boolean canPlace(
+      GridPoint2 targetTile, WorldLayer targetWorldLayer, ImmutableArray<Entity> blockingEntities) {
 
     EnumSet<WorldLayer> blockingLayers = getBlockingLayers(targetTile, blockingEntities);
 
@@ -30,12 +30,13 @@ public class PlacementRules {
     return false;
   }
 
-  public static EnumSet<WorldLayer> getBlockingLayers(GridPoint2 targetTile, ImmutableArray<Entity> blockingEntities) {
+  public static EnumSet<WorldLayer> getBlockingLayers(
+      GridPoint2 targetTile, ImmutableArray<Entity> blockingEntities) {
     EnumSet<WorldLayer> blockingLayers = EnumSet.noneOf(WorldLayer.class);
 
     for (Entity blockingEntity : blockingEntities) {
       TileOverlapComponent tileOverlap = Mappers.tileOccupancy.get(blockingEntity);
-      TileOccupierComponent placement = Mappers.placementOccupied.get(blockingEntity);
+      TileOccupierComponent placement = Mappers.tileOccupier.get(blockingEntity);
       WorldLayerComponent worldLayer = Mappers.worldLayer.get(blockingEntity);
 
       if (tileOverlap == null || placement == null || worldLayer == null) {

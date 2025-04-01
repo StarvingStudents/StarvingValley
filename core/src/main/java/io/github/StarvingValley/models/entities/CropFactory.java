@@ -2,12 +2,16 @@ package io.github.StarvingValley.models.entities;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
+
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.SyncComponent;
+import io.github.StarvingValley.models.components.TileOccupierComponent;
+import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -22,6 +26,9 @@ public class CropFactory {
 
     WorldLayerComponent layer = new WorldLayerComponent(WorldLayer.CROP);
     entity.add(layer);
+    entity.add(new SyncComponent());
+    entity.add(new TileOverlapComponent());
+    entity.add(new TileOccupierComponent());
 
     switch (cropType) {
       case TOMATO:
@@ -56,7 +63,7 @@ public class CropFactory {
   }
 
   private static HarvestingComponent createHarvestingComponent() {
-    return new HarvestingComponent(true, 2.0f);
+    return new HarvestingComponent(true);
   }
 
   private static CropTypeComponent createCropType(CropTypeComponent.CropType cropType) {
@@ -65,23 +72,23 @@ public class CropFactory {
 
   private static Component[] createTomatoComponents() {
     return new Component[] {
-      createSprite("tomato"),
-      createGrowthStage(),
-      new SizeComponent(1, 1),
-      createTimeToGrow(20), // very short growth time for now, just for testing :3
-      createHarvestingComponent(),
-      createCropType(CropTypeComponent.CropType.TOMATO)
+        createSprite("tomato"),
+        createGrowthStage(),
+        new SizeComponent(1, 1),
+        createTimeToGrow(20), // very short growth time for now, just for testing :3
+        createHarvestingComponent(),
+        createCropType(CropTypeComponent.CropType.TOMATO)
     };
   }
 
   private static Component[] createPotatoComponents() {
     return new Component[] {
-      createSprite("potato"),
-      createGrowthStage(),
-      new SizeComponent(1, 1),
-      createTimeToGrow(40),
-      createHarvestingComponent(),
-      createCropType(CropTypeComponent.CropType.POTATO)
+        createSprite("potato"),
+        createGrowthStage(),
+        new SizeComponent(1, 1),
+        createTimeToGrow(40),
+        createHarvestingComponent(),
+        createCropType(CropTypeComponent.CropType.POTATO)
     };
   }
 }

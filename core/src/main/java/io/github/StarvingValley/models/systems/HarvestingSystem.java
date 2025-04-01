@@ -1,5 +1,6 @@
 package io.github.StarvingValley.models.systems;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
@@ -9,37 +10,39 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
+import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 
 public class HarvestingSystem extends EntitySystem {
-  private Entity player;
-
-  public HarvestingSystem(Entity player) {
-    this.player = player;
-  }
-
   @Override
   public void update(float deltaTime) {
+    Engine engine = getEngine();
 
-    ImmutableArray<Entity> crops =
-        getEngine()
-            .getEntitiesFor(
-                Family.all(
-                        GrowthStageComponent.class,
-                        TimeToGrowComponent.class,
-                        PositionComponent.class,
-                        HarvestingComponent.class)
-                    .get());
+    ImmutableArray<Entity> players = engine.getEntitiesFor(Family.all(PlayerComponent.class).get());
+    if (players.size() == 0) {
+      return;
+    }
+
+    Entity player = players.first();
+
+    ImmutableArray<Entity> crops = getEngine()
+        .getEntitiesFor(
+            Family.all(
+                GrowthStageComponent.class,
+                TimeToGrowComponent.class,
+                PositionComponent.class,
+                HarvestingComponent.class)
+                .get());
 
     PositionComponent playerPos = Mappers.position.get(player);
 
-    Entity cameraEntity =
-        getEngine().getEntitiesFor(Family.all(CameraComponent.class).get()).first();
+    Entity cameraEntity = engine.getEntitiesFor(Family.all(CameraComponent.class).get()).first();
     if (cameraEntity == null) {
       return;
     }
@@ -65,8 +68,7 @@ public class HarvestingSystem extends EntitySystem {
 
         if (growthStageComponent.growthStage == 2
             && timeToGrowComponent.isMature()
-            && harvestingComponent.canHarvest
-            && !harvestingComponent.isHarvested) {
+            && harvestingComponent.canHarvest) {
 
           if (isPlayerNearCrop(playerPos, cropPos)
               && isClickNearCrop(worldCoordinates.x, worldCoordinates.y, cropPos)) {
@@ -91,9 +93,7 @@ public class HarvestingSystem extends EntitySystem {
   }
 
   private void harvestCrop(Entity crop, HarvestingComponent harvestingComponent) {
-    harvestingComponent.isHarvested = true;
-
-    getEngine().removeEntity(crop);
+    getEngine().removeEntity(crop);//TODO: We need to sync the removal of this somehow
     // should be added to inventory when it exists
 
     System.out.println("Crop harvested");

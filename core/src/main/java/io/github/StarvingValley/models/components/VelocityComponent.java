@@ -9,4 +9,8 @@ public class VelocityComponent implements Component {
     public VelocityComponent(Vector2 velocity) {
         this.velocity = velocity;
     }
+
+    public VelocityComponent() {
+        this.velocity = new Vector2();
+    }
 }

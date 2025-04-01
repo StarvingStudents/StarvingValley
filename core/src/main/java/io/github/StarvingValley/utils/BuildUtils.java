@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.graphics.Texture;
 
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IBuildableEntityFactory;
@@ -12,7 +11,7 @@ import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.entities.BuildPreviewFactory;
 
 public class BuildUtils {
-    public static void toggleBuildPreview(Texture texture, Engine engine, IBuildableEntityFactory entityFactory) {
+    public static void toggleBuildPreview(String texturePath, Engine engine, IBuildableEntityFactory entityFactory) {
         ImmutableArray<Entity> previews = engine.getEntitiesFor(
                 Family.all(BuildPreviewComponent.class).get());
 
@@ -21,7 +20,7 @@ public class BuildUtils {
                 engine.removeEntity(preview);
             }
         } else {
-            Entity preview = BuildPreviewFactory.createBuildPreview(texture, 0, 0, 1, 1, entityFactory);
+            Entity preview = BuildPreviewFactory.createBuildPreview(texturePath, 0, 0, 1, 1, entityFactory);
             engine.addEntity(preview);
         }
     }

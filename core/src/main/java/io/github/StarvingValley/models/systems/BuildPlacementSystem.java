@@ -10,6 +10,7 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.PlaceRequestComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.utils.SyncUtils;
 
 public class BuildPlacementSystem extends IteratingSystem {
     public BuildPlacementSystem() {
@@ -27,8 +28,11 @@ public class BuildPlacementSystem extends IteratingSystem {
 
         Engine engine = getEngine();
 
-        engine.addEntity(buildPreview.entityFactory
-                .createAt(new GridPoint2((int) position.position.x, (int) position.position.y)));
+        Entity createdEntity = buildPreview.entityFactory
+                .createAt(new GridPoint2((int) position.position.x, (int) position.position.y));
+        SyncUtils.markUnsynced(createdEntity);
+
+        engine.addEntity(createdEntity);
 
         // TODO: When inventory is implemented we can change this to check if there are
         // any more of that buildable available, and if not:
