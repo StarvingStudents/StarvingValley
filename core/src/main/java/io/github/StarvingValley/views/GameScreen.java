@@ -14,29 +14,34 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
+
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.input.TapInputAdapter;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IBuildableEntityFactory;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.PlaceRequestComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.CropFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
 import io.github.StarvingValley.models.systems.BuildPlacementSystem;
 import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
+import io.github.StarvingValley.models.systems.CropGrowthSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
+import io.github.StarvingValley.models.systems.HarvestingSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
@@ -64,9 +69,12 @@ public class GameScreen extends ScreenAdapter {
   public GameScreen(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
 
-    // TODO: Here we can pre-load some assets that we know we always need. Potentially add assetManager.finishLoading(); to wait
+    // TODO: Here we can pre-load some assets that we know we always need.
+    // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
     assetManager.load("DogBasic.png", Texture.class);
+    assetManager.load("tomato1.png", Texture.class);
+    assetManager.load("potato1.png", Texture.class);
 
     // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
@@ -77,7 +85,7 @@ public class GameScreen extends ScreenAdapter {
         if (keycode == Input.Keys.C) {
           BuildUtils.toggleBuildPreview(
               "DogBasic.png",
-                      engine,
+              engine,
               new IBuildableEntityFactory() {
                 @Override
                 public Entity createAt(GridPoint2 tile) {
@@ -93,14 +101,46 @@ public class GameScreen extends ScreenAdapter {
                   return WorldLayer.CROP;
                 }
               });
+        } else if (keycode == Input.Keys.D) {
+          BuildUtils.toggleBuildPreview(
+              "tomato1.png",
+              engine,
+              new IBuildableEntityFactory() {
+                @Override
+                public Entity createAt(GridPoint2 tile) {
+                  return CropFactory.createCrop(
+                      tile.x, tile.y, CropTypeComponent.CropType.TOMATO);
+                }
+
+                @Override
+                public WorldLayer getWorldLayer() {
+                  return WorldLayer.CROP;
+                }
+              });
+        } else if (keycode == Input.Keys.E) {
+          BuildUtils.toggleBuildPreview(
+              "potato1.png",
+              engine,
+              new IBuildableEntityFactory() {
+                @Override
+                public Entity createAt(GridPoint2 tile) {
+                  return CropFactory.createCrop(
+                      tile.x, tile.y, CropTypeComponent.CropType.POTATO);
+                }
+
+                @Override
+                public WorldLayer getWorldLayer() {
+                  return WorldLayer.CROP;
+                }
+              });
         }
         return true;
       }
     };
 
-    tapInputAdapter = new TapInputAdapter(() -> {
-          ImmutableArray<Entity> previews = engine.getEntitiesFor(
-            Family.all(BuildPreviewComponent.class).get());
+    tapInputAdapter = new TapInputAdapter(
+        () -> {
+          ImmutableArray<Entity> previews = engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
 
           for (Entity preview : previews) {
             if (!Mappers.placeRequest.has(preview))
@@ -135,6 +175,9 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem());
     engine.addSystem(new CameraSystem());
+    engine.addSystem(new CropGrowthSystem());
+    engine.addSystem(new HarvestingSystem());
+    engine.addSystem(new RenderSystem(batch));
     engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
     engine.addSystem(new HungerSystem());
     engine.addSystem(new SpriteSystem(assetManager));

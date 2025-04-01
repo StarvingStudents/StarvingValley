@@ -1,17 +1,17 @@
 package io.github.StarvingValley.utils;
 
-import java.util.UUID;
-
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector3;
-
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
+import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
+import io.github.StarvingValley.models.components.GrowthStageComponent;
+import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
@@ -24,9 +24,11 @@ import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TileOverlapComponent;
+import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
+import java.util.UUID;
 
 public class EntitySerializer {
 
@@ -101,6 +103,32 @@ public class EntitySerializer {
     WorldLayerComponent layer = Mappers.worldLayer.get(entity);
     if (layer != null) {
       dto.worldLayer = layer.layer;
+    }
+
+    // Crop type
+    CropTypeComponent cropType = Mappers.cropType.get(entity);
+    if (cropType != null) {
+      dto.cropType = cropType.cropType;
+    }
+
+    // Growth stage
+    GrowthStageComponent growthStage = Mappers.growthStage.get(entity);
+    if (growthStage != null) {
+      dto.growthStage = growthStage.growthStage;
+    }
+
+    // Harvesting
+    HarvestingComponent harvesting = Mappers.harvesting.get(entity);
+    if (harvesting != null) {
+      dto.canHarvest = harvesting.canHarvest;
+    }
+
+    // Time to grow
+    TimeToGrowComponent timeToGrow = Mappers.timeToGrow.get(entity);
+    if (timeToGrow != null) {
+      dto.timeToGrow = timeToGrow.timeToGrow;
+      dto.growthProgress = timeToGrow.growthProgress;
+      dto.growthTimeAccumulator = timeToGrow.growthTimeAccumulator;
     }
 
     dto.isBuildable = Mappers.buildable.has(entity);
@@ -191,25 +219,42 @@ public class EntitySerializer {
       entity.add(sync);
     }
 
+    // Crop type
+    if (dto.cropType != null) {
+      entity.add(new CropTypeComponent(dto.cropType));
+    }
+
+    // Growth stage
+    if (dto.growthStage != null) {
+      entity.add(new GrowthStageComponent(dto.growthStage));
+    }
+
+    // Harvesting
+    if (dto.canHarvest != null) {
+      entity.add(new HarvestingComponent(dto.canHarvest));
+    }
+
+    // Time to grow
+    if (dto.timeToGrow != null && dto.growthProgress != null && dto.growthTimeAccumulator != null) {
+      TimeToGrowComponent timeToGrowComponent = new TimeToGrowComponent(0);
+      timeToGrowComponent.timeToGrow = dto.timeToGrow;
+      timeToGrowComponent.growthProgress = dto.growthProgress;
+      timeToGrowComponent.growthTimeAccumulator = dto.growthTimeAccumulator;
+
+      entity.add(timeToGrowComponent);
+    }
+
     // Boolean tags
-    if (Boolean.TRUE.equals(dto.isBuildable))
-      entity.add(new BuildableComponent());
-    if (Boolean.TRUE.equals(dto.isCollidable))
-      entity.add(new CollidableComponent());
+    if (Boolean.TRUE.equals(dto.isBuildable)) entity.add(new BuildableComponent());
+    if (Boolean.TRUE.equals(dto.isCollidable)) entity.add(new CollidableComponent());
     if (Boolean.TRUE.equals(dto.isEnvironmentCollidable))
       entity.add(new EnvironmentCollidableComponent());
-    if (Boolean.TRUE.equals(dto.isHidden))
-      entity.add(new HiddenComponent());
-    if (Boolean.TRUE.equals(dto.occupiesTiles))
-      entity.add(new TileOccupierComponent());
-    if (Boolean.TRUE.equals(dto.isPlayer))
-      entity.add(new PlayerComponent());
-    if (Boolean.TRUE.equals(dto.hasInput))
-      entity.add(new InputComponent());
-    if (Boolean.TRUE.equals(dto.cameraShouldFollow))
-      entity.add(new CameraFollowComponent(camera));
-    if (Boolean.TRUE.equals(dto.hasVelocity))
-      entity.add(new VelocityComponent());
+    if (Boolean.TRUE.equals(dto.isHidden)) entity.add(new HiddenComponent());
+    if (Boolean.TRUE.equals(dto.occupiesTiles)) entity.add(new TileOccupierComponent());
+    if (Boolean.TRUE.equals(dto.isPlayer)) entity.add(new PlayerComponent());
+    if (Boolean.TRUE.equals(dto.hasInput)) entity.add(new InputComponent());
+    if (Boolean.TRUE.equals(dto.cameraShouldFollow)) entity.add(new CameraFollowComponent(camera));
+    if (Boolean.TRUE.equals(dto.hasVelocity)) entity.add(new VelocityComponent());
 
     return entity;
   }

@@ -1,5 +1,6 @@
 package io.github.StarvingValley.models.dto;
 
+import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class SyncEntity {
@@ -42,6 +43,16 @@ public class SyncEntity {
     public Float speed;
 
     public WorldLayer worldLayer;
+
+    public CropType cropType;
+
+    public Integer growthStage;
+
+    public Boolean canHarvest;
+
+    public Integer timeToGrow;
+    public Integer growthProgress;
+    public Float growthTimeAccumulator;
 
     // Required: no-arg constructor for Firebase
     public SyncEntity() {
