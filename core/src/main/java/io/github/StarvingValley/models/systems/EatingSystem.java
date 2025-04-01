@@ -17,15 +17,10 @@ public class EatingSystem extends IteratingSystem {
         HungerComponent hunger = entity.getComponent(HungerComponent.class);
         EatingComponent eating = entity.getComponent(EatingComponent.class);
         
-        if (eating.isEating) {
-            if (eating.foodPoints - eating.eatingSpeed * deltaTime <= 0) {
-                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.foodPoints);
-                eating.foodPoints = 0;
-                eating.isEating = false;
-            } else {
-                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.eatingSpeed * deltaTime);
-                eating.foodPoints -= eating.eatingSpeed * deltaTime;
-            }
-        }
+
+        hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.foodPoints);
+        
+        
+        entity.remove(EatingComponent.class);
     }
 }
