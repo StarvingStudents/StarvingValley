@@ -14,6 +14,7 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Interfaces.PushCallback;
 import io.github.StarvingValley.models.dto.SyncEntity;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -173,6 +174,48 @@ public class FirebaseRepository implements IFirebaseRepository {
               Gdx.app.postRunnable(
                   () -> {
                     callback.onFailure(e.getMessage());
+                  });
+            });
+
+    return true;
+  }
+
+  @Override
+  public boolean pushEntityDeletions(List<String> entityIds, PushCallback callback) {
+    if (!initUserEntityReference())
+      return false;
+
+    if (entityIds == null || entityIds.isEmpty())
+      return true;
+
+    ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
+
+    Map<String, Object> deletions = new HashMap<>();
+    for (String id : entityIds) {
+      deletions.put(id, null);
+    }
+
+    _entities
+        .updateChildren(deletions)
+        .addOnSuccessListener(
+            backgroundExecutor,
+            unused -> {
+              Gdx.app.postRunnable(
+                  () -> {
+                    if (callback != null) {
+                      callback.onSuccess();
+                    }
+                  });
+            })
+        .addOnFailureListener(
+            e -> {
+              System.err.println("Failed to delete entities: " + e.getMessage());
+
+              Gdx.app.postRunnable(
+                  () -> {
+                    if (callback != null) {
+                      callback.onFailure(e.getMessage());
+                    }
                   });
             });
 

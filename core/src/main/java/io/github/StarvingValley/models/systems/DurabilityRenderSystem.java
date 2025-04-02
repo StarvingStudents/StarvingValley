@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.utils.SyncUtils;
 import io.github.StarvingValley.utils.TextureUtils;
 
 //TODO: Use shaperenderer instead and switch to entitysystem
@@ -33,6 +34,7 @@ public class DurabilityRenderSystem extends IteratingSystem {
             return;
 
         if (durabilityComponent.getHealth() <= 0) {
+            SyncUtils.markForSyncRemoval(entity, engine);
             engine.removeEntity(entity);
             return;
         }

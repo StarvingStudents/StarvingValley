@@ -1,5 +1,6 @@
 package io.github.StarvingValley.models.Interfaces;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IFirebaseRepository {
@@ -15,4 +16,5 @@ public interface IFirebaseRepository {
     
     boolean pushEntities(Map<String, Object> entityMap, PushCallback callback);
     boolean getAllEntities(EntityDataCallback callback);
+    boolean pushEntityDeletions(List<String> entityIds, PushCallback callback);
 }
