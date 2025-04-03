@@ -39,6 +39,7 @@ import io.github.StarvingValley.models.systems.BuildPlacementSystem;
 import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
+import io.github.StarvingValley.models.systems.EatHeldFoodButtonSystem;
 import io.github.StarvingValley.models.systems.EatingSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
@@ -159,6 +160,7 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new HungerSystem());
     engine.addSystem(new HungerRenderSystem(engine, batch));
     engine.addSystem(new EatingSystem());
+    engine.addSystem(new EatHeldFoodButtonSystem(cameraComponent.camera));
 
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);
