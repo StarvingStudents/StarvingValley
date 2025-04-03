@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.views.GameScreen;
+import io.github.StarvingValley.views.WorldMapScreen;
 
 public class StarvingValley extends Game {
 
@@ -15,6 +16,7 @@ public class StarvingValley extends Game {
 
     @Override
     public void create() {
-        setScreen(new GameScreen(_firebaseRepository));
+        // setScreen(new GameScreen(_firebaseRepository));
+        setScreen(new WorldMapScreen(_firebaseRepository));
     }
 }
