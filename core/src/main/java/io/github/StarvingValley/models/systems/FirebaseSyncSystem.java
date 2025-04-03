@@ -2,8 +2,9 @@ package io.github.StarvingValley.models.systems;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -41,10 +42,9 @@ public class FirebaseSyncSystem extends IntervalSystem {
 
         Map<String, Object> batchData = new HashMap<>();
 
-        List<String> batchDeletionIds = new ArrayList<>();
+        Set<String> batchDeletionIds = new HashSet<>();
         for (Entity entity : entitiesMarkedForRemoval) {
             SyncDeletionRequestComponent syncDeletionRequest = Mappers.syncDeletionRequest.get(entity);
-
             batchDeletionIds.add(syncDeletionRequest.id);
         }
 
@@ -79,7 +79,7 @@ public class FirebaseSyncSystem extends IntervalSystem {
         }
 
         if (!batchDeletionIds.isEmpty()) {
-            firebaseRepository.pushEntityDeletions(batchDeletionIds, new PushCallback() {
+            firebaseRepository.pushEntityDeletions(new ArrayList<>(batchDeletionIds), new PushCallback() {
                 @Override
                 public void onSuccess() {
                     for (Entity entity : entitiesMarkedForRemoval) {

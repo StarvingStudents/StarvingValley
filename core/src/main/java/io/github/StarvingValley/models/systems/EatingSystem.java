@@ -6,11 +6,16 @@ import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
-import io.github.StarvingValley.utils.SyncUtils;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
+import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.utils.DiffUtils;
 
 public class EatingSystem extends IteratingSystem {
-    public EatingSystem() {
+    private EventBus eventBus;
+
+    public EatingSystem(EventBus eventBus) {
         super(Family.all(HungerComponent.class, EatingComponent.class).get());
+        this.eventBus = eventBus;
     }
 
     @Override
@@ -22,6 +27,7 @@ public class EatingSystem extends IteratingSystem {
 
         hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + eating.foodPoints); 
 
-        SyncUtils.markUnsyncedIfChanged(entity, hunger.hungerPoints, oldHunger);
+        if (DiffUtils.hasChanged(hunger.hungerPoints, oldHunger))
+            eventBus.publish(new EntityUpdatedEvent(entity));
     }
 }
