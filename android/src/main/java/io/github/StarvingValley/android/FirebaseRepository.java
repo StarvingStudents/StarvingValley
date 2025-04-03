@@ -247,4 +247,24 @@ public class FirebaseRepository implements IFirebaseRepository {
 
     return true;
   }
+
+  @Override
+  public List<String> getAllUserIds() {
+    List<String> userIds = new ArrayList<>();
+    _users.addListenerForSingleValueEvent(
+        new ValueEventListener() {
+          @Override
+          public void onDataChange(DataSnapshot snapshot) {
+            for (DataSnapshot child : snapshot.getChildren()) {
+              userIds.add(child.getKey());
+            }
+          }
+
+          @Override
+          public void onCancelled(DatabaseError error) {
+            System.err.println("Failed to get user IDs: " + error.getMessage());
+          }
+        });
+    return userIds;
+  }
 }
