@@ -17,4 +17,6 @@ public interface IFirebaseRepository {
     boolean pushEntities(Map<String, Object> entityMap, PushCallback callback);
     boolean getAllEntities(EntityDataCallback callback);
     boolean pushEntityDeletions(List<String> entityIds, PushCallback callback);
+
+    List<String> getAllUserIds(); 
 }
