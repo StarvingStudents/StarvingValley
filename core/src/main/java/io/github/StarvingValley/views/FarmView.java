@@ -12,9 +12,8 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
-import io.github.StarvingValley.config.Config;
+import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.input.TapInputAdapter;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
@@ -26,52 +25,27 @@ import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
-import io.github.StarvingValley.models.components.TiledMapComponent;
-import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.CropFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.SoilFactory;
 import io.github.StarvingValley.models.events.BuildPreviewClickedEvent;
 import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.models.systems.AlphaPulseSystem;
-import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
-import io.github.StarvingValley.models.systems.BuildPlacementSystem;
-import io.github.StarvingValley.models.systems.BuildPreviewSystem;
-import io.github.StarvingValley.models.systems.CameraSystem;
-import io.github.StarvingValley.models.systems.CropGrowthSystem;
-import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
-import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
-import io.github.StarvingValley.models.systems.EventCleanupSystem;
-import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
-import io.github.StarvingValley.models.systems.HarvestingSystem;
-import io.github.StarvingValley.models.systems.HungerRenderSystem;
-import io.github.StarvingValley.models.systems.HungerSystem;
-import io.github.StarvingValley.models.systems.MapRenderSystem;
-import io.github.StarvingValley.models.systems.MovementSystem;
-import io.github.StarvingValley.models.systems.RenderSystem;
-import io.github.StarvingValley.models.systems.SpriteSystem;
-import io.github.StarvingValley.models.systems.SyncMarkingSystem;
-import io.github.StarvingValley.models.systems.TileOverlapSystem;
-import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.MapUtils;
 
-// TODO: Maybe move logic to a controller and rename to FarmScreen/FarmView
-public class GameScreen extends ScreenAdapter {
+public class FarmView extends ScreenAdapter {
   public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
-  private Engine engine;
-  private SpriteBatch batch;
-  private Entity camera;
-  private Entity map;
   private JoystickOverlay joystickOverlay;
-  private InputAdapter inputAdapter;
-  private InputAdapter tapInputAdapter;
+  private InputAdapter inputAdapter; //temp
+  private InputAdapter tapInputAdapter; //temp
 
   private EventBus eventBus;
+  private FarmController controller;
+  private Engine engine;
 
-  public GameScreen(IFirebaseRepository firebaseRepository) {
+  public FarmView(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
     eventBus = new EventBus();
 
@@ -170,63 +144,22 @@ public class GameScreen extends ScreenAdapter {
                 eventBus.publish(new BuildPreviewClickedEvent(preview));
               }
             });
+
+      controller = new FarmController(_firebaseRepository, eventBus, assetManager); //initializing this here to avoid problems with the temporal input handling
+      engine = controller.getEngine();
   }
 
   @Override
   public void show() {
-    batch = new SpriteBatch();
-
-    int tilesWide = Config.CAMERA_TILES_WIDE;
-    float tilesHigh = MapUtils.calculateVerticalTileCount(tilesWide);
-
-    camera = CameraFactory.createCamera(tilesWide, tilesHigh);
-
-    CameraComponent cameraComponent = Mappers.camera.get(camera);
-
-    map = MapFactory.createMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
-
-    engine = new Engine();
-
-    // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
-    // batch etc), maybe we should have a GameContext class that holds them so we
-    // just pass around that?
-    engine.addEntity(camera);
-    engine.addEntity(map);
-    engine.addSystem(new MapRenderSystem());
-    engine.addSystem(new TileOverlapSystem());
-    engine.addSystem(new BuildPreviewSystem(cameraComponent.camera));
-    engine.addSystem(new BuildPlacementSystem(eventBus));
-    engine.addSystem(new AlphaPulseSystem());
-    engine.addSystem(new VelocitySystem());
-    engine.addSystem(new EnvironmentCollisionSystem());
-    engine.addSystem(new MovementSystem(eventBus));
-    engine.addSystem(new CameraSystem());
-    engine.addSystem(new CropGrowthSystem(eventBus));
-    engine.addSystem(new HarvestingSystem(eventBus));
-    engine.addSystem(new RenderSystem(batch));
-    engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
-    engine.addSystem(new HungerSystem(eventBus));
-    engine.addSystem(new SpriteSystem(assetManager));
-    engine.addSystem(new HungerRenderSystem(batch));
-    engine.addSystem(new DurabilityRenderSystem(engine, batch, eventBus));
-    engine.addSystem(new SyncMarkingSystem(eventBus));
-    engine.addSystem(new FirebaseSyncSystem(_firebaseRepository));
-    engine.addSystem(new EventCleanupSystem(eventBus));
 
     JoystickController joystickController = new JoystickController(engine);
     joystickOverlay = new JoystickOverlay(joystickController);
 
-    TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
-
-    MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
-    MapUtils.loadPlacementBlockers(
-        tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
-
     InputAdapter joystickInputAdapter = joystickOverlay.getInputAdapter();
 
     InputMultiplexer multiplexer = new InputMultiplexer();
-    multiplexer.addProcessor(tapInputAdapter);
-    multiplexer.addProcessor(inputAdapter);
+    multiplexer.addProcessor(tapInputAdapter); //temp
+    multiplexer.addProcessor(inputAdapter); //temp
     multiplexer.addProcessor(joystickInputAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
@@ -235,7 +168,7 @@ public class GameScreen extends ScreenAdapter {
         new AuthCallback() {
           @Override
           public void onSuccess() {
-            MapUtils.loadSyncedEntities(_firebaseRepository, engine, camera);
+              MapUtils.loadSyncedEntities(_firebaseRepository, controller.getEngine(), controller.getCamera());
           }
 
           @Override
@@ -256,18 +189,17 @@ public class GameScreen extends ScreenAdapter {
     Gdx.gl.glEnable(GL20.GL_BLEND);
     Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-    CameraComponent cameraComponent = Mappers.camera.get(camera);
+    CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
     if (cameraComponent != null) {
-      batch.setProjectionMatrix(cameraComponent.camera.combined);
+        controller.getBatch().setProjectionMatrix(cameraComponent.camera.combined);
     }
 
     engine.update(delta);
-
     joystickOverlay.render();
   }
 
   @Override
   public void dispose() {
-    batch.dispose();
+    controller.dispose();
   }
 }

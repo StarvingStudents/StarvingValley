@@ -1,9 +1,9 @@
-package io.github.StarvingValley;
+package io.github.StarvingValley.controllers;
 
 import com.badlogic.gdx.Game;
 
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.views.GameScreen;
+import io.github.StarvingValley.views.FarmView;
 
 public class StarvingValley extends Game {
 
@@ -15,6 +15,6 @@ public class StarvingValley extends Game {
 
     @Override
     public void create() {
-        setScreen(new GameScreen(_firebaseRepository));
+        setScreen(new FarmView(_firebaseRepository));
     }
 }
