@@ -14,14 +14,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
-
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.input.TapInputAdapter;
-import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IBuildableEntityFactory;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
@@ -31,6 +30,7 @@ import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.CropFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
+import io.github.StarvingValley.models.entities.SoilFactory;
 import io.github.StarvingValley.models.events.BuildPreviewClickedEvent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
@@ -85,73 +85,91 @@ public class GameScreen extends ScreenAdapter {
     // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
     // with BuildableComponent. Use BuildUtils.isBuildable
-    inputAdapter = new InputAdapter() {
-      @Override
-      public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.C) {
-          BuildUtils.toggleBuildPreview(
-              "DogBasic.png",
-              engine,
-              new IBuildableEntityFactory() {
-                @Override
-                public Entity createAt(GridPoint2 tile) {
-                  Entity entity = MapFactory.createEnvPlacementBlocker(tile.x, tile.y, 1, 1);
-                  entity.add(new SpriteComponent("DogBasic.png"));
-                  entity.add(new EnvironmentCollidableComponent());
+    inputAdapter =
+        new InputAdapter() {
+          @Override
+          public boolean keyDown(int keycode) {
+            if (keycode == Input.Keys.C) {
+              BuildUtils.toggleBuildPreview(
+                  "DogBasic.png",
+                  engine,
+                  new IBuildableEntityFactory() {
+                    @Override
+                    public Entity createAt(GridPoint2 tile) {
+                      Entity entity = MapFactory.createEnvPlacementBlocker(tile.x, tile.y, 1, 1);
+                      entity.add(new SpriteComponent("DogBasic.png"));
+                      entity.add(new EnvironmentCollidableComponent());
 
-                  return entity;
-                }
+                      return entity;
+                    }
 
-                @Override
-                public WorldLayer getWorldLayer() {
-                  return WorldLayer.CROP;
-                }
-              });
-        } else if (keycode == Input.Keys.D) {
-          BuildUtils.toggleBuildPreview(
-              "tomato1.png",
-              engine,
-              new IBuildableEntityFactory() {
-                @Override
-                public Entity createAt(GridPoint2 tile) {
-                  return CropFactory.createCrop(
-                      tile.x, tile.y, CropTypeComponent.CropType.TOMATO);
-                }
+                    @Override
+                    public WorldLayer getWorldLayer() {
+                      return WorldLayer.TERRAIN;
+                    }
+                  });
+            } else if (keycode == Input.Keys.D) {
+              BuildUtils.toggleBuildPreview(
+                  "tomato1.png",
+                  engine,
+                  new IBuildableEntityFactory() {
+                    @Override
+                    public Entity createAt(GridPoint2 tile) {
+                      return CropFactory.createCrop(
+                          tile.x, tile.y, CropTypeComponent.CropType.TOMATO);
+                    }
 
-                @Override
-                public WorldLayer getWorldLayer() {
-                  return WorldLayer.CROP;
-                }
-              });
-        } else if (keycode == Input.Keys.E) {
-          BuildUtils.toggleBuildPreview(
-              "potato1.png",
-              engine,
-              new IBuildableEntityFactory() {
-                @Override
-                public Entity createAt(GridPoint2 tile) {
-                  return CropFactory.createCrop(
-                      tile.x, tile.y, CropTypeComponent.CropType.POTATO);
-                }
+                    @Override
+                    public WorldLayer getWorldLayer() {
+                      return WorldLayer.CROP;
+                    }
+                  });
+            } else if (keycode == Input.Keys.E) {
+              BuildUtils.toggleBuildPreview(
+                  "potato1.png",
+                  engine,
+                  new IBuildableEntityFactory() {
+                    @Override
+                    public Entity createAt(GridPoint2 tile) {
+                      return CropFactory.createCrop(
+                          tile.x, tile.y, CropTypeComponent.CropType.POTATO);
+                    }
 
-                @Override
-                public WorldLayer getWorldLayer() {
-                  return WorldLayer.CROP;
-                }
-              });
-        }
-        return true;
-      }
-    };
+                    @Override
+                    public WorldLayer getWorldLayer() {
+                      return WorldLayer.CROP;
+                    }
+                  });
+            } else if (keycode == Input.Keys.F) {
+              BuildUtils.toggleBuildPreview(
+                  "dirt.png",
+                  engine,
+                  new IBuildableEntityFactory() {
+                    @Override
+                    public Entity createAt(GridPoint2 tile) {
+                      return SoilFactory.createSoil(tile.x, tile.y);
+                    }
 
-    tapInputAdapter = new TapInputAdapter(
-        () -> {
-          ImmutableArray<Entity> previews = engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
-
-          for (Entity preview : previews) {
-            eventBus.publish(new BuildPreviewClickedEvent(preview));
+                    @Override
+                    public WorldLayer getWorldLayer() {
+                      return WorldLayer.SOIL;
+                    }
+                  });
+            }
+            return true;
           }
-        });
+        };
+
+    tapInputAdapter =
+        new TapInputAdapter(
+            () -> {
+              ImmutableArray<Entity> previews =
+                  engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
+
+              for (Entity preview : previews) {
+                eventBus.publish(new BuildPreviewClickedEvent(preview));
+              }
+            });
   }
 
   @Override
@@ -189,7 +207,6 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
     engine.addSystem(new HungerSystem(eventBus));
     engine.addSystem(new SpriteSystem(assetManager));
-    engine.addSystem(new RenderSystem(batch));
     engine.addSystem(new HungerRenderSystem(batch));
     engine.addSystem(new DurabilityRenderSystem(engine, batch, eventBus));
     engine.addSystem(new SyncMarkingSystem(eventBus));
@@ -202,7 +219,8 @@ public class GameScreen extends ScreenAdapter {
     TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
 
     MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
-    MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
+    MapUtils.loadPlacementBlockers(
+        tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
     InputAdapter joystickInputAdapter = joystickOverlay.getInputAdapter();
 
@@ -213,18 +231,19 @@ public class GameScreen extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    _firebaseRepository.registerOrSignInWithDeviceId(new AuthCallback() {
-      @Override
-      public void onSuccess() {
-        MapUtils.loadSyncedEntities(_firebaseRepository, engine, camera);
-      }
+    _firebaseRepository.registerOrSignInWithDeviceId(
+        new AuthCallback() {
+          @Override
+          public void onSuccess() {
+            MapUtils.loadSyncedEntities(_firebaseRepository, engine, camera);
+          }
 
-      @Override
-      public void onFailure(String errorMessage) {
-        // TODO: Fail gracefully
-        throw new RuntimeException("Authentication failed: " + errorMessage);
-      }
-    });
+          @Override
+          public void onFailure(String errorMessage) {
+            // TODO: Fail gracefully
+            throw new RuntimeException("Authentication failed: " + errorMessage);
+          }
+        });
   }
 
   @Override

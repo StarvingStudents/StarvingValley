@@ -1,16 +1,14 @@
 package io.github.StarvingValley.utils;
 
-import java.util.EnumSet;
-
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.GridPoint2;
-
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.types.WorldLayer;
+import java.util.EnumSet;
 
 public class PlacementRules {
 
@@ -19,15 +17,11 @@ public class PlacementRules {
 
     EnumSet<WorldLayer> blockingLayers = getBlockingLayers(targetTile, blockingEntities);
 
-    if (blockingLayers.isEmpty()) {
-      return true;
-    }
-
     if (targetWorldLayer == WorldLayer.CROP) {
-      return blockingLayers.size() == 1 && blockingLayers.contains(WorldLayer.SOIL);
+      return blockingLayers.equals(EnumSet.of(WorldLayer.SOIL));
     }
 
-    return false;
+    return blockingLayers.isEmpty();
   }
 
   public static EnumSet<WorldLayer> getBlockingLayers(

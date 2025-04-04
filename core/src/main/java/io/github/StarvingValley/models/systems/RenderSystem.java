@@ -18,7 +18,7 @@ public class RenderSystem extends EntitySystem {
 
   private final Comparator<Entity> renderOrderComparator =
       // TODO: take both y and z into consideration
-      Comparator.comparing(e -> -Mappers.position.get(e).position.y); // changed from z to y
+      Comparator.comparing(e -> Mappers.position.get(e).position.z);
 
   public RenderSystem(SpriteBatch batch) {
     this.batch = batch;
