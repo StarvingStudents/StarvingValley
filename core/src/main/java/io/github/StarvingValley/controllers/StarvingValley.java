@@ -1,6 +1,7 @@
 package io.github.StarvingValley.controllers;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.views.FarmView;
@@ -17,4 +18,18 @@ public class StarvingValley extends Game {
     public void create() {
         setScreen(new FarmView(_firebaseRepository));
     }
+
+    public void switchView(Screen newScreen) {
+        // Prevent disposing of the same screen
+        if (getScreen() == newScreen) {
+            return;
+        }
+
+        // Dispose of the current screen before switching
+        if (getScreen() != null) {
+            getScreen().dispose();
+        }
+
+        setScreen(newScreen);
+    } //Now able to switch between screens by calling switchView(newScreen) from any screen
 }
