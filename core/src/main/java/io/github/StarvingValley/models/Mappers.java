@@ -17,7 +17,6 @@ import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
 import io.github.StarvingValley.models.components.MapRenderComponent;
-import io.github.StarvingValley.models.components.PlaceRequestComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.PulseAlphaComponent;
@@ -67,9 +66,7 @@ public class Mappers {
             .getFor(BuildPreviewComponent.class);
     public static final ComponentMapper<HiddenComponent> hidden = ComponentMapper.getFor(HiddenComponent.class);
     public static final ComponentMapper<PulseAlphaComponent> pulseAlpha = ComponentMapper
-            .getFor(PulseAlphaComponent.class);
-    public static final ComponentMapper<PlaceRequestComponent> placeRequest = ComponentMapper
-            .getFor(PlaceRequestComponent.class);
+                    .getFor(PulseAlphaComponent.class);
     public static final ComponentMapper<WorldLayerComponent> worldLayer = ComponentMapper
             .getFor(WorldLayerComponent.class);
     public static final ComponentMapper<BuildableComponent> buildable = ComponentMapper

@@ -26,12 +26,13 @@ import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
-import io.github.StarvingValley.models.components.PlaceRequestComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.CropFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
+import io.github.StarvingValley.models.events.BuildPreviewClickedEvent;
+import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
 import io.github.StarvingValley.models.systems.BuildPlacementSystem;
@@ -40,6 +41,7 @@ import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.CropGrowthSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
+import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HarvestingSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
@@ -48,6 +50,7 @@ import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
+import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.TileOverlapSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -66,8 +69,11 @@ public class GameScreen extends ScreenAdapter {
   private InputAdapter inputAdapter;
   private InputAdapter tapInputAdapter;
 
+  private EventBus eventBus;
+
   public GameScreen(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
+    eventBus = new EventBus();
 
     // TODO: Here we can pre-load some assets that we know we always need.
     // Potentially add assetManager.finishLoading(); to wait
@@ -143,8 +149,7 @@ public class GameScreen extends ScreenAdapter {
           ImmutableArray<Entity> previews = engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
 
           for (Entity preview : previews) {
-            if (!Mappers.placeRequest.has(preview))
-              preview.add(new PlaceRequestComponent());
+            eventBus.publish(new BuildPreviewClickedEvent(preview));
           }
         });
   }
@@ -164,27 +169,32 @@ public class GameScreen extends ScreenAdapter {
 
     engine = new Engine();
 
+    // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
+    // batch etc), maybe we should have a GameContext class that holds them so we
+    // just pass around that?
     engine.addEntity(camera);
     engine.addEntity(map);
     engine.addSystem(new MapRenderSystem());
     engine.addSystem(new TileOverlapSystem());
     engine.addSystem(new BuildPreviewSystem(cameraComponent.camera));
-    engine.addSystem(new BuildPlacementSystem());
+    engine.addSystem(new BuildPlacementSystem(eventBus));
     engine.addSystem(new AlphaPulseSystem());
     engine.addSystem(new VelocitySystem());
     engine.addSystem(new EnvironmentCollisionSystem());
-    engine.addSystem(new MovementSystem());
+    engine.addSystem(new MovementSystem(eventBus));
     engine.addSystem(new CameraSystem());
-    engine.addSystem(new CropGrowthSystem());
-    engine.addSystem(new HarvestingSystem());
+    engine.addSystem(new CropGrowthSystem(eventBus));
+    engine.addSystem(new HarvestingSystem(eventBus));
     engine.addSystem(new RenderSystem(batch));
     engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
-    engine.addSystem(new HungerSystem());
+    engine.addSystem(new HungerSystem(eventBus));
     engine.addSystem(new SpriteSystem(assetManager));
     engine.addSystem(new RenderSystem(batch));
     engine.addSystem(new HungerRenderSystem(batch));
-    engine.addSystem(new DurabilityRenderSystem(engine, batch));
+    engine.addSystem(new DurabilityRenderSystem(engine, batch, eventBus));
+    engine.addSystem(new SyncMarkingSystem(eventBus));
     engine.addSystem(new FirebaseSyncSystem(_firebaseRepository));
+    engine.addSystem(new EventCleanupSystem(eventBus));
 
     JoystickController joystickController = new JoystickController(engine);
     joystickOverlay = new JoystickOverlay(joystickController);

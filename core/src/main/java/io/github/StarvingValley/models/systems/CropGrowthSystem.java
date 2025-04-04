@@ -10,10 +10,13 @@ import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
-import io.github.StarvingValley.utils.SyncUtils;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
+import io.github.StarvingValley.models.events.EventBus;
 
 public class CropGrowthSystem extends IteratingSystem {
-  public CropGrowthSystem() {
+  private EventBus eventBus;
+
+  public CropGrowthSystem(EventBus eventBus) {
     super(
         Family.all(
             TimeToGrowComponent.class,
@@ -22,6 +25,7 @@ public class CropGrowthSystem extends IteratingSystem {
             CropTypeComponent.class,
             SizeComponent.class)
             .get());
+    this.eventBus = eventBus;
   }
 
   @Override
@@ -35,11 +39,12 @@ public class CropGrowthSystem extends IteratingSystem {
     growthTime.accumulateGrowth(deltaTime);
 
     // TODO: Maybe instead of accumulation growth, we can store planting-datetime
-    // and just check time-diff? Then we don't need to sync any of this
+    // and just check time-diff? Then we don't need to sync so often. NB! We then would
+    // need to add conditional sync on if growthStage has changed
 
     // Don't sync fully-grown crops
     if (growthStage.growthStage < 2) {
-      SyncUtils.markUnsynced(cropEntity);
+      eventBus.publish(new EntityUpdatedEvent(cropEntity));
     }
 
     if (growthTime.growthProgress >= growthTime.timeToGrow) {

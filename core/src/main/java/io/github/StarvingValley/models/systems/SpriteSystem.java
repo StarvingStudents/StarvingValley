@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.SpriteComponent;
-import io.github.StarvingValley.utils.SyncUtils;
 
 public class SpriteSystem extends IteratingSystem {
     private AssetManager assetManager;
@@ -34,9 +33,6 @@ public class SpriteSystem extends IteratingSystem {
         if (assetManager.isLoaded(texturePath)) {
             spriteComponent.sprite = new Sprite(assetManager.get(texturePath, Texture.class));
             spriteComponent.textureChanged = false;
-
-            SyncUtils.markUnsyncedIfChanged(entity, texturePath, spriteComponent.previousTexturePath);
-
         } else {
             assetManager.load(texturePath, Texture.class);
         }

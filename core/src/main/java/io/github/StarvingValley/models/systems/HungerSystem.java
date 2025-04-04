@@ -5,12 +5,16 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.components.HungerComponent;
-import io.github.StarvingValley.utils.SyncUtils;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
+import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.utils.DiffUtils;
 
 public class HungerSystem extends IteratingSystem {
+    private EventBus eventBus;
 
-    public HungerSystem() {
+    public HungerSystem(EventBus eventBus) {
         super(Family.all(HungerComponent.class).get());
+        this.eventBus = eventBus;
     }
 
     @Override
@@ -25,6 +29,7 @@ public class HungerSystem extends IteratingSystem {
         }
 
         // Don't need to sync on every decimal change
-        SyncUtils.markUnsyncedIfChanged(entity, (int) hunger.hungerPoints, (int) oldHunger);
+        if (DiffUtils.hasChanged((int) hunger.hungerPoints, (int) oldHunger))
+            eventBus.publish(new EntityUpdatedEvent(entity));
     }
 }

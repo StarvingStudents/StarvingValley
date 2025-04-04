@@ -18,9 +18,16 @@ import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
-import io.github.StarvingValley.utils.SyncUtils;
+import io.github.StarvingValley.models.events.EntityRemovedEvent;
+import io.github.StarvingValley.models.events.EventBus;
 
 public class HarvestingSystem extends EntitySystem {
+  private EventBus eventBus;
+
+  public HarvestingSystem(EventBus eventBus) {
+    this.eventBus = eventBus;
+  }
+
   @Override
   public void update(float deltaTime) {
     Engine engine = getEngine();
@@ -96,9 +103,11 @@ public class HarvestingSystem extends EntitySystem {
   private void harvestCrop(Entity crop, HarvestingComponent harvestingComponent) {
     Engine engine = getEngine();
 
-    SyncUtils.markForSyncRemoval(crop, engine);
+    eventBus.publish(new EntityRemovedEvent(crop));
+    // TODO: When we add inventory this should also publish a CropHarvestedEvent
+    // that inventory or similar listens to
+
     engine.removeEntity(crop);
-    // TODO: should be added to inventory when it exists
 
     System.out.println("Crop harvested");
   }
