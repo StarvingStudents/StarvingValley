@@ -49,6 +49,7 @@ import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.models.systems.RespawnSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.TileOverlapSystem;
@@ -208,6 +209,7 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new HungerSystem(eventBus));
     engine.addSystem(new SpriteSystem(assetManager));
     engine.addSystem(new HungerRenderSystem(batch));
+    engine.addSystem(new RespawnSystem(eventBus));
     engine.addSystem(new DurabilityRenderSystem(engine, batch, eventBus));
     engine.addSystem(new SyncMarkingSystem(eventBus));
     engine.addSystem(new FirebaseSyncSystem(_firebaseRepository));
