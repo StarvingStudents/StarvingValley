@@ -1,66 +1,53 @@
 package io.github.StarvingValley.models.systems;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ActiveWorldEntity;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
-import io.github.StarvingValley.models.components.PositionComponent;
-import io.github.StarvingValley.models.events.BuildPreviewClickedEvent;
-import io.github.StarvingValley.models.events.EntityAddedEvent;
+import io.github.StarvingValley.models.components.ClickedComponent;
+import io.github.StarvingValley.models.components.PulseAlphaComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.events.EntityPlacedEvent;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.EventBus;
 
-public class BuildPlacementSystem extends EntitySystem {
+public class BuildPlacementSystem extends IteratingSystem {
     private final EventBus eventBus;
 
     public BuildPlacementSystem(EventBus eventBus) {
-        this.eventBus = eventBus;
+      super(Family.all(BuildPreviewComponent.class, ClickedComponent.class).get());
+      this.eventBus = eventBus;
     }
 
     @Override
-    public void update(float deltaTime) {
-        List<BuildPreviewClickedEvent> events = eventBus.getEvents(BuildPreviewClickedEvent.class);
-        for (BuildPreviewClickedEvent event : events) {
-            events.add(event);
-        }
+    protected void processEntity(Entity entity, float deltaTime) {
+      BuildPreviewComponent buildPreview = Mappers.buildPreview.get(entity);
 
-        Set<Entity> uniqueEntities = new HashSet<>();
+      if (buildPreview.isBlocked) {
+        return;
+      }
 
-        for (BuildPreviewClickedEvent event : events) {
-            uniqueEntities.add(event.getEntity());
-        }
+      entity.add(new ActiveWorldEntity());
+      entity.add(new SyncComponent());
+      entity.remove(BuildPreviewComponent.class);
+      entity.remove(PulseAlphaComponent.class);
 
-        for (Entity previewEntity : uniqueEntities) {
-            placeEntityFromPreviewEntity(previewEntity);
-        }
-    }
+      SpriteComponent sprite = Mappers.sprite.get(entity);
+      if (sprite != null) {
+        sprite.sprite.setAlpha(1);
+      }
 
-    private void placeEntityFromPreviewEntity(Entity previewEntity) {
-        BuildPreviewComponent buildPreview = Mappers.buildPreview.get(previewEntity);
-        PositionComponent position = Mappers.position.get(previewEntity);
-
-        if (buildPreview == null || buildPreview.isBlocked) {
-            return;
-        }
-
-        Entity createdEntity = buildPreview.entityFactory.createAt(
-                new GridPoint2((int) position.position.x, (int) position.position.y));
-
-        getEngine().addEntity(createdEntity);
-
-        // TODO: Inventory should listen to this, and remove the entity/lower
-        // counter from the inventory. If there's no more items of this type to place,
-        // exit build mode by removing the buildpreview entity from the engine.
-        // Inventory system could probably send an event to this system to tell it to
-        // stop placing that item. Then that inventory/publisher should be before
-        // BuildPlacementSystem in the engine
-        eventBus.publish(new EntityPlacedEvent(createdEntity));
-        eventBus.publish(new EntityAddedEvent(createdEntity));
+      // TODO: Inventory should listen to this, and remove the entity/lower
+      // counter from the inventory. If there's no more items of this type to place,
+      // exit build mode by removing the buildpreview entity from the engine.
+      // Inventory system could probably send an event to this system to tell it to
+      // stop placing that item. Then that inventory/publisher should be before
+      // BuildPlacementSystem in the engine
+      eventBus.publish(new EntityPlacedEvent(entity));
+      eventBus.publish(new EntityUpdatedEvent(entity));
     }
 }

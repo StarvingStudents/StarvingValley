@@ -2,8 +2,6 @@ package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -12,26 +10,21 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.GridPoint2;
+
 import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
-import io.github.StarvingValley.input.TapInputAdapter;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
-import io.github.StarvingValley.models.Interfaces.IBuildableEntityFactory;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.BuildPreviewComponent;
+import io.github.StarvingValley.models.Interfaces.AuthCallback;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.components.CropTypeComponent;
+import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.entities.CropFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.SoilFactory;
-import io.github.StarvingValley.models.events.BuildPreviewClickedEvent;
 import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
 import io.github.StarvingValley.utils.MapUtils;
@@ -52,7 +45,7 @@ public class FarmView extends ScreenAdapter {
 
   public FarmView(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
-eventDebugger = new EventDebugger();
+    eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
     eventBus = new EventBus(eventDebugger);
 
@@ -62,7 +55,7 @@ eventDebugger = new EventDebugger();
     assetManager.load("DogBasic.png", Texture.class);
     assetManager.load("tomato1.png", Texture.class);
     assetManager.load("potato1.png", Texture.class);
-assetManager.load("dirt.png", Texture.class);
+    assetManager.load("dirt.png", Texture.class);
 
     // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
@@ -71,87 +64,30 @@ assetManager.load("dirt.png", Texture.class);
         new InputAdapter() {
           @Override
           public boolean keyDown(int keycode) {
+            Entity entity = null;
+
             if (keycode == Input.Keys.C) {
-              BuildUtils.toggleBuildPreview(
-                  "DogBasic.png",
-                  engine,
-                  new IBuildableEntityFactory() {
-                    @Override
-                    public Entity createAt(GridPoint2 tile) {
-                      Entity entity = MapFactory.createEnvPlacementBlocker(tile.x, tile.y, 1, 1);
-                      entity.add(new SpriteComponent("DogBasic.png"));
-                      entity.add(new EnvironmentCollidableComponent());
 
-                      return entity;
-                    }
-
-                    @Override
-                    public WorldLayer getWorldLayer() {
-                      return WorldLayer.TERRAIN;
-                    }
-                  });
+              entity = MapFactory.createEnvPlacementBlocker(0, 0, 1, 1);
+              entity.add(new SpriteComponent("DogBasic.png"));
+              entity.add(new EnvironmentCollidableComponent());
             } else if (keycode == Input.Keys.D) {
-              BuildUtils.toggleBuildPreview(
-                  "tomato1.png",
-                  engine,
-                  new IBuildableEntityFactory() {
-                    @Override
-                    public Entity createAt(GridPoint2 tile) {
-                      return CropFactory.createCrop(
-                          tile.x, tile.y, CropTypeComponent.CropType.TOMATO);
-                    }
-
-                    @Override
-                    public WorldLayer getWorldLayer() {
-                      return WorldLayer.CROP;
-                    }
-                  });
+              entity = CropFactory.createCrop(0, 0, CropType.TOMATO);
             } else if (keycode == Input.Keys.E) {
-              BuildUtils.toggleBuildPreview(
-                  "potato1.png",
-                  engine,
-                  new IBuildableEntityFactory() {
-                    @Override
-                    public Entity createAt(GridPoint2 tile) {
-                      return CropFactory.createCrop(
-                          tile.x, tile.y, CropTypeComponent.CropType.POTATO);
-                    }
-
-                    @Override
-                    public WorldLayer getWorldLayer() {
-                      return WorldLayer.CROP;
-                    }
-                  });
+              entity = CropFactory.createCrop(0, 0, CropType.POTATO);
             } else if (keycode == Input.Keys.F) {
-              BuildUtils.toggleBuildPreview(
-                  "dirt.png",
-                  engine,
-                  new IBuildableEntityFactory() {
-                    @Override
-                    public Entity createAt(GridPoint2 tile) {
-                      return SoilFactory.createSoil(tile.x, tile.y);
-                    }
-
-                    @Override
-                    public WorldLayer getWorldLayer() {
-                      return WorldLayer.SOIL;
-                    }
-                  });
+              entity = SoilFactory.createSoil(0, 0);
             }
+
+            if (entity != null) {
+              engine.addEntity(entity);
+
+              BuildUtils.toggleBuildPreview(entity, engine);
+            }
+
             return true;
           }
         };
-
-    tapInputAdapter =
-        new TapInputAdapter(
-            () -> {
-              ImmutableArray<Entity> previews =
-                  engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
-
-              for (Entity preview : previews) {
-                eventBus.publish(new BuildPreviewClickedEvent(preview));
-              }
-            });
 
       controller = new FarmController(_firebaseRepository, eventBus, assetManager); //initializing this here to avoid problems with the temporal input handling
       engine = controller.getEngine();
@@ -207,7 +143,7 @@ assetManager.load("dirt.png", Texture.class);
 
     engine.update(delta);
     joystickOverlay.render();
-eventDebugOverlay.render();
+    eventDebugOverlay.render();
   }
 
   @Override

@@ -13,16 +13,16 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 
-import io.github.StarvingValley.models.components.SpriteComponent;
-import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.config.Config;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
+import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.types.WorldLayer;
-import io.github.StarvingValley.models.entities.MapFactory;
 
 public class MapUtils {
     public static void loadEnvCollidables(TiledMap map, float unitScale, Engine engine) {
@@ -38,8 +38,6 @@ public class MapUtils {
         for (Rectangle scaledHitbox : scaledHitboxes) {
             Entity entity = MapFactory.createEnvPlacementBlocker(scaledHitbox);
             engine.addEntity(entity);
-
-            TileUtils.updateOverlappingTiles(entity);
         }
     }
 

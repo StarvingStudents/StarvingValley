@@ -6,26 +6,42 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IBuildableEntityFactory;
+import io.github.StarvingValley.models.components.ActiveWorldEntity;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
-import io.github.StarvingValley.models.entities.BuildPreviewFactory;
+import io.github.StarvingValley.models.components.ClickableComponent;
+import io.github.StarvingValley.models.components.PulseAlphaComponent;
+import io.github.StarvingValley.models.components.SyncComponent;
 
 public class BuildUtils {
-    public static void toggleBuildPreview(String texturePath, Engine engine, IBuildableEntityFactory entityFactory) {
-        ImmutableArray<Entity> previews = engine.getEntitiesFor(
-                Family.all(BuildPreviewComponent.class).get());
+  public static void toggleBuildPreview(Entity entity, Engine engine) {
+    assertBuildPreviewCompatible(entity);
 
-        if (previews.size() > 0) {
-            for (Entity preview : previews) {
-                engine.removeEntity(preview);
-            }
-        } else {
-            Entity preview = BuildPreviewFactory.createBuildPreview(texturePath, 0, 0, 1, 1, entityFactory);
-            engine.addEntity(preview);
-        }
+    ImmutableArray<Entity> previews = engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
+
+    if (previews.size() > 0) {
+      for (Entity preview : previews) {
+        engine.removeEntity(preview);
+      }
+      return;
     }
 
-    public static boolean isBuildable(Entity entity) {
-        return Mappers.buildable.has(entity);
+    entity.add(new BuildPreviewComponent());
+    entity.add(new ClickableComponent());
+    entity.add(new PulseAlphaComponent());
+    entity.remove(ActiveWorldEntity.class);
+    entity.remove(SyncComponent.class);
+  }
+
+  public static boolean isBuildable(Entity entity) {
+    return Mappers.buildable.has(entity);
+  }
+
+  private static void assertBuildPreviewCompatible(Entity entity) {
+    if (!Mappers.position.has(entity)
+        || !Mappers.sprite.has(entity)
+        || !Mappers.worldLayer.has(entity)) {
+      throw new IllegalArgumentException(
+          "Build preview must have Position, Sprite, and WorldLayer components");
     }
+  }
 }

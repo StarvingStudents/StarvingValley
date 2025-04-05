@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ActiveWorldEntity;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
@@ -22,7 +23,7 @@ public class DurabilityRenderSystem extends IteratingSystem {
     private EventBus eventBus;
 
     public DurabilityRenderSystem(Engine engine, SpriteBatch batch, EventBus eventBus) {
-        super(Family.all(DurabilityComponent.class, PositionComponent.class).get());
+        super(Family.all(DurabilityComponent.class, PositionComponent.class, ActiveWorldEntity.class).get());
         this.engine = engine;
         this.batch = batch;
         this.eventBus = eventBus;

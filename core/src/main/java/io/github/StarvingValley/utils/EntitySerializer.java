@@ -1,8 +1,12 @@
 package io.github.StarvingValley.utils;
 
+import java.util.UUID;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector3;
+
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ActiveWorldEntity;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
@@ -28,7 +32,6 @@ import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
-import java.util.UUID;
 
 public class EntitySerializer {
 
@@ -140,6 +143,8 @@ public class EntitySerializer {
     dto.hasInput = Mappers.input.has(entity);
     dto.cameraShouldFollow = Mappers.cameraFollow.has(entity);
     dto.hasVelocity = Mappers.velocity.has(entity);
+    dto.isClickable = Mappers.clickable.has(entity);
+    dto.isActiveWorldEntity = Mappers.activeWorldEntity.has(entity);
 
     return dto;
   }
@@ -252,6 +257,10 @@ public class EntitySerializer {
     if (Boolean.TRUE.equals(dto.hasInput)) entity.add(new InputComponent());
     if (Boolean.TRUE.equals(dto.cameraShouldFollow)) entity.add(new CameraFollowComponent(camera));
     if (Boolean.TRUE.equals(dto.hasVelocity)) entity.add(new VelocityComponent());
+    if (Boolean.TRUE.equals(dto.isClickable))
+      entity.add(new ClickableComponent());
+    if (Boolean.TRUE.equals(dto.isActiveWorldEntity))
+      entity.add(new ActiveWorldEntity());
 
     return entity;
   }

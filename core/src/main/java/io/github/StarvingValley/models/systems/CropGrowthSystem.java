@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ActiveWorldEntity;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
@@ -23,7 +24,8 @@ public class CropGrowthSystem extends IteratingSystem {
             GrowthStageComponent.class,
             SpriteComponent.class,
             CropTypeComponent.class,
-            SizeComponent.class)
+            SizeComponent.class,
+            ActiveWorldEntity.class)
             .get());
     this.eventBus = eventBus;
   }
