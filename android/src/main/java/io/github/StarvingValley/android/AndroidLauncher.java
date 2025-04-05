@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import io.github.StarvingValley.StarvingValley;
+import io.github.StarvingValley.controllers.StarvingValley;
 
 /** Launches the Android application. */
 public class AndroidLauncher extends AndroidApplication {
