@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import io.github.StarvingValley.controllers.FarmController;
+import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.input.TapInputAdapter;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
@@ -40,7 +41,7 @@ public class FarmView extends ScreenAdapter {
   IFirebaseRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
   private InputAdapter inputAdapter; //temp
-  private InputAdapter tapInputAdapter; //temp
+  private InputEventAdapter inputEventAdapter;
 
   private EventBus eventBus;
   private FarmController controller;
@@ -55,12 +56,13 @@ eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
     eventBus = new EventBus(eventDebugger);
 
-    // TODO: Here we can pre-load some assets that we know we always need.
+    // pre-load some assets that we know we always need.
     // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
     assetManager.load("DogBasic.png", Texture.class);
     assetManager.load("tomato1.png", Texture.class);
     assetManager.load("potato1.png", Texture.class);
+assetManager.load("dirt.png", Texture.class);
 
     // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
@@ -153,6 +155,9 @@ eventDebugger = new EventDebugger();
 
       controller = new FarmController(_firebaseRepository, eventBus, assetManager); //initializing this here to avoid problems with the temporal input handling
       engine = controller.getEngine();
+
+      CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
+      inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
   }
 
   @Override
@@ -164,7 +169,7 @@ eventDebugger = new EventDebugger();
     InputAdapter joystickInputAdapter = joystickOverlay.getInputAdapter();
 
     InputMultiplexer multiplexer = new InputMultiplexer();
-    multiplexer.addProcessor(tapInputAdapter); //temp
+    multiplexer.addProcessor(inputEventAdapter);
     multiplexer.addProcessor(inputAdapter); //temp
     multiplexer.addProcessor(joystickInputAdapter);
 

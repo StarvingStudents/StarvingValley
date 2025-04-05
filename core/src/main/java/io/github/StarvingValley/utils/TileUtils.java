@@ -6,7 +6,9 @@ import java.util.Set;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.Mappers;
@@ -53,5 +55,26 @@ public class TileUtils {
     int tileY = (int) (world.y);
 
     return new GridPoint2(tileX, tileY);
+  }
+
+  public static GridPoint2 worldToTile(Vector2 worldPos) {
+    return new GridPoint2((int) Math.floor(worldPos.x), (int) Math.floor(worldPos.y));
+  }
+
+  public static GridPoint2 coordinatesToTile(int screenX, int screenY, OrthographicCamera camera) {
+    Vector2 worldClick = ScreenUtils.getWorldPosition(camera, screenX, screenY);
+    return worldToTile(worldClick);
+  }
+
+  public static boolean isOverlappingTile(
+      float x, float y, float width, float height, GridPoint2 tile) {
+
+    int startX = (int) Math.floor(x);
+    int endX = (int) Math.floor((x + width - 0.001f));
+    int startY = (int) Math.floor(y);
+    int endY = (int) Math.floor((y + height - 0.001f));
+
+    return tile.x >= startX && tile.x <= endX
+        && tile.y >= startY && tile.y <= endY;
   }
 }

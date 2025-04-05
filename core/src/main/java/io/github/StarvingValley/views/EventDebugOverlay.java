@@ -28,7 +28,7 @@ public class EventDebugOverlay {
     int screenWidth = Gdx.graphics.getWidth();
     int tileWidth = screenWidth / tilesWide;
 
-    Vector2 renderPos = ScreenUtils.convertTouchCoordinatesToRenderCoordinates(screenWidth - (tileWidth * 2), 0);
+    Vector2 renderPos = ScreenUtils.getScreenPositionFromTouchPosition(screenWidth - (tileWidth * 2), 0);
 
     batch.begin();
 

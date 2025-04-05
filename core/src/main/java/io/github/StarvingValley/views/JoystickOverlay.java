@@ -61,7 +61,7 @@ public class JoystickOverlay extends ScreenAdapter {
             return;
         }
 
-        Vector2 touchPos = ScreenUtils.convertTouchCoordinatesToRenderCoordinates(screenX, screenY);
+        Vector2 touchPos = ScreenUtils.getScreenPositionFromTouchPosition(screenX, screenY);
 
         Vector2 delta = new Vector2(touchPos.x - joystickCenter.x, touchPos.y - joystickCenter.y);
         delta.setLength(Math.min(delta.len(), joystickRadius));
@@ -84,7 +84,7 @@ public class JoystickOverlay extends ScreenAdapter {
     private boolean touchIsWithinActiveRange(int screenX, int screenY) {
         boolean isValid = true;
 
-        Vector2 posTouchDown = ScreenUtils.convertTouchCoordinatesToRenderCoordinates(screenX, screenY);
+        Vector2 posTouchDown = ScreenUtils.getScreenPositionFromTouchPosition(screenX, screenY);
 
         if (posTouchDown.dst2(joystickCenter) > minDragStartDistance * minDragStartDistance) {
             isValid = false;

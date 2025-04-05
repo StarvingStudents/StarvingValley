@@ -3,6 +3,7 @@ package io.github.StarvingValley.models.entities;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 
+import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
@@ -29,6 +30,7 @@ public class CropFactory {
     entity.add(new SyncComponent());
     entity.add(new TileOverlapComponent());
     entity.add(new TileOccupierComponent());
+entity.add(new ClickableComponent());
 
     switch (cropType) {
       case TOMATO:
