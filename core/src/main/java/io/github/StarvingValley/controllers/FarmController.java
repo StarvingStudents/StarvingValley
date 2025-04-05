@@ -72,9 +72,8 @@ public class FarmController {
         // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
         // batch etc), maybe we should have a GameContext class that holds them so we
         // just pass around that?
-engine.addSystem(new ClickSystem(eventBus));
+        engine.addSystem(new ClickSystem(eventBus));
         engine.addSystem(new MapRenderSystem());
-        engine.addSystem(new TileOverlapSystem());
         engine.addSystem(new BuildPreviewSystem(cameraComponent.camera));
         engine.addSystem(new BuildPlacementSystem(eventBus));
         engine.addSystem(new AlphaPulseSystem());
@@ -92,7 +91,7 @@ engine.addSystem(new ClickSystem(eventBus));
         engine.addSystem(new DurabilityRenderSystem(engine, batch, eventBus));
         engine.addSystem(new SyncMarkingSystem(eventBus));
         engine.addSystem(new FirebaseSyncSystem(firebaseRepository));
-engine.addSystem(new ClickedCleanupSystem());
+        engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(eventBus));
 
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);

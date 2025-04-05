@@ -28,7 +28,6 @@ import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.SyncDeletionRequestComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
-import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
@@ -64,9 +63,7 @@ public static final ComponentMapper<ClickedComponent> clicked = ComponentMapper
     public static final ComponentMapper<SpriteComponent> sprite = ComponentMapper.getFor(SpriteComponent.class);
     public static final ComponentMapper<TiledMapComponent> tiledMap = ComponentMapper
             .getFor(TiledMapComponent.class);
-    public static final ComponentMapper<TileOverlapComponent> tileOccupancy = ComponentMapper
-            .getFor(TileOverlapComponent.class);
-    public static final ComponentMapper<TileOccupierComponent> tileOccupier = ComponentMapper
+        public static final ComponentMapper<TileOccupierComponent> tileOccupier = ComponentMapper
             .getFor(TileOccupierComponent.class);
     public static final ComponentMapper<BuildPreviewComponent> buildPreview = ComponentMapper
             .getFor(BuildPreviewComponent.class);

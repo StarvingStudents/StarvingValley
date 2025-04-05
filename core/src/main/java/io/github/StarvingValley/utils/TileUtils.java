@@ -3,18 +3,12 @@ package io.github.StarvingValley.utils;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-
-import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.PositionComponent;
-import io.github.StarvingValley.models.components.SizeComponent;
-import io.github.StarvingValley.models.components.TileOverlapComponent;
 
 public class TileUtils {
   //TODO: Change overlapping tiles to a spatialgrid
@@ -34,19 +28,6 @@ public class TileUtils {
     }
 
     return result;
-  }
-
-  public static void updateOverlappingTiles(Entity entity) {
-    PositionComponent pos = Mappers.position.get(entity);
-    SizeComponent size = Mappers.size.get(entity);
-    TileOverlapComponent occ = Mappers.tileOccupancy.get(entity);
-
-    if (pos == null || size == null || occ == null)
-      return;
-
-    occ.overlappingTiles.clear();
-    occ.overlappingTiles.addAll(
-        getOverlappingTiles(pos.position.x, pos.position.y, size.width, size.height, 1));
   }
 
   public static GridPoint2 getHoveredTile(Camera camera) {

@@ -12,7 +12,6 @@ import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
-import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -28,8 +27,7 @@ public class CropFactory {
     WorldLayerComponent layer = new WorldLayerComponent(WorldLayer.CROP);
     entity.add(layer);
     entity.add(new SyncComponent());
-    entity.add(new TileOverlapComponent());
-    entity.add(new TileOccupierComponent());
+        entity.add(new TileOccupierComponent());
 entity.add(new ClickableComponent());
 
     switch (cropType) {

@@ -13,7 +13,6 @@ import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
-import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
@@ -32,8 +31,7 @@ public class PlayerFactory {
       entity.add(new SizeComponent(width, height));
       entity.add(new CollidableComponent());
       entity.add(new HungerComponent()); 
-      entity.add(new TileOverlapComponent());
-      entity.add(new TileOccupierComponent());
+            entity.add(new TileOccupierComponent());
       entity.add(new InputComponent());
       entity.add(new WorldLayerComponent(WorldLayer.CHARACTER));
       entity.add(new SyncComponent());

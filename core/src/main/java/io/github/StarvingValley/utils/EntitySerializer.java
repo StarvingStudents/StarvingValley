@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
+import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
@@ -23,7 +24,6 @@ import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
-import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
@@ -135,7 +135,7 @@ public class EntitySerializer {
     dto.isCollidable = Mappers.collidable.has(entity);
     dto.isEnvironmentCollidable = Mappers.environmentCollider.has(entity);
     dto.isHidden = Mappers.hidden.has(entity);
-    dto.occupiesTiles = Mappers.tileOccupancy.has(entity);
+    dto.occupiesTiles = Mappers.tileOccupier.has(entity);
     dto.isPlayer = Mappers.player.has(entity);
     dto.hasInput = Mappers.input.has(entity);
     dto.cameraShouldFollow = Mappers.cameraFollow.has(entity);
@@ -146,9 +146,6 @@ public class EntitySerializer {
 
   public static Entity deserialize(SyncEntity dto, Entity camera) {
     Entity entity = new Entity();
-
-    // All synced entities should store overlap
-    entity.add(new TileOverlapComponent());
 
     // Position
     if (dto.x != null && dto.y != null) {
