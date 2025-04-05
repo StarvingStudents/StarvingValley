@@ -32,6 +32,7 @@ import io.github.StarvingValley.models.events.BuildPreviewClickedEvent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.BuildUtils;
+import io.github.StarvingValley.utils.EventDebugger;
 import io.github.StarvingValley.utils.MapUtils;
 
 public class FarmView extends ScreenAdapter {
@@ -45,9 +46,14 @@ public class FarmView extends ScreenAdapter {
   private FarmController controller;
   private Engine engine;
 
+  private final EventDebugger eventDebugger;
+  private EventDebugOverlay eventDebugOverlay;
+
   public FarmView(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
-    eventBus = new EventBus();
+eventDebugger = new EventDebugger();
+    eventDebugOverlay = new EventDebugOverlay(eventDebugger);
+    eventBus = new EventBus(eventDebugger);
 
     // TODO: Here we can pre-load some assets that we know we always need.
     // Potentially add assetManager.finishLoading(); to wait
@@ -196,6 +202,7 @@ public class FarmView extends ScreenAdapter {
 
     engine.update(delta);
     joystickOverlay.render();
+eventDebugOverlay.render();
   }
 
   @Override
