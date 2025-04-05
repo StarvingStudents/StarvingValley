@@ -6,7 +6,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.ActiveWorldEntity;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
@@ -260,7 +260,7 @@ public class EntitySerializer {
     if (Boolean.TRUE.equals(dto.isClickable))
       entity.add(new ClickableComponent());
     if (Boolean.TRUE.equals(dto.isActiveWorldEntity))
-      entity.add(new ActiveWorldEntity());
+      entity.add(new ActiveWorldEntityComponent());
 
     return entity;
   }

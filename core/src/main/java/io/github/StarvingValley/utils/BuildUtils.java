@@ -6,7 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.ActiveWorldEntity;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.PulseAlphaComponent;
@@ -28,7 +28,7 @@ public class BuildUtils {
     entity.add(new BuildPreviewComponent());
     entity.add(new ClickableComponent());
     entity.add(new PulseAlphaComponent());
-    entity.remove(ActiveWorldEntity.class);
+    entity.remove(ActiveWorldEntityComponent.class);
     entity.remove(SyncComponent.class);
   }
 

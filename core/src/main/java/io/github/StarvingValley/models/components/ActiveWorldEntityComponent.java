@@ -2,6 +2,6 @@ package io.github.StarvingValley.models.components;
 
 import com.badlogic.ashley.core.Component;
 
-public class ActiveWorldEntity implements Component {
+public class ActiveWorldEntityComponent implements Component {
     
 }

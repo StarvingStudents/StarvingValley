@@ -3,7 +3,7 @@ package io.github.StarvingValley.models.entities;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 
-import io.github.StarvingValley.models.components.ActiveWorldEntity;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
@@ -29,7 +29,7 @@ public class CropFactory {
     entity.add(layer);
     entity.add(new SyncComponent());
     entity.add(new TileOccupierComponent());
-    entity.add(new ActiveWorldEntity());
+    entity.add(new ActiveWorldEntityComponent());
     entity.add(new ClickableComponent());
 
     switch (cropType) {

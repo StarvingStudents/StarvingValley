@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.GridPoint2;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.ActiveWorldEntity;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -45,7 +45,7 @@ public class BuildPreviewSystem extends IteratingSystem {
 
     ImmutableArray<Entity> blockingEntities = engine.getEntitiesFor(
         Family.all(
-            TileOccupierComponent.class, WorldLayerComponent.class, ActiveWorldEntity.class)
+            TileOccupierComponent.class, WorldLayerComponent.class, ActiveWorldEntityComponent.class)
             .get());
 
     boolean canPlaceEntity = PlacementRules.canPlace(hoveredTile, worldLayer, blockingEntities);

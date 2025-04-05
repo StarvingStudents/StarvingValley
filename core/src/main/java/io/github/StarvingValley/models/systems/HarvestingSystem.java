@@ -7,7 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.ActiveWorldEntity;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
@@ -38,7 +38,7 @@ public class HarvestingSystem extends EntitySystem {
 
     ImmutableArray<Entity> clickedCrops = engine
         .getEntitiesFor(Family.all(ClickedComponent.class, GrowthStageComponent.class, TimeToGrowComponent.class,
-            PositionComponent.class, HarvestingComponent.class, ActiveWorldEntity.class).get());
+            PositionComponent.class, HarvestingComponent.class, ActiveWorldEntityComponent.class).get());
 
     for (Entity crop : clickedCrops) {
       GrowthStageComponent growthStageComponent = Mappers.growthStage.get(crop);

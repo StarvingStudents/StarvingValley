@@ -2,7 +2,7 @@ package io.github.StarvingValley.models;
 
 import com.badlogic.ashley.core.ComponentMapper;
 
-import io.github.StarvingValley.models.components.ActiveWorldEntity;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
@@ -56,8 +56,8 @@ public class Mappers {
     public static final ComponentMapper<EatingComponent> eating = ComponentMapper.getFor(EatingComponent.class);
     public static final ComponentMapper<PlayerComponent> player = ComponentMapper.getFor(PlayerComponent.class);
     public static final ComponentMapper<SpeedComponent> speed = ComponentMapper.getFor(SpeedComponent.class);
-    public static final ComponentMapper<ActiveWorldEntity> activeWorldEntity = ComponentMapper
-                    .getFor(ActiveWorldEntity.class);
+    public static final ComponentMapper<ActiveWorldEntityComponent> activeWorldEntity = ComponentMapper
+                    .getFor(ActiveWorldEntityComponent.class);
     public static final ComponentMapper<InputComponent> input = ComponentMapper.getFor(InputComponent.class);
     public static final ComponentMapper<ClickableComponent> clickable = ComponentMapper
                     .getFor(ClickableComponent.class);

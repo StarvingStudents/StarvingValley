@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.ActiveWorldEntity;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.PulseAlphaComponent;
@@ -31,7 +31,7 @@ public class BuildPlacementSystem extends IteratingSystem {
         return;
       }
 
-      entity.add(new ActiveWorldEntity());
+      entity.add(new ActiveWorldEntityComponent());
       entity.add(new SyncComponent());
       entity.remove(BuildPreviewComponent.class);
       entity.remove(PulseAlphaComponent.class);
