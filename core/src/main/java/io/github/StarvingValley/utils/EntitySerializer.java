@@ -15,6 +15,7 @@ import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
+import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
@@ -147,6 +148,12 @@ public class EntitySerializer {
       dto.drops = drop.drops;
     }
 
+    // Economy
+    EconomyComponent economy = Mappers.economy.get(entity);
+    if (economy != null) {
+      dto.balance = economy.balance;
+    }
+
     dto.isCollidable = Mappers.collidable.has(entity);
     dto.isEnvironmentCollidable = Mappers.environmentCollider.has(entity);
     dto.isHidden = Mappers.hidden.has(entity);
@@ -266,6 +273,11 @@ public class EntitySerializer {
     // Drop
     if (dto.drops != null && dto.drops.size() > 0) {
       entity.add(new DropComponent(dto.drops));
+    }
+
+    // Economy
+    if (dto.balance != null) {
+      entity.add(new EconomyComponent(dto.balance));
     }
 
     // Boolean tags

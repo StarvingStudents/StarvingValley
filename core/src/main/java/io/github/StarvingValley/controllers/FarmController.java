@@ -2,7 +2,6 @@ package io.github.StarvingValley.controllers;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -11,7 +10,6 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
@@ -36,6 +34,7 @@ import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
+import io.github.StarvingValley.models.systems.TradingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -48,11 +47,11 @@ public class FarmController {
     private final EventBus eventBus;
     private final AssetManager assetManager;
     private final IFirebaseRepository firebaseRepository;
-public GameContext gameContext;
+    public GameContext gameContext;
 
     private Entity camera;
     private Entity map;
-private Entity player;
+    private Entity player;
 
     public FarmController(IFirebaseRepository firebaseRepository, EventBus eventBus, AssetManager assetManager) {
         this.firebaseRepository = firebaseRepository;
@@ -60,11 +59,12 @@ private Entity player;
         this.assetManager = assetManager;
         this.engine = new Engine();
         this.batch = new SpriteBatch();
-gameContext = new GameContext();
+        gameContext = new GameContext();
         gameContext.spriteBatch = this.batch;
         gameContext.eventBus = this.eventBus;
         gameContext.assetManager = this.assetManager;
         gameContext.firebaseRepository = this.firebaseRepository;
+        gameContext.engine = this.engine;
         initGame();
     }
 
@@ -82,7 +82,7 @@ gameContext = new GameContext();
         engine.addEntity(camera);
         engine.addEntity(map);
 
-                engine.addSystem(new ClickSystem(gameContext));
+        engine.addSystem(new ClickSystem(gameContext));
         engine.addSystem(new MapRenderSystem());
         engine.addSystem(new BuildPreviewSystem(gameContext));
         engine.addSystem(new BuildPlacementSystem(gameContext));
@@ -93,6 +93,7 @@ gameContext = new GameContext();
         engine.addSystem(new CameraSystem());
         engine.addSystem(new CropGrowthSystem(gameContext));
         engine.addSystem(new HarvestingSystem(gameContext));
+        engine.addSystem(new TradingSystem(gameContext));
         engine.addSystem(new RenderSystem(gameContext));
         engine.addSystem(new BuildGridRenderSystem(gameContext));
         engine.addSystem(new HungerSystem(gameContext));
@@ -112,10 +113,7 @@ gameContext = new GameContext();
                 new AuthCallback() {
                     @Override
                     public void onSuccess() {
-                        MapUtils.loadSyncedEntities(firebaseRepository, getEngine(), getCamera(), () -> {
-                            player = engine.getEntitiesFor(Family.all(PlayerComponent.class).get()).first();
-                            gameContext.player = player;
-                        });
+                        MapUtils.loadSyncedEntities(gameContext, getCamera());
                     }
 
                     @Override
