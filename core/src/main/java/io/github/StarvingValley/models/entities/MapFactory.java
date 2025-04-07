@@ -12,7 +12,6 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
-import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -39,7 +38,7 @@ public class MapFactory {
 
         entity.add(new PositionComponent(scaledHitbox.x, scaledHitbox.y));
         entity.add(new SizeComponent(scaledHitbox.width, scaledHitbox.height));
-        entity.add(new TileOverlapComponent());
+        entity.add(new TileOccupierComponent());
         entity.add(new SyncComponent());
         entity.add(new EnvironmentCollidableComponent());
         entity.add(new WorldLayerComponent(WorldLayer.TERRAIN));
@@ -52,7 +51,6 @@ public class MapFactory {
 
         entity.add(new PositionComponent(scaledHitbox.x, scaledHitbox.y));
         entity.add(new SizeComponent(scaledHitbox.width, scaledHitbox.height));
-        entity.add(new TileOverlapComponent());
         entity.add(new SyncComponent());
         entity.add(new TileOccupierComponent());
         entity.add(new WorldLayerComponent(WorldLayer.TERRAIN));

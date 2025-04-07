@@ -11,7 +11,6 @@ import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.utils.DiffUtils;
-import io.github.StarvingValley.utils.TileUtils;
 
 public class MovementSystem extends IteratingSystem {
   private EventBus eventBus;
@@ -29,8 +28,6 @@ public class MovementSystem extends IteratingSystem {
     Vector3 oldPosition = new Vector3(position.position);
     position.position.x += velocity.velocity.x;
     position.position.y += velocity.velocity.y;
-
-    TileUtils.updateOverlappingTiles(entity);
 
     if (DiffUtils.hasChanged(position.position, oldPosition))
       eventBus.publish(new EntityUpdatedEvent(entity));

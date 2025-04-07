@@ -9,6 +9,7 @@ import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
@@ -17,7 +18,8 @@ import io.github.StarvingValley.models.components.VelocityComponent;
 public class EnvironmentCollisionSystem extends IteratingSystem {
     public EnvironmentCollisionSystem() {
         super(Family
-                .all(CollidableComponent.class, PositionComponent.class, SizeComponent.class, VelocityComponent.class)
+                .all(CollidableComponent.class, PositionComponent.class, SizeComponent.class, VelocityComponent.class,
+                        ActiveWorldEntityComponent.class)
                 .get());
     }
 

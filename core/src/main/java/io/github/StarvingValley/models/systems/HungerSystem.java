@@ -3,6 +3,8 @@ package io.github.StarvingValley.models.systems;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.EventBus;
@@ -13,7 +15,7 @@ public class HungerSystem extends IteratingSystem {
   private EventBus eventBus;
 
   public HungerSystem(EventBus eventBus) {
-    super(Family.all(HungerComponent.class).get());
+    super(Family.all(HungerComponent.class, ActiveWorldEntityComponent.class).get());
     this.eventBus = eventBus;
   }
 

@@ -6,14 +6,34 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.config.Config;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.models.systems.*;
+import io.github.StarvingValley.models.systems.AlphaPulseSystem;
+import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
+import io.github.StarvingValley.models.systems.BuildPlacementSystem;
+import io.github.StarvingValley.models.systems.BuildPreviewSystem;
+import io.github.StarvingValley.models.systems.CameraSystem;
+import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
+import io.github.StarvingValley.models.systems.ClickSystem;
+import io.github.StarvingValley.models.systems.CropGrowthSystem;
+import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
+import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
+import io.github.StarvingValley.models.systems.EventCleanupSystem;
+import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
+import io.github.StarvingValley.models.systems.HarvestingSystem;
+import io.github.StarvingValley.models.systems.HungerRenderSystem;
+import io.github.StarvingValley.models.systems.HungerSystem;
+import io.github.StarvingValley.models.systems.MapRenderSystem;
+import io.github.StarvingValley.models.systems.MovementSystem;
+import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.models.systems.SpriteSystem;
+import io.github.StarvingValley.models.systems.SyncMarkingSystem;
+import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.MapUtils;
 
@@ -52,8 +72,8 @@ public class FarmController {
         // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
         // batch etc), maybe we should have a GameContext class that holds them so we
         // just pass around that?
+        engine.addSystem(new ClickSystem(eventBus));
         engine.addSystem(new MapRenderSystem());
-        engine.addSystem(new TileOverlapSystem());
         engine.addSystem(new BuildPreviewSystem(cameraComponent.camera));
         engine.addSystem(new BuildPlacementSystem(eventBus));
         engine.addSystem(new AlphaPulseSystem());
@@ -71,6 +91,7 @@ public class FarmController {
         engine.addSystem(new DurabilityRenderSystem(engine, batch, eventBus));
         engine.addSystem(new SyncMarkingSystem(eventBus));
         engine.addSystem(new FirebaseSyncSystem(firebaseRepository));
+        engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(eventBus));
 
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);

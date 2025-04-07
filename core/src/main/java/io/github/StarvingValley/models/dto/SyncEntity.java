@@ -54,6 +54,10 @@ public class SyncEntity {
     public Integer growthProgress;
     public Float growthTimeAccumulator;
 
+    public Boolean isClickable;
+    public Boolean isActiveWorldEntity;
+
+
     // Required: no-arg constructor for Firebase
     public SyncEntity() {
     }

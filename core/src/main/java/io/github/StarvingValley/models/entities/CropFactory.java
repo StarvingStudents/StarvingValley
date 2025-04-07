@@ -3,6 +3,8 @@ package io.github.StarvingValley.models.entities;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
+import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
@@ -11,7 +13,6 @@ import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
-import io.github.StarvingValley.models.components.TileOverlapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -27,8 +28,9 @@ public class CropFactory {
     WorldLayerComponent layer = new WorldLayerComponent(WorldLayer.CROP);
     entity.add(layer);
     entity.add(new SyncComponent());
-    entity.add(new TileOverlapComponent());
     entity.add(new TileOccupierComponent());
+    entity.add(new ActiveWorldEntityComponent());
+    entity.add(new ClickableComponent());
 
     switch (cropType) {
       case TOMATO:

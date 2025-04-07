@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.utils.TextureUtils;
@@ -17,7 +18,7 @@ public class HungerRenderSystem extends IteratingSystem {
     private final SpriteBatch batch;
 
     public HungerRenderSystem(SpriteBatch batch) {
-        super(Family.all(HungerComponent.class, PositionComponent.class).get());
+        super(Family.all(HungerComponent.class, PositionComponent.class, ActiveWorldEntityComponent.class).get());
         this.batch = batch;
     }
 

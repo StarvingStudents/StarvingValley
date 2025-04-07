@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.StarvingValley.models.Interfaces.Event;
+import io.github.StarvingValley.utils.EventDebugger;
 
 /**
  * Publish-Subscribe event bus storing current and next frame's events. To avoid
@@ -19,6 +20,12 @@ import io.github.StarvingValley.models.Interfaces.Event;
 public class EventBus {
     private Map<Class<? extends Event>, List<Event>> currentFrameEvents = new HashMap<>();
     private Map<Class<? extends Event>, List<Event>> nextFrameEvents = new HashMap<>();
+    private EventDebugger debugger;
+
+    public EventBus(EventDebugger debugger) {
+        super();
+        this.debugger = debugger;
+    }
 
     /**
      * Publishes an event to be processed in the next frame
@@ -27,6 +34,8 @@ public class EventBus {
      */
     public void publish(Event event) {
         nextFrameEvents.computeIfAbsent(event.getClass(), k -> new ArrayList<>()).add(event);
+
+        debugger.logEvent(event);
     }
 
     /**
