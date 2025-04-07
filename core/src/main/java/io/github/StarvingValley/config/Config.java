@@ -15,4 +15,7 @@ public class Config {
     public static final float MAX_TAP_DISTANCE = 20f;
     public static final float MAX_TAP_DURATION = 0.4f;
     public static final float COLLISION_MARGIN = 0.1f;
+    public static final int WORLD_MAP_GRID_WIDTH = 7;
+    public static final int WORLD_MAP_GRID_HEIGHT = 4;
+    public static final int ATTACKABLE_FARMS = 1; 
 }
