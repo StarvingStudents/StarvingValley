@@ -1,7 +1,6 @@
 package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -18,13 +17,8 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
-import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
-import io.github.StarvingValley.models.components.SpriteComponent;
-import io.github.StarvingValley.models.entities.CropFactory;
-import io.github.StarvingValley.models.entities.MapFactory;
-import io.github.StarvingValley.models.entities.SoilFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
 import io.github.StarvingValley.utils.MapUtils;
@@ -64,25 +58,22 @@ public class FarmView extends ScreenAdapter {
         new InputAdapter() {
           @Override
           public boolean keyDown(int keycode) {
-            Entity entity = null;
+            PrefabType prefabType = null;
 
-            if (keycode == Input.Keys.C) {
-
-              entity = MapFactory.createEnvPlacementBlocker(0, 0, 1, 1);
-              entity.add(new SpriteComponent("DogBasic.png"));
-              entity.add(new EnvironmentCollidableComponent());
-            } else if (keycode == Input.Keys.D) {
-              entity = CropFactory.createCrop(0, 0, CropType.TOMATO);
-            } else if (keycode == Input.Keys.E) {
-              entity = CropFactory.createCrop(0, 0, CropType.POTATO);
-            } else if (keycode == Input.Keys.F) {
-              entity = SoilFactory.createSoil(0, 0);
+            switch (keycode) {
+              case Input.Keys.C:
+                prefabType = PrefabType.TOMATO_CROP;
+                break;
+              case Input.Keys.E:
+                prefabType = PrefabType.POTATO_CROP;
+                break;
+              case Input.Keys.F:
+                prefabType = PrefabType.SOIL;
+                break;
             }
 
-            if (entity != null) {
-              engine.addEntity(entity);
-
-              BuildUtils.toggleBuildPreview(entity, engine);
+            if (prefabType != null) {
+              BuildUtils.toggleBuildPreview(prefabType, engine);
             }
 
             return true;

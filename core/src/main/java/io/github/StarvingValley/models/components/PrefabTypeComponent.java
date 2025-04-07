@@ -4,10 +4,10 @@ import com.badlogic.ashley.core.Component;
 
 import io.github.StarvingValley.models.types.PrefabType;
 
-public class BuildableComponent implements Component {
-    public PrefabType builds;
+public class PrefabTypeComponent implements Component {
+    public PrefabType type;
 
-    public BuildableComponent(PrefabType type) {
-        this.builds = type;
+    public PrefabTypeComponent(PrefabType type) {
+        this.type = type;
     }
 }

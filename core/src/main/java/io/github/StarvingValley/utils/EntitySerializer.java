@@ -12,6 +12,7 @@ import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
+import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
@@ -134,7 +135,18 @@ public class EntitySerializer {
       dto.growthTimeAccumulator = timeToGrow.growthTimeAccumulator;
     }
 
-    dto.isBuildable = Mappers.buildable.has(entity);
+    // Buildable
+    BuildableComponent buildable = Mappers.buildable.get(entity);
+    if (buildable != null) {
+      dto.builds = buildable.builds;
+    }
+
+    // Drop
+    DropComponent drop = Mappers.drop.get(entity);
+    if (drop != null && drop.drops != null && drop.drops.size() > 0) {
+      dto.drops = drop.drops;
+    }
+
     dto.isCollidable = Mappers.collidable.has(entity);
     dto.isEnvironmentCollidable = Mappers.environmentCollider.has(entity);
     dto.isHidden = Mappers.hidden.has(entity);
@@ -246,8 +258,17 @@ public class EntitySerializer {
       entity.add(timeToGrowComponent);
     }
 
+    // Buildable
+    if (dto.builds != null) {
+      entity.add(new BuildableComponent(dto.builds));
+    }
+
+    // Drop
+    if (dto.drops != null && dto.drops.size() > 0) {
+      entity.add(new DropComponent(dto.drops));
+    }
+
     // Boolean tags
-    if (Boolean.TRUE.equals(dto.isBuildable)) entity.add(new BuildableComponent());
     if (Boolean.TRUE.equals(dto.isCollidable)) entity.add(new CollidableComponent());
     if (Boolean.TRUE.equals(dto.isEnvironmentCollidable))
       entity.add(new EnvironmentCollidableComponent());

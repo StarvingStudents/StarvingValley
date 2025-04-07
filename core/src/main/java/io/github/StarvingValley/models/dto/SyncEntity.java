@@ -1,6 +1,10 @@
 package io.github.StarvingValley.models.dto;
 
+import java.util.List;
+
 import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
+import io.github.StarvingValley.models.types.ItemDrop;
+import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class SyncEntity {
@@ -8,7 +12,6 @@ public class SyncEntity {
     public Float y;
     public Float z;
 
-    public Boolean isBuildable;
     public Boolean isCollidable;
     public Boolean isEnvironmentCollidable;
     public Boolean isHidden;
@@ -57,6 +60,9 @@ public class SyncEntity {
     public Boolean isClickable;
     public Boolean isActiveWorldEntity;
 
+    public PrefabType builds;
+
+    public List<ItemDrop> drops;
 
     // Required: no-arg constructor for Firebase
     public SyncEntity() {

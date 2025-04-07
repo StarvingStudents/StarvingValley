@@ -5,17 +5,12 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
-import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
-import io.github.StarvingValley.models.components.ClickableComponent;
-import io.github.StarvingValley.models.components.PulseAlphaComponent;
-import io.github.StarvingValley.models.components.SyncComponent;
+import io.github.StarvingValley.models.entities.BuildPreviewFactory;
+import io.github.StarvingValley.models.types.PrefabType;
 
 public class BuildUtils {
-  public static void toggleBuildPreview(Entity entity, Engine engine) {
-    assertBuildPreviewCompatible(entity);
-
+  public static void toggleBuildPreview(PrefabType prefabType, Engine engine) {
     ImmutableArray<Entity> previews = engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
 
     if (previews.size() > 0) {
@@ -25,23 +20,8 @@ public class BuildUtils {
       return;
     }
 
-    entity.add(new BuildPreviewComponent());
-    entity.add(new ClickableComponent());
-    entity.add(new PulseAlphaComponent());
-    entity.remove(ActiveWorldEntityComponent.class);
-    entity.remove(SyncComponent.class);
-  }
+    Entity preview = BuildPreviewFactory.create(prefabType);
 
-  public static boolean isBuildable(Entity entity) {
-    return Mappers.buildable.has(entity);
-  }
-
-  private static void assertBuildPreviewCompatible(Entity entity) {
-    if (!Mappers.position.has(entity)
-        || !Mappers.sprite.has(entity)
-        || !Mappers.worldLayer.has(entity)) {
-      throw new IllegalArgumentException(
-          "Build preview must have Position, Sprite, and WorldLayer components");
-    }
+    engine.addEntity(preview);
   }
 }
