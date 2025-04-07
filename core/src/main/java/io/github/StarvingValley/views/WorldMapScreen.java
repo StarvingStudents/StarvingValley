@@ -13,11 +13,13 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.JoystickController;
+import io.github.StarvingValley.controllers.WorldMapController;
 import io.github.StarvingValley.input.TapInputAdapter;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
@@ -30,6 +32,7 @@ import io.github.StarvingValley.models.components.EnvironmentCollidableComponent
 import io.github.StarvingValley.models.components.PlaceRequestComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
+import io.github.StarvingValley.models.components.WorldMapFarmSelectionComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.CropFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
@@ -54,9 +57,19 @@ import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.MapUtils;
+import io.github.StarvingValley.models.entities.WorldMapFarmFactory;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.awt.Point;
+
 
 // TODO: Maybe move logic to a controller and rename to FarmScreen/FarmView
 public class WorldMapScreen extends ScreenAdapter {
+
+  private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+
   public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
   private Engine engine;
@@ -66,6 +79,7 @@ public class WorldMapScreen extends ScreenAdapter {
   private JoystickOverlay joystickOverlay;
   private InputAdapter inputAdapter;
 //   private InputAdapter tapInputAdapter;
+  private WorldMapFarmSelectionComponent farmSelection;
 
   public WorldMapScreen(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
@@ -140,6 +154,12 @@ public class WorldMapScreen extends ScreenAdapter {
       }
     };
 
+    WorldMapController controller = new WorldMapController(_firebaseRepository);
+    this.farmSelection = WorldMapFarmSelectionComponent.getInstance(
+      controller.randomUserIds(Config.ATTACKABLE_FARMS)
+      // controller.randomUserIds(1)
+      );
+
     // tapInputAdapter = new TapInputAdapter(
     //     () -> {
     //       ImmutableArray<Entity> previews = engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
@@ -160,7 +180,7 @@ public class WorldMapScreen extends ScreenAdapter {
 
     camera = CameraFactory.createCamera(tilesWide, tilesHigh);
 
-    CameraComponent cameraComponent = Mappers.camera.get(camera);
+    // CameraComponent cameraComponent = Mappers.camera.get(camera);
 
     // map = MapFactory.createMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
 
@@ -234,14 +254,92 @@ public class WorldMapScreen extends ScreenAdapter {
       batch.setProjectionMatrix(cameraComponent.camera.combined);
     }
 
-    Vector2 camCenter = new Vector2(CameraComponent.camera.position.x, CameraComponent.camera.position.y);
-    float viewW = camera.viewportWidth;
-    float viewH = camera.viewportHeight;
+    Vector2 camCenter = new Vector2(cameraComponent.camera.position.x, cameraComponent.camera.position.y);
+    float viewH = cameraComponent.camera.viewportHeight;
 
+    Vector2[][] gridCenters = computeGridSquareCenters(camCenter, viewH);
+
+    // Use gridCenters as needed, e.g., for rendering markers at each center
+    // for (int row = 0; row < gridCenters.length; row++) {
+    //     for (int col = 0; col < gridCenters[row].length; col++) {
+    //         Vector2 center = gridCenters[row][col];
+    //         // render something at center.x, center.y
+    //     }
+    // }
+
+    // // Render selected farms on grid squares
+    // final int rows = Config.WORLD_MAP_GRID_HEIGHT;
+    // final int cols = Config.WORLD_MAP_GRID_WIDTH;
+
+
+    // Vector2 camCenter = new Vector2(cameraComponent.camera.position.x, cameraComponent.camera.position.y);
+    // float viewW = cameraComponent.camera.viewportWidth;
+    // float viewH = cameraComponent.camera.viewportHeight;
+
+    // shapeRenderer.setProjectionMatrix(cameraComponent.camera.combined);
+
+    // shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+    // shapeRenderer.setColor(1, 1, 1, 0.5f);
+
+    // int startX = (int) (camCenter.x - viewW / 2);
+    //     int endX = (int) (camCenter.x + viewW / 2 + 1);
+    //     int startY = (int) (camCenter.y - viewH / 2);
+    //     int endY = (int) (camCenter.y + viewH / 2 + 1);
+
+    //     float thickness = Config.BUILD_GRID_LINE_THICKNESS;
+
+    //     for (int x = startX; x <= endX; x++) {
+    //         shapeRenderer.rect(x - thickness / 2f, startY, thickness, endY - startY);
+    //     }
+
+    //     for (int y = startY; y <= endY; y++) {
+    //         shapeRenderer.rect(startX, y - thickness / 2f, endX - startX, thickness);
+    //     }
+    //     shapeRenderer.end();
+
+    // Render each farm's image at its corresponding grid square
+    batch.begin();
+    for (Map.Entry<Vector2, Entity> entry : farmSelection.gridToFarm.entrySet()) {
+      Vector2 gridPos = entry.getKey(); // gridPos.x is col, gridPos.y is row
+      Vector2 center = gridCenters[(int) gridPos.y][(int) gridPos.x];
+      // Retrieve SpriteComponent (assumed field 'textureKey')
+      SpriteComponent sprite = Mappers.sprite.get(entry.getValue());
+      if (sprite != null) {
+        Texture texture = assetManager.get(sprite.getTexturePath(), Texture.class); // replaced sprite.textureKey with sprite.texture
+        // Draw texture centered at the grid square (adjust offset if needed)
+        batch.draw(texture, center.x - texture.getWidth() / 2f, center.y - texture.getHeight() / 2f);
+      }
+    }
+    batch.end();
 
     engine.update(delta);
 
     joystickOverlay.render();
+  }
+
+  private Vector2[][] computeGridSquareCenters(Vector2 camCenter, float viewH) {
+    final int rows = Config.WORLD_MAP_GRID_HEIGHT; 
+    final int cols = Config.WORLD_MAP_GRID_WIDTH; 
+    // Total grid height is 90% of the viewport height.
+    float gridHeight = viewH * 0.9f;
+    // Each square is a square so its side equals gridHeight divided by the number of rows.
+    float squareSize = gridHeight / rows;
+    float gridWidth = squareSize * cols;
+
+    // Bottom left corner of the grid.
+    float gridLeft = camCenter.x - gridWidth / 2;
+    float gridBottom = camCenter.y - gridHeight / 2;
+
+    // Create an array to hold the center positions.
+    Vector2[][] centers = new Vector2[rows][cols];
+    for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+            float x = gridLeft + (col + 0.5f) * squareSize;
+            float y = gridBottom + (row + 0.5f) * squareSize;
+            centers[row][col] = new Vector2(x, y);
+        }
+    }
+    return centers;
   }
 
   @Override
