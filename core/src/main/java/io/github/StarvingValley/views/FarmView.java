@@ -102,20 +102,7 @@ public class FarmView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    _firebaseRepository.registerOrSignInWithDeviceId(
-        new AuthCallback() {
-          @Override
-          public void onSuccess() {
-              MapUtils.loadSyncedEntities(_firebaseRepository, controller.getEngine(), controller.getCamera());
-          }
-
-          @Override
-          public void onFailure(String errorMessage) {
-            // TODO: Fail gracefully
-            throw new RuntimeException("Authentication failed: " + errorMessage);
-          }
-        });
-  }
+      }
 
   @Override
   public void render(float delta) {

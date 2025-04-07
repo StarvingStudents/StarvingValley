@@ -2,13 +2,16 @@ package io.github.StarvingValley.controllers;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
@@ -18,8 +21,8 @@ import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
 import io.github.StarvingValley.models.systems.BuildPlacementSystem;
 import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
-import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
 import io.github.StarvingValley.models.systems.ClickSystem;
+import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
 import io.github.StarvingValley.models.systems.CropGrowthSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
@@ -34,6 +37,7 @@ import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.MapUtils;
 
@@ -44,9 +48,11 @@ public class FarmController {
     private final EventBus eventBus;
     private final AssetManager assetManager;
     private final IFirebaseRepository firebaseRepository;
+public GameContext gameContext;
 
     private Entity camera;
     private Entity map;
+private Entity player;
 
     public FarmController(IFirebaseRepository firebaseRepository, EventBus eventBus, AssetManager assetManager) {
         this.firebaseRepository = firebaseRepository;
@@ -54,6 +60,11 @@ public class FarmController {
         this.assetManager = assetManager;
         this.engine = new Engine();
         this.batch = new SpriteBatch();
+gameContext = new GameContext();
+        gameContext.spriteBatch = this.batch;
+        gameContext.eventBus = this.eventBus;
+        gameContext.assetManager = this.assetManager;
+        gameContext.firebaseRepository = this.firebaseRepository;
         initGame();
     }
 
@@ -64,39 +75,55 @@ public class FarmController {
         camera = CameraFactory.createCamera(tilesWide, tilesHigh);
         CameraComponent cameraComponent = Mappers.camera.get(camera);
 
+        gameContext.camera = cameraComponent.camera;
+
         map = MapFactory.createMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
 
         engine.addEntity(camera);
         engine.addEntity(map);
 
-        // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
-        // batch etc), maybe we should have a GameContext class that holds them so we
-        // just pass around that?
-        engine.addSystem(new ClickSystem(eventBus));
+                engine.addSystem(new ClickSystem(gameContext));
         engine.addSystem(new MapRenderSystem());
-        engine.addSystem(new BuildPreviewSystem(cameraComponent.camera));
-        engine.addSystem(new BuildPlacementSystem(eventBus));
+        engine.addSystem(new BuildPreviewSystem(gameContext));
+        engine.addSystem(new BuildPlacementSystem(gameContext));
         engine.addSystem(new AlphaPulseSystem());
         engine.addSystem(new VelocitySystem());
         engine.addSystem(new EnvironmentCollisionSystem());
-        engine.addSystem(new MovementSystem(eventBus));
+        engine.addSystem(new MovementSystem(gameContext));
         engine.addSystem(new CameraSystem());
-        engine.addSystem(new CropGrowthSystem(eventBus));
-        engine.addSystem(new HarvestingSystem(eventBus));
-        engine.addSystem(new RenderSystem(batch));
-        engine.addSystem(new BuildGridRenderSystem(cameraComponent.camera));
-        engine.addSystem(new HungerSystem(eventBus));
-        engine.addSystem(new SpriteSystem(assetManager));
-        engine.addSystem(new HungerRenderSystem(batch));
-        engine.addSystem(new DurabilityRenderSystem(engine, batch, eventBus));
-        engine.addSystem(new SyncMarkingSystem(eventBus));
-        engine.addSystem(new FirebaseSyncSystem(firebaseRepository));
+        engine.addSystem(new CropGrowthSystem(gameContext));
+        engine.addSystem(new HarvestingSystem(gameContext));
+        engine.addSystem(new RenderSystem(gameContext));
+        engine.addSystem(new BuildGridRenderSystem(gameContext));
+        engine.addSystem(new HungerSystem(gameContext));
+        engine.addSystem(new SpriteSystem(gameContext));
+        engine.addSystem(new HungerRenderSystem(gameContext));
+        engine.addSystem(new DurabilityRenderSystem(gameContext));
+        engine.addSystem(new SyncMarkingSystem(gameContext));
+        engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new ClickedCleanupSystem());
-        engine.addSystem(new EventCleanupSystem(eventBus));
+        engine.addSystem(new EventCleanupSystem(gameContext));
 
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
         MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
+
+        firebaseRepository.registerOrSignInWithDeviceId(
+                new AuthCallback() {
+                    @Override
+                    public void onSuccess() {
+                        MapUtils.loadSyncedEntities(firebaseRepository, getEngine(), getCamera(), () -> {
+                            player = engine.getEntitiesFor(Family.all(PlayerComponent.class).get()).first();
+                            gameContext.player = player;
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        // TODO: Fail gracefully
+                        throw new RuntimeException("Authentication failed: " + errorMessage);
+                    }
+                });
     }
 
     public Engine getEngine() {
@@ -109,6 +136,10 @@ public class FarmController {
 
     public Entity getCamera() {
         return camera;
+    }
+
+    public Entity getPlayer() {
+        return player;
     }
 
     public void dispose() {

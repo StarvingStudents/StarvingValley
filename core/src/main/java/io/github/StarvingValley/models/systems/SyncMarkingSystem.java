@@ -10,13 +10,13 @@ import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.events.EntityAddedEvent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
-import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 
 public class SyncMarkingSystem extends EntitySystem {
-    private final EventBus eventBus;
+    private GameContext context;
 
-    public SyncMarkingSystem(EventBus eventBus) {
-        this.eventBus = eventBus;
+    public SyncMarkingSystem(GameContext context) {
+        this.context = context;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SyncMarkingSystem extends EntitySystem {
     }
 
     private void markAddedEntitiesUnsynced() {
-        List<EntityAddedEvent> addEvents = eventBus.getEvents(EntityAddedEvent.class);
+        List<EntityAddedEvent> addEvents = context.eventBus.getEvents(EntityAddedEvent.class);
 
         for (EntityAddedEvent event : addEvents) {
             event.getEntity().add(new UnsyncedComponent());
@@ -35,7 +35,7 @@ public class SyncMarkingSystem extends EntitySystem {
     }
 
     private void markUpdatedEntitiesUnsynced() {
-        List<EntityUpdatedEvent> updateEvents = eventBus.getEvents(EntityUpdatedEvent.class);
+        List<EntityUpdatedEvent> updateEvents = context.eventBus.getEvents(EntityUpdatedEvent.class);
 
         for (EntityUpdatedEvent event : updateEvents) {
             event.getEntity().add(new UnsyncedComponent());
@@ -43,7 +43,7 @@ public class SyncMarkingSystem extends EntitySystem {
     }
 
     private void markRemovedEntitiesForDeletion() {
-        List<EntityRemovedEvent> removeEvents = eventBus.getEvents(EntityRemovedEvent.class);
+        List<EntityRemovedEvent> removeEvents = context.eventBus.getEvents(EntityRemovedEvent.class);
 
         for (EntityRemovedEvent event : removeEvents) {
             Entity deletionMarkerEntity = getEngine().createEntity();

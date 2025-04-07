@@ -3,21 +3,20 @@ package io.github.StarvingValley.models.systems;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
+import io.github.StarvingValley.models.types.GameContext;
 
 public class BuildGridRenderSystem extends EntitySystem {
-
-    private final Camera camera;
     private final ShapeRenderer shapeRenderer;
+    private GameContext context;
 
-    public BuildGridRenderSystem(Camera camera) {
-        this.camera = camera;
+    public BuildGridRenderSystem(GameContext context) {
+        this.context = context;
         this.shapeRenderer = new ShapeRenderer();
     }
 
@@ -28,15 +27,15 @@ public class BuildGridRenderSystem extends EntitySystem {
             return;
         }
 
-        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(context.camera.combined);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(1, 1, 1, 0.3f);
 
-        Vector2 camCenter = new Vector2(camera.position.x, camera.position.y);
-        float viewW = camera.viewportWidth;
-        float viewH = camera.viewportHeight;
+        Vector2 camCenter = new Vector2(context.camera.position.x, context.camera.position.y);
+        float viewW = context.camera.viewportWidth;
+        float viewH = context.camera.viewportHeight;
 
         // Only render the grid on tiles visible to the camera
         int startX = (int) (camCenter.x - viewW / 2);

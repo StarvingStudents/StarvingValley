@@ -44,7 +44,8 @@ public class MapUtils {
     // TODO: While we're waiting on firebase to fetch entities we should show a
     // loading screen so we
     // don't first load the map, then add the player which causes the camera to jump
-    public static void loadSyncedEntities(IFirebaseRepository firebaseRepository, Engine engine, Entity camera) {
+    public static void loadSyncedEntities(IFirebaseRepository firebaseRepository, Engine engine, Entity camera,
+            Runnable onLoaded) {
         firebaseRepository.getAllEntities(
                 new EntityDataCallback() {
                     @Override
@@ -69,6 +70,8 @@ public class MapUtils {
                             skipSpriteSyncOnLoad(player);
                             engine.addEntity(player);
                         }
+
+                        onLoaded.run();
                     }
 
                     @Override
