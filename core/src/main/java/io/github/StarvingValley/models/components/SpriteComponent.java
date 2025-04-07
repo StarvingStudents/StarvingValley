@@ -25,6 +25,6 @@ public class SpriteComponent implements Component {
     }
 
     public String getTexturePath() {
-        return _texturePath;
+        return _texturePath == null ? "" : _texturePath;
     }
 }

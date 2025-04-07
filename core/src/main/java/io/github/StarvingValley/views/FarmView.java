@@ -2,6 +2,8 @@ package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -10,10 +12,14 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-
+import com.badlogic.gdx.math.GridPoint2;
 import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
+import io.github.StarvingValley.input.TapInputAdapter;
+import io.github.StarvingValley.models.Interfaces.AuthCallback;
+import io.github.StarvingValley.models.Interfaces.IBuildableEntityFactory;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
@@ -46,12 +52,22 @@ public class FarmView extends ScreenAdapter {
     // pre-load some assets that we know we always need.
     // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
-    assetManager.load("DogBasic.png", Texture.class);
+    //assetManager.load("DogBasic.png", Texture.class);
     assetManager.load("tomato1.png", Texture.class);
     assetManager.load("potato1.png", Texture.class);
     assetManager.load("dirt.png", Texture.class);
 
-    // TODO: Temp logic. When inventory is implemented it should handle this, and it
+    assetManager.load("idle_down.png", Texture.class);
+    assetManager.load("idle_up.png", Texture.class);
+    assetManager.load("idle_left.png", Texture.class);
+    assetManager.load("idle_right.png", Texture.class);
+    assetManager.load("walking_down.png", Texture.class);
+    assetManager.load("walking_up.png", Texture.class);
+    assetManager.load("walking_left.png", Texture.class);
+    assetManager.load("walking_right.png", Texture.class);
+
+
+      // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
     // with BuildableComponent. Use BuildUtils.isBuildable
     inputAdapter =

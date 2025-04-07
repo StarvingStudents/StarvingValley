@@ -88,6 +88,7 @@ public class FarmController {
         engine.addSystem(new BuildPlacementSystem(gameContext));
         engine.addSystem(new AlphaPulseSystem());
         engine.addSystem(new VelocitySystem());
+        engine.addSystem(new AnimationSystem());
         engine.addSystem(new EnvironmentCollisionSystem());
         engine.addSystem(new MovementSystem(gameContext));
         engine.addSystem(new CameraSystem());

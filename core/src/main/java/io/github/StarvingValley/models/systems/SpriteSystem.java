@@ -28,6 +28,9 @@ public class SpriteSystem extends IteratingSystem {
             return;
 
         String texturePath = spriteComponent.getTexturePath();
+        if (texturePath == null || texturePath.isEmpty()) {
+            return;
+        }
 
         if (context.assetManager.isLoaded(texturePath)) {
             spriteComponent.sprite = new Sprite(context.assetManager.get(texturePath, Texture.class));

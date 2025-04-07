@@ -7,12 +7,15 @@ import java.util.Map;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 
+import io.github.StarvingValley.models.components.AnimationComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
@@ -58,14 +61,33 @@ public class MapUtils {
                             skipSpriteSyncOnLoad(entity);
                             context.engine.addEntity(entity);
 
+                            /*if (syncEntity.isPlayer) {
+                                anyIsPlayer = true;
+                            }*/
+
+                            Entity entity = EntitySerializer.deserialize(syncEntity, camera);
+
+                            // Replace static sprite with animation for players
                             if (syncEntity.isPlayer) {
                                 anyIsPlayer = true;
                                 context.player = entity;
+
+                                entity.remove(SpriteComponent.class);
+
+                                AnimationComponent anim = AnimationFactory.createPlayerAnimations(assetManager);
+                                entity.add(anim);
+
+                                SpriteComponent sprite = new SpriteComponent("");
+                                sprite.sprite.setRegion(anim.animations.get(anim.currentAnimation).getKeyFrame(0));
+                                entity.add(sprite);
                             }
+
+                            skipSpriteSyncOnLoad(entity);
+                            engine.addEntity(entity);
                         }
 
                         if (!anyIsPlayer) {
-                            Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png", camera);
+                            Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, assetManager, camera);
                             player.add(new UnsyncedComponent());
                             skipSpriteSyncOnLoad(player);
                             context.engine.addEntity(player);

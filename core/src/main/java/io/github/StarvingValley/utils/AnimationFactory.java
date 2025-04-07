@@ -1,0 +1,30 @@
+package io.github.StarvingValley.utils;
+
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+
+import io.github.StarvingValley.models.components.AnimationComponent;
+
+public class AnimationFactory {
+
+    public static AnimationComponent createPlayerAnimations(AssetManager manager) {
+        AnimationComponent anim = new AnimationComponent();
+
+        // Frame data: 2 frames, 16x32 per sprite
+        int cols = 2, rows = 1;
+        float speed = 0.2f;
+
+        anim.animations.put("idle_down", AnimationUtils.loadFromSheet(manager, "idle_down.png", cols, rows, speed, PlayMode.LOOP));
+        anim.animations.put("idle_up", AnimationUtils.loadFromSheet(manager, "idle_up.png", cols, rows, speed, PlayMode.LOOP));
+        anim.animations.put("idle_left", AnimationUtils.loadFromSheet(manager, "idle_left.png", cols, rows, speed, PlayMode.LOOP));
+        anim.animations.put("idle_right", AnimationUtils.loadFromSheet(manager, "idle_right.png", cols, rows, speed, PlayMode.LOOP));
+
+        anim.animations.put("walking_down", AnimationUtils.loadFromSheet(manager, "walking_down.png", cols, rows, speed, PlayMode.LOOP));
+        anim.animations.put("walking_up", AnimationUtils.loadFromSheet(manager, "walking_up.png", cols, rows, speed, PlayMode.LOOP));
+        anim.animations.put("walking_left", AnimationUtils.loadFromSheet(manager, "walking_left.png", cols, rows, speed, PlayMode.LOOP));
+        anim.animations.put("walking_right", AnimationUtils.loadFromSheet(manager, "walking_right.png", cols, rows, speed, PlayMode.LOOP));
+
+        anim.currentAnimation = "idle_down";
+        return anim;
+    }
+}
