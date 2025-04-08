@@ -60,6 +60,11 @@ public class FarmView extends ScreenAdapter {
     assetManager.load("walking_up.png", Texture.class);
     assetManager.load("walking_left.png", Texture.class);
     assetManager.load("walking_right.png", Texture.class);
+    assetManager.load("action_soil_down.png", Texture.class);
+    assetManager.load("action_soil_up.png", Texture.class);
+    assetManager.load("action_soil_left.png", Texture.class);
+    assetManager.load("action_soil_right.png", Texture.class);
+    assetManager.finishLoading();
 
 
       // TODO: Temp logic. When inventory is implemented it should handle this, and it

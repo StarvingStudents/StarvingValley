@@ -22,9 +22,32 @@ public class AnimationSystem extends IteratingSystem {
         InputComponent input = Mappers.input.get(entity);
         VelocityComponent velocity = Mappers.velocity.get(entity);
 
+        Animation<TextureRegion> currentAnim = anim.animations.get(anim.currentAnimation);
+        if (currentAnim == null) return;
+
+        boolean isAction = anim.currentAnimation.startsWith("action_");
+        boolean isNormal = currentAnim.getPlayMode() == Animation.PlayMode.NORMAL;
+
         anim.stateTime += deltaTime;
 
-        // Determine direction from input
+        // wait for action to finish
+        if (isAction && isNormal) {
+            TextureRegion frame = currentAnim.getKeyFrame(anim.stateTime, false);
+            sprite.sprite.setRegion(frame);
+            sprite.sprite.setSize(frame.getRegionWidth(), frame.getRegionHeight());
+
+            // reset to idle after action
+            if (currentAnim.isAnimationFinished(anim.stateTime)) {
+                String[] parts = anim.currentAnimation.split("_");
+                String direction = parts.length >= 3 ? parts[2] : "down";
+                anim.currentAnimation = "idle_" + direction;
+                anim.stateTime = 0f;
+            }
+
+            return;
+        }
+
+        // walking/idle animation
         Vector2 dir = input.movingDirection;
         String nextState = anim.currentAnimation;
 
@@ -34,27 +57,21 @@ public class AnimationSystem extends IteratingSystem {
             } else {
                 nextState = dir.y > 0 ? "walking_up" : "walking_down";
             }
-        }else{ // Preserve direction from last animation
-            if (anim.currentAnimation.startsWith("walking_")) {
-                String lastDir = anim.currentAnimation.substring("walking_".length());
-                nextState = "idle_" + lastDir;
-            } else if (anim.currentAnimation.startsWith("idle_")) {
-                nextState = anim.currentAnimation; // stay idle in last known direction
-            } else {
-                nextState = "idle_down"; // fallback default
-            }
+        } else if (anim.currentAnimation.startsWith("walking_")) {
+            String lastDir = anim.currentAnimation.substring("walking_".length());
+            nextState = "idle_" + lastDir;
         }
-
 
         if (!anim.currentAnimation.equals(nextState)) {
             anim.currentAnimation = nextState;
             anim.stateTime = 0f;
+            currentAnim = anim.animations.get(anim.currentAnimation);
         }
 
-        Animation<TextureRegion> animation = anim.animations.get(anim.currentAnimation);
-        if (animation != null) {
-            TextureRegion frame = animation.getKeyFrame(anim.stateTime, anim.loop);
+        if (currentAnim != null) {
+            TextureRegion frame = currentAnim.getKeyFrame(anim.stateTime, currentAnim.getPlayMode() != Animation.PlayMode.NORMAL);
             sprite.sprite.setRegion(frame);
+            sprite.sprite.setSize(frame.getRegionWidth(), frame.getRegionHeight());
         }
     }
 }

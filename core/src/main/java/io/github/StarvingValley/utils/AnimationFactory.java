@@ -24,6 +24,11 @@ public class AnimationFactory {
         anim.animations.put("walking_left", AnimationUtils.loadFromSheet(manager, "walking_left.png", cols, rows, speed, PlayMode.LOOP));
         anim.animations.put("walking_right", AnimationUtils.loadFromSheet(manager, "walking_right.png", cols, rows, speed, PlayMode.LOOP));
 
+        anim.animations.put("action_soil_down", AnimationUtils.loadFromSheet(manager, "action_soil_down.png", cols, rows, speed, PlayMode.NORMAL));
+        anim.animations.put("action_soil_up", AnimationUtils.loadFromSheet(manager, "action_soil_up.png", cols, rows, speed, PlayMode.NORMAL));
+        anim.animations.put("action_soil_left", AnimationUtils.loadFromSheet(manager, "action_soil_left.png", cols, rows, speed, PlayMode.NORMAL));
+        anim.animations.put("action_soil_right", AnimationUtils.loadFromSheet(manager, "action_soil_right.png", cols, rows, speed, PlayMode.NORMAL));
+
         anim.currentAnimation = "idle_down";
         return anim;
     }

@@ -13,7 +13,9 @@ import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
+import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.AnimationSystem;
 import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
@@ -106,6 +108,10 @@ public class FarmController {
         engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
+        engine.addSystem(new ActionAnimationSystem(gameContext));
+
+        //player = PlayerFactory.createPlayer(10, 10, 1f, 1f, 3.5f, assetManager, camera);
+        //engine.addEntity(player);
 
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
