@@ -38,7 +38,7 @@ public class PlayerFactory {
       entity.add(new SizeComponent(width, height));
       entity.add(new CollidableComponent());
       entity.add(new HungerComponent());
-      entity.add(new TileOverlapComponent());
+      entity.add(new TileOccupierComponent());
       entity.add(new TileOccupierComponent());
       entity.add(new InputComponent());
       entity.add(new WorldLayerComponent(WorldLayer.CHARACTER));

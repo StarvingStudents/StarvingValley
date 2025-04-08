@@ -61,12 +61,6 @@ public class MapUtils {
                             skipSpriteSyncOnLoad(entity);
                             context.engine.addEntity(entity);
 
-                            /*if (syncEntity.isPlayer) {
-                                anyIsPlayer = true;
-                            }*/
-
-                            Entity entity = EntitySerializer.deserialize(syncEntity, camera);
-
                             // Replace static sprite with animation for players
                             if (syncEntity.isPlayer) {
                                 anyIsPlayer = true;
@@ -74,7 +68,7 @@ public class MapUtils {
 
                                 entity.remove(SpriteComponent.class);
 
-                                AnimationComponent anim = AnimationFactory.createPlayerAnimations(assetManager);
+                                AnimationComponent anim = AnimationFactory.createPlayerAnimations(context.assetManager);
                                 entity.add(anim);
 
                                 SpriteComponent sprite = new SpriteComponent("");
@@ -83,11 +77,11 @@ public class MapUtils {
                             }
 
                             skipSpriteSyncOnLoad(entity);
-                            engine.addEntity(entity);
+                            context.engine.addEntity(entity);
                         }
 
                         if (!anyIsPlayer) {
-                            Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, assetManager, camera);
+                            Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
                             player.add(new UnsyncedComponent());
                             skipSpriteSyncOnLoad(player);
                             context.engine.addEntity(player);

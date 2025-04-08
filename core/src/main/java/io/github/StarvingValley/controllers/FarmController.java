@@ -15,6 +15,7 @@ import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
+import io.github.StarvingValley.models.systems.AnimationSystem;
 import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
 import io.github.StarvingValley.models.systems.BuildPlacementSystem;
 import io.github.StarvingValley.models.systems.BuildPreviewSystem;
