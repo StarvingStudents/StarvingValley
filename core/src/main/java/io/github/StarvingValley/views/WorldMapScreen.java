@@ -62,6 +62,7 @@ import io.github.StarvingValley.models.entities.WorldMapFarmFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.awt.Point;
 
 
@@ -87,6 +88,18 @@ public class WorldMapScreen extends ScreenAdapter {
     // TODO: Here we can pre-load some assets that we know we always need.
     // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
+    // Load BlueHouse asset
+    assetManager.load("BlueHouse.png", Texture.class);
+    assetManager.load("GreenHouse.png", Texture.class);
+    assetManager.load("OrangeHouse.png", Texture.class);
+    assetManager.load("PinkHouse.png", Texture.class);
+    assetManager.load("PurpleHouse1.png", Texture.class);
+    assetManager.load("House.png", Texture.class);
+    // Texture blueHouseTexture = assetManager.get("DogBasic.png", Texture.class);
+
+    // assetManager.load("BlueHouse.png", Texture.class);
+
+
     // assetManager.load("DogBasic.png", Texture.class);
     // assetManager.load("tomato1.png", Texture.class);
     // assetManager.load("potato1.png", Texture.class);
@@ -174,6 +187,8 @@ public class WorldMapScreen extends ScreenAdapter {
   @Override
   public void show() {
     batch = new SpriteBatch();
+    // Ensure all assets are loaded before proceeding
+    assetManager.finishLoading();
 
     int tilesWide = Config.CAMERA_TILES_WIDE;
     float tilesHigh = MapUtils.calculateVerticalTileCount(tilesWide);
@@ -299,21 +314,48 @@ public class WorldMapScreen extends ScreenAdapter {
 
     // Render each farm's image at its corresponding grid square
     batch.begin();
+    // Texture blueHouseTexture = assetManager.get("DogBasic.png", Texture.class);
+// /*
+    float gridSquareSide = (viewH * 0.9f) / Config.WORLD_MAP_GRID_HEIGHT;
+    float drawSize = gridSquareSide * 0.9f;
     for (Map.Entry<Vector2, Entity> entry : farmSelection.gridToFarm.entrySet()) {
       Vector2 gridPos = entry.getKey(); // gridPos.x is col, gridPos.y is row
       Vector2 center = gridCenters[(int) gridPos.y][(int) gridPos.x];
-      // Retrieve SpriteComponent (assumed field 'textureKey')
       SpriteComponent sprite = Mappers.sprite.get(entry.getValue());
+      Texture blueHouseTexture = assetManager.get("BlueHouse.png", Texture.class);
       if (sprite != null) {
-        Texture texture = assetManager.get(sprite.getTexturePath(), Texture.class); // replaced sprite.textureKey with sprite.texture
-        // Draw texture centered at the grid square (adjust offset if needed)
-        batch.draw(texture, center.x - texture.getWidth() / 2f, center.y - texture.getHeight() / 2f);
+        // Texture texture = assetManager.get("BlueHouse.png", Texture.class);
+        // batch.draw(texture, center.x - texture.getWidth() / 2f, center.y - texture.getHeight() / 2f);
+        // batch.draw(texture, center.x - drawSize/2f, center.y - drawSize/2f, drawSize, drawSize);
+        // batch.draw(blueHouseTexture, center.x - blueHouseTexture.getWidth() / 2f, center.y - blueHouseTexture.getHeight() / 2f);
+        throw new RuntimeException("asfasdfasdf");
+        // batch.draw(blueHouseTexture, center.x - drawSize/2f, center.y - drawSize/2f, drawSize, drawSize);
+
       }
     }
+    // */
+    // New implementation: draw DogBasic.png at every grid cell for testing.
+    // Texture blueHouseTexture = assetManager.get("PinkHouse.png", Texture.class);
+    // Compute grid square side and derive new size (90% of grid square)
+    // float gridSquareSide = (viewH * 0.9f) / Config.WORLD_MAP_GRID_HEIGHT;
+    // float drawSize = gridSquareSide * 0.9f;
+
+
+    // String[] houses = { "BlueHouse.png", "GreenHouse.png", "House.png", "OrangeHouse.png", "PinkHouse.png", "PurpleHouse1.png" };
+    // Random random = new Random();
+
+    // for (int row = 0; row < gridCenters.length; row++) {
+    //   for (int col = 0; col < gridCenters[row].length; col++) {
+    //     Vector2 center = gridCenters[row][col];
+    //     String selectedHouse = houses[random.nextInt(houses.length)];
+    //     Texture selectedHouseTexture = assetManager.get(selectedHouse, Texture.class);
+    //     batch.draw(selectedHouseTexture, center.x - drawSize/2f, center.y - drawSize/2f, drawSize, drawSize);
+    //     // batch.draw(blueHouseTexture, center.x - drawSize/2f, center.y - drawSize/2f, drawSize, drawSize);
+    //   }
+    // }
     batch.end();
 
     engine.update(delta);
-
     joystickOverlay.render();
   }
 

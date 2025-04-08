@@ -29,7 +29,7 @@ public class FirebaseRepository implements IFirebaseRepository {
 
   public FirebaseRepository() {
     _database = FirebaseDatabase.getInstance(Config.FIREBASE_DATABASE_URL);
-    _users = _database.getReference("users");
+    _users = _database.getReference("userEntities");
     _auth = FirebaseAuth.getInstance();
   }
 
@@ -249,23 +249,50 @@ public class FirebaseRepository implements IFirebaseRepository {
     return true;
   }
 
+  // @Override
+  // public List<String> getAllUserIds() {
+  //   List<String> userIds = new ArrayList<>();
+  //   _users.addListenerForSingleValueEvent(
+  //       new ValueEventListener() {
+  //         @Override
+  //         public void onDataChange(DataSnapshot snapshot) {
+  //           for (DataSnapshot child : snapshot.getChildren()) {
+  //             userIds.add(child.getKey());
+  //           }
+  //         }
+
+  //         @Override
+  //         public void onCancelled(DatabaseError error) {
+  //           System.err.println("Failed to get user IDs: " + error.getMessage());
+  //         }
+  //       });
+  //   return userIds;
+  // }
+
   @Override
-  public List<String> getAllUserIds() {
-    List<String> userIds = new ArrayList<>();
-    _users.addListenerForSingleValueEvent(
+  public boolean getAllUserIds(EntityDataCallback callback) {
+    if (!initUserEntityReference())
+      return false;
+
+    _entities.addListenerForSingleValueEvent(
         new ValueEventListener() {
           @Override
           public void onDataChange(DataSnapshot snapshot) {
+            Map<String, SyncEntity> result = new HashMap<>();
             for (DataSnapshot child : snapshot.getChildren()) {
-              userIds.add(child.getKey());
+              SyncEntity entity = child.getValue(SyncEntity.class);
+              result.put(child.getKey(), entity);
             }
+            callback.onSuccess(result);
           }
 
           @Override
           public void onCancelled(DatabaseError error) {
-            System.err.println("Failed to get user IDs: " + error.getMessage());
+            callback.onFailure(error.getMessage());
           }
         });
-    return userIds;
+
+    return true;
   }
 }
+

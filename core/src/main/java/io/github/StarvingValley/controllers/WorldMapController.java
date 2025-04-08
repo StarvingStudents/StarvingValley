@@ -5,8 +5,13 @@ import java.util.List;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.components.UnsyncedComponent;
+import io.github.StarvingValley.models.dto.SyncEntity;
+import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.entities.WorldMapFarmFactory;
+import io.github.StarvingValley.utils.EntitySerializer;
 
 import java.util.ArrayList;
 import java.util.Collections; // added import
@@ -17,6 +22,7 @@ import java.util.Map;
 public class WorldMapController {
 
     private IFirebaseRepository firebaseRepository;
+    private List<String> allUserIds = new ArrayList<>(); // List to store all user IDs  
 
 
     public WorldMapController(IFirebaseRepository firebaseRepository) {
@@ -25,7 +31,42 @@ public class WorldMapController {
     
     
     public List<String> randomUserIds(int numberOfUsers) {
-        List<String> allUserIds = firebaseRepository.getAllUserIds();
+        // List<String> allUserIds = firebaseRepository.getAllUserIds();
+        firebaseRepository.getAllUserIds(
+        new EntityDataCallback() {
+            @Override
+            public void onSuccess(Map<String, SyncEntity> data) {
+
+                // boolean anyIsPlayer = false;
+                for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
+                    SyncEntity syncEntity = entry.getValue();
+
+                    if (syncEntity.isPlayer) {
+                        // Add each player to the list of all users?
+                        allUserIds.add(entry.getKey()); // Add the userId to the list of all user IDs
+
+
+                        // anyIsPlayer = true;
+                    }
+
+                    // Entity entity = EntitySerializer.deserialize(syncEntity, camera);
+                    // skipSpriteSyncOnLoad(entity);
+                    // engine.addEntity(entity);
+                }
+
+                // if (!anyIsPlayer) {
+                //     Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png", camera);
+                //     player.add(new UnsyncedComponent());
+                //     skipSpriteSyncOnLoad(player);
+                //     engine.addEntity(player);
+                // }
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                System.err.println("Failed to load entities: " + errorMessage);
+            }
+        });
         
         Collections.shuffle(allUserIds); // shuffle the list
         List<String> userIds = new ArrayList<>();
