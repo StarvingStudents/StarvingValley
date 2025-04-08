@@ -1,27 +1,28 @@
 package io.github.StarvingValley.models.systems;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.PositionComponent;
-import io.github.StarvingValley.models.components.SizeComponent;
-import io.github.StarvingValley.models.components.SpriteComponent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class RenderSystem extends EntitySystem {
-  private final SpriteBatch batch;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 
+import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.components.SizeComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.types.GameContext;
+
+public class RenderSystem extends EntitySystem {
   private final Comparator<Entity> renderOrderComparator =
       // TODO: take both y and z into consideration
       Comparator.comparing(e -> Mappers.position.get(e).position.z);
+  private GameContext context;
 
-  public RenderSystem(SpriteBatch batch) {
-    this.batch = batch;
+  public RenderSystem(GameContext context) {
+    this.context = context;
   }
 
   @Override
@@ -39,7 +40,7 @@ public class RenderSystem extends EntitySystem {
 
     sorted.sort(renderOrderComparator);
 
-    batch.begin();
+    context.spriteBatch.begin();
 
     for (Entity entity : sorted) {
       if (Mappers.hidden.has(entity)) continue;
@@ -54,9 +55,9 @@ public class RenderSystem extends EntitySystem {
 
       sprite.sprite.setPosition(pos.position.x, pos.position.y);
       sprite.sprite.setSize(size.width, size.height);
-      sprite.sprite.draw(batch);
+      sprite.sprite.draw(context.spriteBatch);
     }
 
-    batch.end();
+    context.spriteBatch.end();
   }
 }

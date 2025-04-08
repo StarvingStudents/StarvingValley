@@ -2,17 +2,17 @@ package io.github.StarvingValley.models.systems;
 
 import com.badlogic.ashley.core.EntitySystem;
 
-import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 
 public class EventCleanupSystem extends EntitySystem {
-    private final EventBus eventBus;
+    private GameContext context;
 
-    public EventCleanupSystem(EventBus eventBus) {
-        this.eventBus = eventBus;
+    public EventCleanupSystem(GameContext context) {
+        this.context = context;
     }
 
     @Override
     public void update(float delta) {
-        eventBus.advanceFrame();
+        context.eventBus.advanceFrame();
     }
 }

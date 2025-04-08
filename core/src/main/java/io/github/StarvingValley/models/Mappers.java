@@ -14,6 +14,7 @@ import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
+import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
@@ -32,6 +33,7 @@ import io.github.StarvingValley.models.components.SyncDeletionRequestComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.models.components.TradingComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
@@ -91,4 +93,6 @@ public class Mappers {
     public static final ComponentMapper<SyncDeletionRequestComponent> syncDeletionRequest = ComponentMapper
                     .getFor(SyncDeletionRequestComponent.class);
     public static final ComponentMapper<DropComponent> drop = ComponentMapper.getFor(DropComponent.class);
+    public static final ComponentMapper<TradingComponent> trading = ComponentMapper.getFor(TradingComponent.class);
+    public static final ComponentMapper<EconomyComponent> economy = ComponentMapper.getFor(EconomyComponent.class);
 }

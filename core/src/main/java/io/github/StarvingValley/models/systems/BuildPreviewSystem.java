@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.GridPoint2;
 
 import io.github.StarvingValley.models.Mappers;
@@ -16,15 +15,15 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.PlacementRules;
 import io.github.StarvingValley.utils.TileUtils;
 
 public class BuildPreviewSystem extends IteratingSystem {
+  private GameContext context;
 
-  private final Camera camera;
-
-  public BuildPreviewSystem(Camera camera) {
+  public BuildPreviewSystem(GameContext context) {
     super(
         Family.all(
             BuildPreviewComponent.class,
@@ -32,8 +31,7 @@ public class BuildPreviewSystem extends IteratingSystem {
             SpriteComponent.class,
             WorldLayerComponent.class)
             .get());
-
-    this.camera = camera;
+    this.context = context;
   }
 
   @Override
@@ -41,7 +39,7 @@ public class BuildPreviewSystem extends IteratingSystem {
     Engine engine = getEngine();
     WorldLayer worldLayer = Mappers.worldLayer.get(entity).layer;
 
-    GridPoint2 hoveredTile = TileUtils.getHoveredTile(camera);
+    GridPoint2 hoveredTile = TileUtils.getHoveredTile(context.camera);
 
     ImmutableArray<Entity> blockingEntities = engine.getEntitiesFor(
         Family.all(

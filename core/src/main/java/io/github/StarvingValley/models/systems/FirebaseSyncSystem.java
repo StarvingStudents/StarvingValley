@@ -14,20 +14,19 @@ import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Interfaces.PushCallback;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.SyncDeletionRequestComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.EntitySerializer;
 
 public class FirebaseSyncSystem extends IntervalSystem {
-    private final IFirebaseRepository firebaseRepository;
+    private GameContext context;
 
-    public FirebaseSyncSystem(IFirebaseRepository firebaseRepository) {
+    public FirebaseSyncSystem(GameContext context) {
         super(Config.FIREBASE_SYNC_INTERVAL);
-
-        this.firebaseRepository = firebaseRepository;
+        this.context = context;
     }
 
     @Override
@@ -59,7 +58,7 @@ public class FirebaseSyncSystem extends IntervalSystem {
         }
 
         if (!batchData.isEmpty()) {
-            firebaseRepository.pushEntities(batchData, new PushCallback() {
+            context.firebaseRepository.pushEntities(batchData, new PushCallback() {
                 @Override
                 public void onSuccess() {
                     for (Entity entity : unsyncedEntities) {
@@ -79,7 +78,7 @@ public class FirebaseSyncSystem extends IntervalSystem {
         }
 
         if (!batchDeletionIds.isEmpty()) {
-            firebaseRepository.pushEntityDeletions(new ArrayList<>(batchDeletionIds), new PushCallback() {
+            context.firebaseRepository.pushEntityDeletions(new ArrayList<>(batchDeletionIds), new PushCallback() {
                 @Override
                 public void onSuccess() {
                     for (Entity entity : entitiesMarkedForRemoval) {

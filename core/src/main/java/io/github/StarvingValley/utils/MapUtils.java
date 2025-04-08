@@ -16,12 +16,12 @@ import com.badlogic.gdx.math.Rectangle;
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class MapUtils {
@@ -44,8 +44,8 @@ public class MapUtils {
     // TODO: While we're waiting on firebase to fetch entities we should show a
     // loading screen so we
     // don't first load the map, then add the player which causes the camera to jump
-    public static void loadSyncedEntities(IFirebaseRepository firebaseRepository, Engine engine, Entity camera) {
-        firebaseRepository.getAllEntities(
+    public static void loadSyncedEntities(GameContext context, Entity camera) {
+        context.firebaseRepository.getAllEntities(
                 new EntityDataCallback() {
                     @Override
                     public void onSuccess(Map<String, SyncEntity> data) {
@@ -54,20 +54,21 @@ public class MapUtils {
                         for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
                             SyncEntity syncEntity = entry.getValue();
 
-                            if (syncEntity.isPlayer) {
-                                anyIsPlayer = true;
-                            }
-
                             Entity entity = EntitySerializer.deserialize(syncEntity, camera);
                             skipSpriteSyncOnLoad(entity);
-                            engine.addEntity(entity);
+                            context.engine.addEntity(entity);
+
+                            if (syncEntity.isPlayer) {
+                                anyIsPlayer = true;
+                                context.player = entity;
+                            }
                         }
 
                         if (!anyIsPlayer) {
                             Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, "DogBasic.png", camera);
                             player.add(new UnsyncedComponent());
                             skipSpriteSyncOnLoad(player);
-                            engine.addEntity(player);
+                            context.engine.addEntity(player);
                         }
                     }
 

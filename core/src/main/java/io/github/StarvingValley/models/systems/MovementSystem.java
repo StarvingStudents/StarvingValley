@@ -9,15 +9,15 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
-import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.DiffUtils;
 
 public class MovementSystem extends IteratingSystem {
-  private EventBus eventBus;
+  private GameContext context;
 
-  public MovementSystem(EventBus eventBus) {
+  public MovementSystem(GameContext context) {
     super(Family.all(PositionComponent.class, VelocityComponent.class).get());
-    this.eventBus = eventBus;
+    this.context = context;
   }
 
   @Override
@@ -30,6 +30,6 @@ public class MovementSystem extends IteratingSystem {
     position.position.y += velocity.velocity.y;
 
     if (DiffUtils.hasChanged(position.position, oldPosition))
-      eventBus.publish(new EntityUpdatedEvent(entity));
+      context.eventBus.publish(new EntityUpdatedEvent(entity));
   }
 }

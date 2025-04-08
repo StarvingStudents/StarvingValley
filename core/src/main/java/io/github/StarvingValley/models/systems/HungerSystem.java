@@ -7,16 +7,16 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
-import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.RespawnEvent;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.DiffUtils;
 
 public class HungerSystem extends IteratingSystem {
-  private EventBus eventBus;
+  private GameContext context;
 
-  public HungerSystem(EventBus eventBus) {
+  public HungerSystem(GameContext context) {
     super(Family.all(HungerComponent.class, ActiveWorldEntityComponent.class).get());
-    this.eventBus = eventBus;
+    this.context = context;
   }
 
   @Override
@@ -27,11 +27,11 @@ public class HungerSystem extends IteratingSystem {
 
     hunger.hungerPoints -= hunger.decayRate * deltaTime;
     if (hunger.hungerPoints <= 0) {
-      eventBus.publish(new RespawnEvent(entity));
+      context.eventBus.publish(new RespawnEvent(entity));
     }
 
     // Don't need to sync on every decimal change
     if (DiffUtils.hasChanged((int) hunger.hungerPoints, (int) oldHunger))
-      eventBus.publish(new EntityUpdatedEvent(entity));
+      context.eventBus.publish(new EntityUpdatedEvent(entity));
   }
 }

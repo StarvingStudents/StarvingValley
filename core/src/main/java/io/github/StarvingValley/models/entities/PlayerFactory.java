@@ -3,9 +3,11 @@ package io.github.StarvingValley.models.entities;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
+import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
@@ -38,6 +40,7 @@ public class PlayerFactory {
     entity.add(new SyncComponent());
     entity.add(new PlayerComponent());
     entity.add(new ActiveWorldEntityComponent());
+    entity.add(new EconomyComponent(Config.STARTING_BALANCE));
 
     CameraFollowComponent cameraFollowComponent = new CameraFollowComponent(camera);
     cameraFollowComponent.targetCamera = camera;

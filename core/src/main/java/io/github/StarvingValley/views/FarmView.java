@@ -1,6 +1,7 @@
 package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -14,14 +15,13 @@ import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
-import io.github.StarvingValley.utils.MapUtils;
 
 public class FarmView extends ScreenAdapter {
   public AssetManager assetManager;
@@ -102,19 +102,9 @@ public class FarmView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    _firebaseRepository.registerOrSignInWithDeviceId(
-        new AuthCallback() {
-          @Override
-          public void onSuccess() {
-              MapUtils.loadSyncedEntities(_firebaseRepository, controller.getEngine(), controller.getCamera());
-          }
-
-          @Override
-          public void onFailure(String errorMessage) {
-            // TODO: Fail gracefully
-            throw new RuntimeException("Authentication failed: " + errorMessage);
-          }
-        });
+    // Temp until we have villageview
+    Entity trader = TraderFactory.create(30, 13);
+    engine.addEntity(trader);
   }
 
   @Override
