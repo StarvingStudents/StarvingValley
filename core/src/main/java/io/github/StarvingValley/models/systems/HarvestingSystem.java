@@ -9,6 +9,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
+import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
@@ -16,6 +17,8 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.ItemDroppedEvent;
+import io.github.StarvingValley.models.types.ItemDrop;
 
 public class HarvestingSystem extends EntitySystem {
   private EventBus eventBus;
@@ -65,8 +68,17 @@ public class HarvestingSystem extends EntitySystem {
     Engine engine = getEngine();
 
     eventBus.publish(new EntityRemovedEvent(crop));
-    // TODO: When we add inventory this should also publish a CropHarvestedEvent
-    // that inventory or similar listens to
+
+    // TODO: Should this be handled by pickupsystem? This could just check if crop
+    // can be harvested and publish an event and pickup removes the entity and gives
+    // player the drops
+    DropComponent drops = Mappers.drop.get(crop);
+    if (drops != null) {
+      for (ItemDrop drop : drops.drops) {
+        eventBus.publish(new ItemDroppedEvent(drop));
+        System.out.println("Dropped " + drop.count + " " + drop.type);
+      }
+    }
 
     engine.removeEntity(crop);
 

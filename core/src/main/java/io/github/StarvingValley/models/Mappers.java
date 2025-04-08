@@ -11,6 +11,7 @@ import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
+import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
@@ -89,5 +90,5 @@ public class Mappers {
     public static final ComponentMapper<CropTypeComponent> cropType = ComponentMapper.getFor(CropTypeComponent.class);
     public static final ComponentMapper<SyncDeletionRequestComponent> syncDeletionRequest = ComponentMapper
                     .getFor(SyncDeletionRequestComponent.class);
-
+    public static final ComponentMapper<DropComponent> drop = ComponentMapper.getFor(DropComponent.class);
 }
