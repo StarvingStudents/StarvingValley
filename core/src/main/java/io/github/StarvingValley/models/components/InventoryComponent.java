@@ -1,30 +1,41 @@
 package io.github.StarvingValley.models.components;
 
 import com.badlogic.ashley.core.Component;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InventoryComponent implements Component {
-    private List<String> items; // Using String for simplicity initially, will represent item IDs or names
+    // Map to store item IDs and their quantities
+    private Map<String, Integer> items;
 
     public InventoryComponent() {
-        this.items = new ArrayList<>();
+        this.items = new HashMap<>();
     }
 
-    public List<String> getItems() {
+    // Getter to access the entire map
+    public Map<String, Integer> getItems() {
         return items;
     }
 
+    // Adds an item: if it already exists, increments its quantity, otherwise sets it to 1
     public void addItem(String item) {
-        items.add(item);
+        items.put(item, items.getOrDefault(item, 0) + 1);
     }
 
+    // Removes one unit of the specified item: if the quantity becomes 0, the item is removed from the map
     public void removeItem(String item) {
-        items.remove(item);
+        if (items.containsKey(item)) {
+            int count = items.get(item);
+            if (count > 1) {
+                items.put(item, count - 1);
+            } else {
+                items.remove(item);
+            }
+        }
     }
 
+    // Checks if the item exists in the inventory
     public boolean hasItem(String item) {
-        return items.contains(item);
+        return items.containsKey(item);
     }
 }

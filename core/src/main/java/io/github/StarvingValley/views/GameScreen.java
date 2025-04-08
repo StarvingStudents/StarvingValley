@@ -46,9 +46,9 @@ public class GameScreen extends ScreenAdapter {
 
   private JoystickOverlay joystickOverlay;
 
-    private boolean isInventoryVisible = false;
-    private InventoryOverlay inventoryOverlay;
-    private Viewport viewport; // Add a viewport
+  private boolean isInventoryVisible = false;
+  private InventoryOverlay inventoryOverlay;
+  private Viewport viewport; // Add a viewport
 
   public GameScreen(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
@@ -105,9 +105,11 @@ public class GameScreen extends ScreenAdapter {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     Gdx.gl.glClearColor(0, 0, 0, 1);
 
-      // Toggle inventory visibility
       if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
           isInventoryVisible = !isInventoryVisible;
+          if (isInventoryVisible) {
+              inventoryOverlay.update(player);
+          }
       }
 
     batch.begin();
@@ -121,9 +123,11 @@ public class GameScreen extends ScreenAdapter {
     batch.end();
 
     joystickOverlay.render();
+
       // Render inventory overlay if visible
       if (isInventoryVisible) {
-          inventoryOverlay.render(inventorySystem, player);
+          viewport.apply();
+          inventoryOverlay.render();
       }
   }
 
@@ -134,6 +138,7 @@ public class GameScreen extends ScreenAdapter {
 
   @Override
   public void dispose() {
-    batch.dispose();
+      batch.dispose();
+      inventoryOverlay.dispose();
   }
 }
