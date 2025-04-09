@@ -22,6 +22,8 @@ public class SpriteSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+        if (Mappers.animation.has(entity)) return;
+
         SpriteComponent spriteComponent = Mappers.sprite.get(entity);
 
         if (!spriteComponent.textureChanged)

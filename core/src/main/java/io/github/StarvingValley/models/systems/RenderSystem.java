@@ -44,7 +44,7 @@ public class RenderSystem extends EntitySystem {
     context.spriteBatch.begin();
 
     for (Entity entity : sorted) {
-      if (Mappers.hidden.has(entity)) continue;
+      if (Mappers.hidden.has(entity) || Mappers.animation.has(entity)) continue;
 
       PositionComponent pos = Mappers.position.get(entity);
       SpriteComponent sprite = Mappers.sprite.get(entity);

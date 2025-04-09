@@ -58,8 +58,6 @@ public class MapUtils {
                             SyncEntity syncEntity = entry.getValue();
 
                             Entity entity = EntitySerializer.deserialize(syncEntity, camera);
-                            skipSpriteSyncOnLoad(entity);
-                            context.engine.addEntity(entity);
 
                             // Replace static sprite with animation for players
                             if (syncEntity.isPlayer) {

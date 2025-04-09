@@ -34,7 +34,6 @@ public class PlayerFactory {
       entity.add(new PositionComponent(x, y, 100));
       entity.add(new SpeedComponent(speed));
       entity.add(new VelocityComponent(new Vector2()));
-      //entity.add(new SpriteComponent(spritePath));
       entity.add(new SizeComponent(width, height));
       entity.add(new CollidableComponent());
       entity.add(new HungerComponent());
@@ -55,9 +54,6 @@ public class PlayerFactory {
       AnimationComponent anim = AnimationFactory.createPlayerAnimations(assetManager);
       entity.add(anim);
 
-      SpriteComponent sprite = new SpriteComponent("");
-      sprite.sprite.setRegion(anim.animations.get(anim.currentAnimation).getKeyFrame(0));
-      entity.add(sprite);
 
       return entity;
     }
