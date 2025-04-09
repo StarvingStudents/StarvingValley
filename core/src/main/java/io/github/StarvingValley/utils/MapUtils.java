@@ -25,6 +25,7 @@ import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class MapUtils {
@@ -57,21 +58,16 @@ public class MapUtils {
                         for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
                             SyncEntity syncEntity = entry.getValue();
 
-                            Entity entity = EntitySerializer.deserialize(syncEntity, camera);
+                            Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
 
                             // Replace static sprite with animation for players
                             if (syncEntity.isPlayer) {
                                 anyIsPlayer = true;
                                 context.player = entity;
 
-                                entity.remove(SpriteComponent.class);
 
-                                AnimationComponent anim = AnimationFactory.createPlayerAnimations(context.assetManager);
+                                AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
                                 entity.add(anim);
-
-                                SpriteComponent sprite = new SpriteComponent("");
-                                sprite.sprite.setRegion(anim.animations.get(anim.currentAnimation).getKeyFrame(0));
-                                entity.add(sprite);
                             }
 
                             skipSpriteSyncOnLoad(entity);

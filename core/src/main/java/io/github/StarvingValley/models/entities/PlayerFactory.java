@@ -21,6 +21,7 @@ import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
+import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.AnimationFactory;
 
@@ -38,7 +39,6 @@ public class PlayerFactory {
       entity.add(new CollidableComponent());
       entity.add(new HungerComponent());
       entity.add(new TileOccupierComponent());
-      entity.add(new TileOccupierComponent());
       entity.add(new InputComponent());
       entity.add(new WorldLayerComponent(WorldLayer.CHARACTER));
       entity.add(new SyncComponent());
@@ -51,7 +51,7 @@ public class PlayerFactory {
 
       entity.add(cameraFollowComponent);
 
-      AnimationComponent anim = AnimationFactory.createPlayerAnimations(assetManager);
+      AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER, assetManager);
       entity.add(anim);
 
 

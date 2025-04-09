@@ -4,10 +4,19 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 
 import io.github.StarvingValley.models.components.AnimationComponent;
+import io.github.StarvingValley.models.types.PrefabType;
 
 public class AnimationFactory {
 
-    public static AnimationComponent createPlayerAnimations(AssetManager manager) {
+    public static AnimationComponent createAnimationsForType(PrefabType type, AssetManager assetManager) {
+        switch (type) {
+            case PLAYER:
+                return createPlayerAnimations(assetManager);
+            default:
+                return null;
+        }
+    }
+    private static AnimationComponent createPlayerAnimations(AssetManager manager) {
         AnimationComponent anim = new AnimationComponent();
 
         // Frame data: 2 frames, 16x32 per sprite
