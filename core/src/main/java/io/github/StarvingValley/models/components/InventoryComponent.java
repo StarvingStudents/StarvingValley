@@ -1,5 +1,7 @@
 package io.github.StarvingValley.models.components;
 
+import static io.github.StarvingValley.models.systems.InventorySystem.MAX_INVENTORY_CAPACITY;
+
 import com.badlogic.ashley.core.Component;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +9,8 @@ import java.util.Map;
 public class InventoryComponent implements Component {
     // Map to store item IDs and their quantities
     private Map<String, Integer> items;
+    private int capacity = 5; // Default capacity
+
 
     public InventoryComponent() {
         this.items = new HashMap<>();
@@ -38,4 +42,19 @@ public class InventoryComponent implements Component {
     public boolean hasItem(String item) {
         return items.containsKey(item);
     }
+
+    public boolean isFull() {
+        return items.size() >= MAX_INVENTORY_CAPACITY;
+    }
+
+    // Gets the quantity of a specific item, or 0 if the item doesn't exist
+    public int getItemQuantity(String item) {
+        return items.getOrDefault(item, 0);
+    }
+
+    // Clears all items from the inventory
+    public void clearInventory() {
+        items.clear();
+    }
+
 }

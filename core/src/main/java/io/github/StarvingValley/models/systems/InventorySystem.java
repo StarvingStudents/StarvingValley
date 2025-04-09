@@ -12,6 +12,7 @@ public class InventorySystem extends IteratingSystem {
 
     private ComponentMapper<InventoryComponent> inventoryMapper;
     private ComponentMapper<PositionComponent> positionMapper;
+    public static final int MAX_INVENTORY_CAPACITY = 5; // Maximum number of unique items
 
     public InventorySystem() {
         super(Family.all(InventoryComponent.class).get());
@@ -29,10 +30,18 @@ public class InventorySystem extends IteratingSystem {
     }
 
     public void addItem(Entity entity, String item) {
-        if (InventoryUtility.addItem(entity, item)) {
-            System.out.println("Added item '" + item + "' to inventory of entity: " + entity);
-        } else {
-            System.out.println("Failed to add item. Entity may lack InventoryComponent: " + entity);
+        InventoryComponent inventory = inventoryMapper.get(entity);
+
+        if (inventory != null) {
+            if (!inventory.isFull()) {
+                if (InventoryUtility.addItem(entity, item)) {
+                    System.out.println("Added item '" + item + "' to inventory of entity: " + entity);
+                }
+            } else {
+                System.out.println("Inventory is full. Cannot add item '" + item + "' to entity: " + entity);
+            }
+        } else{
+             System.out.println("Failed to add item. Entity may lack InventoryComponent: " + entity);
         }
     }
 
