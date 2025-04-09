@@ -2,6 +2,7 @@ package io.github.StarvingValley.models;
 
 import com.badlogic.ashley.core.ComponentMapper;
 
+import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
@@ -92,6 +93,9 @@ public class Mappers {
     public static final ComponentMapper<CropTypeComponent> cropType = ComponentMapper.getFor(CropTypeComponent.class);
     public static final ComponentMapper<SyncDeletionRequestComponent> syncDeletionRequest = ComponentMapper
                     .getFor(SyncDeletionRequestComponent.class);
+
+    public static final ComponentMapper<AnimationComponent> animation = ComponentMapper.getFor(AnimationComponent.class);
+
     public static final ComponentMapper<DropComponent> drop = ComponentMapper.getFor(DropComponent.class);
     public static final ComponentMapper<TradingComponent> trading = ComponentMapper.getFor(TradingComponent.class);
     public static final ComponentMapper<EconomyComponent> economy = ComponentMapper.getFor(EconomyComponent.class);

@@ -3,10 +3,12 @@ package io.github.StarvingValley.utils;
 import java.util.UUID;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
+import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
@@ -34,6 +36,7 @@ import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
+import io.github.StarvingValley.models.types.GameContext;
 
 public class EntitySerializer {
 
@@ -168,7 +171,7 @@ public class EntitySerializer {
     return dto;
   }
 
-  public static Entity deserialize(SyncEntity dto, Entity camera) {
+  public static Entity deserialize(SyncEntity dto, Entity camera, AssetManager assetManager) {
     Entity entity = new Entity();
 
     // Position
@@ -221,11 +224,17 @@ public class EntitySerializer {
       entity.add(eating);
     }
 
-    // Texture / Sprite
-    if (dto.texture != null) {
-      SpriteComponent sprite = new SpriteComponent(dto.texture);
-      entity.add(sprite);
-    }
+      // Animation OR Sprite
+      if (dto.builds != null) {
+          AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds,assetManager );
+          if (anim != null) {
+              entity.add(anim);
+          } else if (dto.texture != null) {
+              entity.add(new SpriteComponent(dto.texture));
+          }
+      } else if (dto.texture != null) {
+          entity.add(new SpriteComponent(dto.texture));
+      }
 
     // Layer
     if (dto.worldLayer != null) {

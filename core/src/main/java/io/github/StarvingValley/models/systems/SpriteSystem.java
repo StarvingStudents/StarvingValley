@@ -22,12 +22,17 @@ public class SpriteSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+        if (Mappers.animation.has(entity)) return;
+
         SpriteComponent spriteComponent = Mappers.sprite.get(entity);
 
         if (!spriteComponent.textureChanged)
             return;
 
         String texturePath = spriteComponent.getTexturePath();
+        if (texturePath == null || texturePath.isEmpty()) {
+            return;
+        }
 
         if (context.assetManager.isLoaded(texturePath)) {
             spriteComponent.sprite = new Sprite(context.assetManager.get(texturePath, Texture.class));
