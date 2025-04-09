@@ -30,24 +30,30 @@ public class AnimationSystem extends IteratingSystem {
 
         anim.stateTime += deltaTime;
 
-        // wait for action to finish
         if (isAction && isNormal) {
             TextureRegion frame = currentAnim.getKeyFrame(anim.stateTime, false);
             sprite.sprite.setRegion(frame);
-            sprite.sprite.setSize(frame.getRegionWidth(), frame.getRegionHeight());
 
-            // reset to idle after action
+            if (Mappers.size.has(entity)) {
+                SizeComponent size = Mappers.size.get(entity);
+                size.useRegionSize = true;
+            }
+
             if (currentAnim.isAnimationFinished(anim.stateTime)) {
                 String[] parts = anim.currentAnimation.split("_");
                 String direction = parts.length >= 3 ? parts[2] : "down";
                 anim.currentAnimation = "idle_" + direction;
                 anim.stateTime = 0f;
+
+                if (Mappers.size.has(entity)) {
+                    SizeComponent size = Mappers.size.get(entity);
+                    size.useRegionSize = false;
+                }
             }
 
             return;
         }
 
-        // walking/idle animation
         Vector2 dir = input.movingDirection;
         String nextState = anim.currentAnimation;
 
@@ -71,7 +77,11 @@ public class AnimationSystem extends IteratingSystem {
         if (currentAnim != null) {
             TextureRegion frame = currentAnim.getKeyFrame(anim.stateTime, currentAnim.getPlayMode() != Animation.PlayMode.NORMAL);
             sprite.sprite.setRegion(frame);
-            sprite.sprite.setSize(frame.getRegionWidth(), frame.getRegionHeight());
+
+            if (Mappers.size.has(entity)) {
+                SizeComponent size = Mappers.size.get(entity);
+                size.useRegionSize = false;
+            }
         }
     }
 }

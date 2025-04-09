@@ -11,5 +11,4 @@ public class AnimationComponent implements Component {
     public Map<String, Animation<TextureRegion>> animations = new HashMap<>();
     public String currentAnimation = "idle_down";
     public float stateTime = 0f;
-    public boolean loop = true;
 }

@@ -9,6 +9,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
+import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
@@ -52,9 +53,18 @@ public class RenderSystem extends EntitySystem {
       if (sprite.sprite.getTexture() == null) {
         continue;
       }
+        if (size.useRegionSize) {
+            float widthInTiles = sprite.sprite.getRegionWidth() / Config.PIXELS_PER_TILE;
+            float heightInTiles = sprite.sprite.getRegionHeight() / Config.PIXELS_PER_TILE;
+            sprite.sprite.setSize(widthInTiles, heightInTiles);
+        } else {
+            sprite.sprite.setSize(size.width, size.height);
+        }
 
-      sprite.sprite.setPosition(pos.position.x, pos.position.y);
-      sprite.sprite.setSize(size.width, size.height);
+        float renderX = pos.position.x - sprite.sprite.getWidth() / 2f + size.width / 2f;
+        float renderY = pos.position.y - sprite.sprite.getHeight() / 2f + size.height / 2f;
+        sprite.sprite.setPosition(renderX, renderY);
+
       sprite.sprite.draw(context.spriteBatch);
     }
 
