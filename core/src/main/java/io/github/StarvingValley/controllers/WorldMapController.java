@@ -68,7 +68,7 @@ public class WorldMapController {
         engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(eventBus));
 
-        // loadUserEntities();
+        loadUserEntities();
     }
 
     public void update(float deltaTime) {
@@ -78,24 +78,8 @@ public class WorldMapController {
             System.out.println(events.get(0).userId);
         }
     }
-
-    public Engine getEngine() {
-        return engine;
-    }
-
-    public SpriteBatch getBatch() {
-        return batch;
-    }
-
-    public Entity getCamera() {
-        return camera;
-    }
-
-    public void dispose() {
-        batch.dispose();
-    }
-
-    public void loadUserEntities(IFirebaseRepository firebaseRepository) {
+    
+    public void loadUserEntities() {
         firebaseRepository.registerOrSignInWithDeviceId(
                 new AuthCallback() {
                     @Override
@@ -121,5 +105,22 @@ public class WorldMapController {
                     }
                 });
     }
+
+    public Engine getEngine() {
+        return engine;
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
+    public Entity getCamera() {
+        return camera;
+    }
+
+    public void dispose() {
+        batch.dispose();
+    }
+
 
 }

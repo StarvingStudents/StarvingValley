@@ -90,9 +90,6 @@ public class WorldMapView extends ScreenAdapter {
     multiplexer.addProcessor(inputEventAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
-
-    controller.loadUserEntities(_firebaseRepository);
-
   }
 
   @Override
