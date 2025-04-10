@@ -39,6 +39,7 @@ import io.github.StarvingValley.models.components.TradingComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
+import io.github.StarvingValley.models.components.WorldMapFarmComponent;
 
 public class Mappers {
         public static final ComponentMapper<PositionComponent> position = ComponentMapper
@@ -102,4 +103,6 @@ public class Mappers {
         public static final ComponentMapper<DropComponent> drop = ComponentMapper.getFor(DropComponent.class);
         public static final ComponentMapper<TradingComponent> trading = ComponentMapper.getFor(TradingComponent.class);
         public static final ComponentMapper<EconomyComponent> economy = ComponentMapper.getFor(EconomyComponent.class);
+        public static final ComponentMapper<WorldMapFarmComponent> worldMapFarm = ComponentMapper
+                        .getFor(WorldMapFarmComponent.class);
 }
