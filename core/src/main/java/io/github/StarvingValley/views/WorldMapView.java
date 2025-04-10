@@ -119,8 +119,8 @@ public class WorldMapView extends ScreenAdapter {
                     int farmsToCreate = Math.min(Config.ATTACKABLE_FARMS, Math.min(data.size(), gridPositions.size()));
                     for (int i = 0; i < farmsToCreate; i++) {
                       int[] pos = gridPositions.get(i);
-                      int xCoord = pos[0] * 3 - 6; // adjust as needed
-                      int yCoord = pos[1] * 2 - 2; // adjust as needed
+                      float xCoord = pos[0] * 3 - 6; // adjust as needed
+                      float yCoord = pos[1] * 2 - 1.5f; // adjust as needed
                       Entity entity = WorldMapUserFactory.create(data.get(i), xCoord, yCoord);
                       engine.addEntity(entity);
                     }
