@@ -12,20 +12,20 @@ import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
-import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.TapEvent;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.TileUtils;
 
 public class ClickSystem extends EntitySystem {
-  private final EventBus eventBus;
+  private GameContext context;
 
-  public ClickSystem(EventBus eventBus) {
-    this.eventBus = eventBus;
+  public ClickSystem(GameContext context) {
+    this.context = context;
   }
 
   @Override
   public void update(float delta) {
-    List<TapEvent> events = eventBus.getEvents(TapEvent.class);
+    List<TapEvent> events = context.eventBus.getEvents(TapEvent.class);
 
     ImmutableArray<Entity> clickableEntities =
         getEngine()

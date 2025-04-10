@@ -12,12 +12,12 @@ import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
-import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 
 public class CropGrowthSystem extends IteratingSystem {
-  private EventBus eventBus;
+  private GameContext context;
 
-  public CropGrowthSystem(EventBus eventBus) {
+  public CropGrowthSystem(GameContext context) {
     super(
         Family.all(
             TimeToGrowComponent.class,
@@ -27,7 +27,7 @@ public class CropGrowthSystem extends IteratingSystem {
             SizeComponent.class,
             ActiveWorldEntityComponent.class)
             .get());
-    this.eventBus = eventBus;
+    this.context = context;
   }
 
   @Override
@@ -46,7 +46,7 @@ public class CropGrowthSystem extends IteratingSystem {
 
     // Don't sync fully-grown crops
     if (growthStage.growthStage < 2) {
-      eventBus.publish(new EntityUpdatedEvent(cropEntity));
+      context.eventBus.publish(new EntityUpdatedEvent(cropEntity));
     }
 
     if (growthTime.growthProgress >= growthTime.timeToGrow) {

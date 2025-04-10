@@ -16,4 +16,5 @@ public class Config {
     public static final float MAX_TAP_DURATION = 300;
     public static final float COLLISION_MARGIN = 0.1f;
     public static final int ATTACKABLE_FARMS = 5;
+    public static final float STARTING_BALANCE = 100;
 }

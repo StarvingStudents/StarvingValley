@@ -1,6 +1,9 @@
 package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -9,19 +12,17 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-
 import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
-import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
-import io.github.StarvingValley.utils.MapUtils;
 
 public class FarmView extends ScreenAdapter {
   public AssetManager assetManager;
@@ -46,12 +47,27 @@ public class FarmView extends ScreenAdapter {
     // pre-load some assets that we know we always need.
     // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
-    assetManager.load("DogBasic.png", Texture.class);
+    //assetManager.load("DogBasic.png", Texture.class);
     assetManager.load("tomato1.png", Texture.class);
     assetManager.load("potato1.png", Texture.class);
     assetManager.load("dirt.png", Texture.class);
 
-    // TODO: Temp logic. When inventory is implemented it should handle this, and it
+    assetManager.load("idle_down.png", Texture.class);
+    assetManager.load("idle_up.png", Texture.class);
+    assetManager.load("idle_left.png", Texture.class);
+    assetManager.load("idle_right.png", Texture.class);
+    assetManager.load("walking_down.png", Texture.class);
+    assetManager.load("walking_up.png", Texture.class);
+    assetManager.load("walking_left.png", Texture.class);
+    assetManager.load("walking_right.png", Texture.class);
+    assetManager.load("action_soil_down.png", Texture.class);
+    assetManager.load("action_soil_up.png", Texture.class);
+    assetManager.load("action_soil_left.png", Texture.class);
+    assetManager.load("action_soil_right.png", Texture.class);
+    assetManager.finishLoading();
+
+
+      // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
     // with BuildableComponent. Use BuildUtils.isBuildable
     inputAdapter =
@@ -102,19 +118,9 @@ public class FarmView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    _firebaseRepository.registerOrSignInWithDeviceId(
-        new AuthCallback() {
-          @Override
-          public void onSuccess() {
-              MapUtils.loadSyncedEntities(_firebaseRepository, controller.getEngine(), controller.getCamera());
-          }
-
-          @Override
-          public void onFailure(String errorMessage) {
-            // TODO: Fail gracefully
-            throw new RuntimeException("Authentication failed: " + errorMessage);
-          }
-        });
+    // Temp until we have villageview
+    Entity trader = TraderFactory.create(30, 13);
+    engine.addEntity(trader);
   }
 
   @Override

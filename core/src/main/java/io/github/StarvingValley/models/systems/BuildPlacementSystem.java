@@ -14,12 +14,12 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.models.events.EntityAddedEvent;
 import io.github.StarvingValley.models.events.EntityPlacedEvent;
-import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 
 public class BuildPlacementSystem extends IteratingSystem {
-  private final EventBus eventBus;
+  private GameContext context;
 
-  public BuildPlacementSystem(EventBus eventBus) {
+  public BuildPlacementSystem(GameContext context) {
     super(
         Family.all(
             BuildPreviewComponent.class,
@@ -27,7 +27,7 @@ public class BuildPlacementSystem extends IteratingSystem {
             BuildableComponent.class,
             PositionComponent.class)
             .get());
-    this.eventBus = eventBus;
+    this.context = context;
   }
 
   @Override
@@ -56,7 +56,7 @@ public class BuildPlacementSystem extends IteratingSystem {
     // Inventory system could probably send an event to this system to tell it to
     // stop placing that item. Then that inventory/publisher should be before
     // BuildPlacementSystem in the engine
-    eventBus.publish(new EntityPlacedEvent(entityToPlace));
-    eventBus.publish(new EntityAddedEvent(entityToPlace));
+    context.eventBus.publish(new EntityPlacedEvent(entityToPlace));
+    context.eventBus.publish(new EntityAddedEvent(entityToPlace));
   }
 }

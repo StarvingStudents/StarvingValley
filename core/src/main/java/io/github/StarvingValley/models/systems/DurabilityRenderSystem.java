@@ -6,27 +6,24 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
-import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.TextureUtils;
 
 //TODO: Use shaperenderer instead and switch to entitysystem
 public class DurabilityRenderSystem extends IteratingSystem {
     private final Engine engine;
-    private final SpriteBatch batch;
-    private EventBus eventBus;
+    private GameContext context;
 
-    public DurabilityRenderSystem(Engine engine, SpriteBatch batch, EventBus eventBus) {
+    public DurabilityRenderSystem(GameContext context) {
         super(Family.all(DurabilityComponent.class, PositionComponent.class, ActiveWorldEntityComponent.class).get());
-        this.engine = engine;
-        this.batch = batch;
-        this.eventBus = eventBus;
+        this.context = context;
+        this.engine = getEngine();
     }
 
     @Override
@@ -38,23 +35,23 @@ public class DurabilityRenderSystem extends IteratingSystem {
             return;
 
         if (durabilityComponent.getHealth() <= 0) {
-            eventBus.publish(new EntityRemovedEvent(entity));
+            context.eventBus.publish(new EntityRemovedEvent(entity));
             engine.removeEntity(entity);
             return;
         }
 
-        batch.begin();
+        context.spriteBatch.begin();
 
         float barX = position.position.x;
         float barY = position.position.y + 1;
 
         Texture pxl = TextureUtils.createWhitePixel();
-        batch.setColor(Color.RED);
-        batch.draw(pxl, barX, barY, 1, 0.2f);
-        batch.setColor(Color.GREEN);
-        batch.draw(pxl, barX, barY, 1 * durabilityComponent.getHealthPercentage(), 0.2f);
-        batch.setColor(Color.WHITE);
+        context.spriteBatch.setColor(Color.RED);
+        context.spriteBatch.draw(pxl, barX, barY, 1, 0.2f);
+        context.spriteBatch.setColor(Color.GREEN);
+        context.spriteBatch.draw(pxl, barX, barY, 1 * durabilityComponent.getHealthPercentage(), 0.2f);
+        context.spriteBatch.setColor(Color.WHITE);
 
-        batch.end();
+        context.spriteBatch.end();
     }
 }

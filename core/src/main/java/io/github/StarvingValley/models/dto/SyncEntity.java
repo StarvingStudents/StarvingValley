@@ -64,6 +64,8 @@ public class SyncEntity {
 
     public List<ItemDrop> drops;
 
+    public Float balance;
+
     // Required: no-arg constructor for Firebase
     public SyncEntity() {
     }

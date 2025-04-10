@@ -16,15 +16,15 @@ import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
-import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ItemDroppedEvent;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemDrop;
 
 public class HarvestingSystem extends EntitySystem {
-  private EventBus eventBus;
+  private GameContext context;
 
-  public HarvestingSystem(EventBus eventBus) {
-    this.eventBus = eventBus;
+  public HarvestingSystem(GameContext context) {
+    this.context = context;
   }
 
   @Override
@@ -67,7 +67,7 @@ public class HarvestingSystem extends EntitySystem {
   private void harvestCrop(Entity crop, HarvestingComponent harvestingComponent) {
     Engine engine = getEngine();
 
-    eventBus.publish(new EntityRemovedEvent(crop));
+    context.eventBus.publish(new EntityRemovedEvent(crop));
 
     // TODO: Should this be handled by pickupsystem? This could just check if crop
     // can be harvested and publish an event and pickup removes the entity and gives
@@ -75,7 +75,7 @@ public class HarvestingSystem extends EntitySystem {
     DropComponent drops = Mappers.drop.get(crop);
     if (drops != null) {
       for (ItemDrop drop : drops.drops) {
-        eventBus.publish(new ItemDroppedEvent(drop));
+        context.eventBus.publish(new ItemDroppedEvent(drop));
         System.out.println("Dropped " + drop.count + " " + drop.type);
       }
     }
