@@ -24,9 +24,21 @@ public class WorldMapUserFactory {
                 "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\PurpleHouse1.png" };
         Random random = new Random();
         String selectedHouse = houses[random.nextInt(houses.length)];
-        float size = 0.8f + random.nextFloat() * 1.4f;
+        float size = 1.4f + random.nextFloat() * .8f;
+
+        float positionYModifier = 0;
+
+        if (y <= 0.5f) {
+            positionYModifier = random.nextFloat() * 1.6f - 1.4f;
+        } else {
+            positionYModifier = random.nextFloat() * 1.6f + 1.4f;
+        }
+
+        // float positionXModifier = random.nextFloat() * 0.8f - 0.4f;
+        float positionXModifier = random.nextFloat() * 0.25f - 0.125f;
+
         Entity entity = new Entity();
-        entity.add(new PositionComponent(x, y))
+        entity.add(new PositionComponent(x + positionXModifier, y + positionYModifier))
                 .add(new SpriteComponent(selectedHouse))
                 .add(new SizeComponent(size, size))
                 .add(new ClickableComponent())
