@@ -4,35 +4,59 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.math.GridPoint2;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
-import io.github.StarvingValley.models.components.PlaceRequestComponent;
+import io.github.StarvingValley.models.components.BuildableComponent;
+import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
+import io.github.StarvingValley.models.events.EntityAddedEvent;
+import io.github.StarvingValley.models.events.EntityPlacedEvent;
+import io.github.StarvingValley.models.types.GameContext;
 
 public class BuildPlacementSystem extends IteratingSystem {
-    public BuildPlacementSystem() {
-        super(Family.all(BuildPreviewComponent.class, PlaceRequestComponent.class, PositionComponent.class).get());
+  private GameContext context;
+
+  public BuildPlacementSystem(GameContext context) {
+    super(
+        Family.all(
+            BuildPreviewComponent.class,
+            ClickedComponent.class,
+            BuildableComponent.class,
+            PositionComponent.class)
+            .get());
+    this.context = context;
+  }
+
+  @Override
+  protected void processEntity(Entity entity, float deltaTime) {
+    BuildPreviewComponent buildPreview = Mappers.buildPreview.get(entity);
+
+    if (buildPreview.isBlocked) {
+      return;
     }
 
-    @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        BuildPreviewComponent buildPreview = Mappers.buildPreview.get(entity);
-        PositionComponent position = Mappers.position.get(entity);
+    Engine engine = getEngine();
 
-        if (buildPreview.isBlocked) {
-            return;
-        }
+    BuildableComponent buildable = Mappers.buildable.get(entity);
+    PositionComponent position = Mappers.position.get(entity);
 
-        Engine engine = getEngine();
+    Entity entityToPlace = EntityFactoryRegistry.create(buildable.builds);
+    entityToPlace.add(new ActiveWorldEntityComponent());
+    entityToPlace.add(new PositionComponent(position.position.x, position.position.y));
 
-        engine.addEntity(buildPreview.entityFactory
-                .createAt(new GridPoint2((int) position.position.x, (int) position.position.y)));
+    engine.addEntity(entityToPlace);
+    engine.removeEntity(entity);
 
-        // TODO: When inventory is implemented we can change this to check if there are
-        // any more of that buildable available, and if not:
-        // engine.removeEntity(entity);
-        entity.remove(PlaceRequestComponent.class);
-    }
+    // TODO: Inventory should listen to this, and remove the entity/lower
+    // counter from the inventory. If there's no more items of this type to place,
+    // exit build mode by removing the buildpreview entity from the engine.
+    // Inventory system could probably send an event to this system to tell it to
+    // stop placing that item. Then that inventory/publisher should be before
+    // BuildPlacementSystem in the engine
+    context.eventBus.publish(new EntityPlacedEvent(entityToPlace));
+    context.eventBus.publish(new EntityAddedEvent(entityToPlace));
+  }
 }

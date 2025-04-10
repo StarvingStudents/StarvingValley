@@ -4,29 +4,24 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.graphics.Texture;
 
-import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IBuildableEntityFactory;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.entities.BuildPreviewFactory;
+import io.github.StarvingValley.models.types.PrefabType;
 
 public class BuildUtils {
-    public static void toggleBuildPreview(Texture texture, Engine engine, IBuildableEntityFactory entityFactory) {
-        ImmutableArray<Entity> previews = engine.getEntitiesFor(
-                Family.all(BuildPreviewComponent.class).get());
+  public static void toggleBuildPreview(PrefabType prefabType, Engine engine) {
+    ImmutableArray<Entity> previews = engine.getEntitiesFor(Family.all(BuildPreviewComponent.class).get());
 
-        if (previews.size() > 0) {
-            for (Entity preview : previews) {
-                engine.removeEntity(preview);
-            }
-        } else {
-            Entity preview = BuildPreviewFactory.createBuildPreview(texture, 0, 0, 1, 1, entityFactory);
-            engine.addEntity(preview);
-        }
+    if (previews.size() > 0) {
+      for (Entity preview : previews) {
+        engine.removeEntity(preview);
+      }
+      return;
     }
 
-    public static boolean isBuildable(Entity entity) {
-        return Mappers.buildable.has(entity);
-    }
+    Entity preview = BuildPreviewFactory.create(prefabType);
+
+    engine.addEntity(preview);
+  }
 }

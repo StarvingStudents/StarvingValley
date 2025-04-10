@@ -9,6 +9,7 @@ import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
+import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
@@ -17,7 +18,8 @@ import io.github.StarvingValley.models.components.VelocityComponent;
 public class EnvironmentCollisionSystem extends IteratingSystem {
     public EnvironmentCollisionSystem() {
         super(Family
-                .all(CollidableComponent.class, PositionComponent.class, SizeComponent.class, VelocityComponent.class)
+                .all(CollidableComponent.class, PositionComponent.class, SizeComponent.class, VelocityComponent.class,
+                        ActiveWorldEntityComponent.class)
                 .get());
     }
 
@@ -30,10 +32,19 @@ public class EnvironmentCollisionSystem extends IteratingSystem {
         // Allow some overlap without collisions on top part of collidables
         float boundsCollidableHeight = size.height * Config.BOUNDS_BOTTOM_COLLISION_RATIO;
 
+        float margin = Config.COLLISION_MARGIN;
+
         Rectangle futureBoundsX = new Rectangle(
-                position.position.x + velocity.velocity.x, position.position.y, size.width, boundsCollidableHeight);
+                position.position.x + velocity.velocity.x + margin,
+                position.position.y + margin,
+                size.width - 2 * margin,
+                boundsCollidableHeight - margin);
+
         Rectangle futureBoundsY = new Rectangle(
-                position.position.x, position.position.y + velocity.velocity.y, size.width, boundsCollidableHeight);
+                position.position.x + margin,
+                position.position.y + velocity.velocity.y + margin,
+                size.width - 2 * margin,
+                boundsCollidableHeight - margin);
 
         boolean isBlockedX = false;
         boolean isBlockedY = false;

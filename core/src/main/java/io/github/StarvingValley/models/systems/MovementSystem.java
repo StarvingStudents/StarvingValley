@@ -8,13 +8,16 @@ import com.badlogic.gdx.math.Vector3;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
-import io.github.StarvingValley.utils.TileUtils;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
+import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.utils.DiffUtils;
 
 public class MovementSystem extends IteratingSystem {
-  public MovementSystem() {
-    super(
-        Family.all(PositionComponent.class, VelocityComponent.class)
-            .get());
+  private GameContext context;
+
+  public MovementSystem(GameContext context) {
+    super(Family.all(PositionComponent.class, VelocityComponent.class).get());
+    this.context = context;
   }
 
   @Override
@@ -22,10 +25,11 @@ public class MovementSystem extends IteratingSystem {
     PositionComponent position = Mappers.position.get(entity);
     VelocityComponent velocity = Mappers.velocity.get(entity);
 
-Vector3 oldPosition = new Vector3(position.position);
+    Vector3 oldPosition = new Vector3(position.position);
     position.position.x += velocity.velocity.x;
     position.position.y += velocity.velocity.y;
 
-    TileUtils.updateOverlappingTiles(entity);
+    if (DiffUtils.hasChanged(position.position, oldPosition))
+      context.eventBus.publish(new EntityUpdatedEvent(entity));
   }
 }

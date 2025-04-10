@@ -5,4 +5,8 @@ import com.badlogic.ashley.core.Entity;
 
 public class CameraFollowComponent implements Component {
     public Entity targetCamera;
+
+    public CameraFollowComponent(Entity targetCamera) {
+        this.targetCamera = targetCamera;
+    }
 }
