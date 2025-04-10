@@ -259,7 +259,6 @@ public class FirebaseRepository implements IFirebaseRepository {
         List<String> userIds = new ArrayList<>();
         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
           userIds.add(childSnapshot.getKey());
-          System.out.println("User ID: " + childSnapshot.getKey());
         }
         callback.onSuccess(userIds);
       }
