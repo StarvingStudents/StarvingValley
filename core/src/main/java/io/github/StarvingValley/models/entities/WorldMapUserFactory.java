@@ -28,14 +28,18 @@ public class WorldMapUserFactory {
 
         float positionYModifier = 0;
 
+        float yPositionVariability = 1f;
+        float yCenterOffset = 1f;
+
         if (y <= 0.5f) {
-            positionYModifier = random.nextFloat() * 1.6f - 1.4f;
+            positionYModifier = random.nextFloat() * yPositionVariability - yCenterOffset - size / 4;
         } else {
-            positionYModifier = random.nextFloat() * 1.6f + 1.4f;
+            positionYModifier = random.nextFloat() * yPositionVariability + yCenterOffset + size / 4;
         }
 
-        // float positionXModifier = random.nextFloat() * 0.8f - 0.4f;
-        float positionXModifier = random.nextFloat() * 0.25f - 0.125f;
+        float xPositionVariability = 0.25f - size / 4;
+        float xCenterOffset = 0.125f;
+        float positionXModifier = random.nextFloat() * xPositionVariability - xCenterOffset;
 
         Entity entity = new Entity();
         entity.add(new PositionComponent(x + positionXModifier, y + positionYModifier))
