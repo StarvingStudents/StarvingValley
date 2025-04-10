@@ -26,6 +26,7 @@ import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.WorldMapTransitionSystem;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.MapUtils;
 
 public class WorldMapController {
@@ -35,6 +36,7 @@ public class WorldMapController {
     private final EventBus eventBus;
     private final AssetManager assetManager;
     private final IFirebaseRepository firebaseRepository;
+    public GameContext gameContext;
 
     private Entity camera;
 
@@ -44,6 +46,12 @@ public class WorldMapController {
         this.assetManager = assetManager;
         this.engine = new Engine();
         this.batch = new SpriteBatch();
+        gameContext = new GameContext();
+        gameContext.spriteBatch = this.batch;
+        gameContext.eventBus = this.eventBus;
+        gameContext.assetManager = this.assetManager;
+        gameContext.firebaseRepository = this.firebaseRepository;
+        gameContext.engine = this.engine;
         initGame();
     }
 
@@ -58,15 +66,15 @@ public class WorldMapController {
         // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
         // batch etc), maybe we should have a GameContext class that holds them so we
         // just pass around that?
-        engine.addSystem(new ClickSystem(eventBus));
-        engine.addSystem(new WorldMapTransitionSystem(eventBus));
+        engine.addSystem(new ClickSystem(gameContext));
+        engine.addSystem(new WorldMapTransitionSystem(gameContext));
         engine.addSystem(new CameraSystem());
-        engine.addSystem(new RenderSystem(batch));
-        engine.addSystem(new SpriteSystem(assetManager));
-        engine.addSystem(new SyncMarkingSystem(eventBus));
-        engine.addSystem(new FirebaseSyncSystem(firebaseRepository));
+        engine.addSystem(new RenderSystem(gameContext));
+        engine.addSystem(new SpriteSystem(gameContext));
+        engine.addSystem(new SyncMarkingSystem(gameContext));
+        engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new ClickedCleanupSystem());
-        engine.addSystem(new EventCleanupSystem(eventBus));
+        engine.addSystem(new EventCleanupSystem(gameContext));
 
         loadUserEntities();
     }
@@ -74,11 +82,12 @@ public class WorldMapController {
     public void update(float deltaTime) {
 
         List<WorldMapFarmClickEvent> events = eventBus.getEvents(WorldMapFarmClickEvent.class);
-        if (events.size() > 0) {
-            System.out.println(events.get(0).userId);
-        }
+        if(events.size()>0)
+    {
+        System.out.println(events.get(0).userId);
     }
-    
+    }
+
     public void loadUserEntities() {
         firebaseRepository.registerOrSignInWithDeviceId(
                 new AuthCallback() {

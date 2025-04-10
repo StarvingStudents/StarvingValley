@@ -12,19 +12,20 @@ import io.github.StarvingValley.models.components.MapRenderComponent;
 import io.github.StarvingValley.models.components.WorldMapFarmComponent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
+import io.github.StarvingValley.models.types.GameContext;
 
 public class WorldMapTransitionSystem extends IteratingSystem {
 
-    private EventBus eventBus;
+    private GameContext context;
 
-    public WorldMapTransitionSystem(EventBus eventBus) {
+    public WorldMapTransitionSystem(GameContext context) {
         super(Family.all(WorldMapFarmComponent.class, ClickedComponent.class).get());
-        this.eventBus = eventBus;
+        this.context = context;
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        eventBus.publish(new WorldMapFarmClickEvent(Mappers.worldMapFarm.get(entity).userId));
+        context.eventBus.publish(new WorldMapFarmClickEvent(Mappers.worldMapFarm.get(entity).userId));
     }
 
 }
