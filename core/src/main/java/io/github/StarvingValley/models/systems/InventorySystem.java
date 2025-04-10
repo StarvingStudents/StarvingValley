@@ -33,7 +33,7 @@ public class InventorySystem extends IteratingSystem {
         InventoryComponent inventory = inventoryMapper.get(entity);
 
         if (inventory != null) {
-            if (!inventory.isFull()) {
+            if (inventory.hasItem(item) || !inventory.isFull()) {
                 if (InventoryUtility.addItem(entity, item)) {
                     System.out.println("Added item '" + item + "' to inventory of entity: " + entity);
                 }

@@ -91,7 +91,7 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new HungerRenderSystem(engine, batch));
 
     inventorySystem = new InventorySystem();
-    engine.addSystem(new InventorySystem());
+    engine.addSystem(inventorySystem);
 
     JoystickController joystickController = new JoystickController();
     joystickOverlay = new JoystickOverlay(joystickController);

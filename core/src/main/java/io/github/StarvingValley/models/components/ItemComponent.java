@@ -3,8 +3,8 @@ package io.github.StarvingValley.models.components;
 import com.badlogic.ashley.core.Component;
 
 public class ItemComponent implements Component {
-    public static String id;
-    public static String itemName;
+    public String id;
+    public String itemName;
 
     // Constructor for convenience
     public ItemComponent(String id, String itemname) {

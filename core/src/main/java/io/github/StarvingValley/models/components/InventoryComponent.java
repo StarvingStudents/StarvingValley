@@ -9,8 +9,6 @@ import java.util.Map;
 public class InventoryComponent implements Component {
     // Map to store item IDs and their quantities
     private Map<String, Integer> items;
-    private int capacity = 5; // Default capacity
-
 
     public InventoryComponent() {
         this.items = new HashMap<>();
@@ -22,8 +20,10 @@ public class InventoryComponent implements Component {
     }
 
     // Adds an item: if it already exists, increments its quantity, otherwise sets it to 1
-    public void addItem(String item) {
-        items.put(item, items.getOrDefault(item, 0) + 1);
+    public void addItem(String item){
+        if(!isFull() || hasItem(item)){
+            items.put(item, items.getOrDefault(item, 0) + 1);
+        }
     }
 
     // Removes one unit of the specified item: if the quantity becomes 0, the item is removed from the map

@@ -69,6 +69,7 @@ public class InventoryActor extends Actor {
             }
             return;
         }
+
         else if (inv != null) {
             inv.addItem("coin_id");  // Add 1 coins
             inv.addItem("coin_id");
@@ -83,8 +84,7 @@ public class InventoryActor extends Actor {
             Gdx.app.log("Inventory", inv.getItems().toString());
 
         }
-        // For this example, we simply take the first numSlots items from the Map.
-        // In a real game you might order items by slot index.
+
         int index = 0;
         for (Map.Entry<String, Integer> entry : inv.getItems().entrySet()) {
             if (index >= numSlots) break;
