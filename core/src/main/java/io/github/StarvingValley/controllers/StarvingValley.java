@@ -17,6 +17,7 @@ public class StarvingValley extends Game {
 
     @Override
     public void create() {
+        // TODO: Comment out FarmView and uncomment WorldMapView to test the world map
         setScreen(new FarmView(_firebaseRepository));
         // setScreen(new WorldMapView(_firebaseRepository));
     }
