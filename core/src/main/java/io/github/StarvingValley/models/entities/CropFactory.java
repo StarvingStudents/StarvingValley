@@ -20,12 +20,12 @@ import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
-import io.github.StarvingValley.models.types.ItemDrop;
+import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class CropFactory {
-  public static Entity createCrop(CropTypeComponent.CropType cropType) {
+  public static Entity createCrop(PrefabType cropType) {
     Entity entity = new Entity();
 
     WorldLayerComponent layer = new WorldLayerComponent(WorldLayer.CROP);
@@ -36,11 +36,11 @@ public class CropFactory {
     entity.add(new ClickableComponent());
 
     switch (cropType) {
-      case TOMATO:
-        addComponentsToEntity(entity, createTomatoComponents());
+      case WHEAT_CROP:
+        addComponentsToEntity(entity, createWheatComponents());
         break;
-      case POTATO:
-        addComponentsToEntity(entity, createPotatoComponents());
+      case BEETROOT_CROP:
+        addComponentsToEntity(entity, createBeetrootComponents());
         break;
       default:
         throw new IllegalArgumentException("Unknown crop type: " + cropType);
@@ -56,7 +56,7 @@ public class CropFactory {
   }
 
   private static SpriteComponent createSprite(String cropType) {
-    return new SpriteComponent(cropType + "1.png");
+    return new SpriteComponent("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\" + cropType + "_0.png");
   }
 
   private static GrowthStageComponent createGrowthStage() {
@@ -79,7 +79,7 @@ public class CropFactory {
     return new PrefabTypeComponent(prefabType);
   }
 
-  private static DropComponent createDrop(List<ItemDrop> drops) {
+  private static DropComponent createDrop(List<ItemStack> drops) {
     return new DropComponent(drops);
   }
 
@@ -87,31 +87,31 @@ public class CropFactory {
     return new BuildableComponent(builds);
   }
 
-  private static Component[] createTomatoComponents() {
+  private static Component[] createWheatComponents() {
     return new Component[] {
-        createSprite("tomato"),
+        createSprite("wheat"),
         createGrowthStage(),
         new SizeComponent(1, 1),
         createTimeToGrow(20), // very short growth time for now, just for testing :3
         createHarvestingComponent(),
-        createCropType(CropTypeComponent.CropType.TOMATO),
-        createItemType(PrefabType.TOMATO_CROP),
-        createDrop(Arrays.asList(new ItemDrop(PrefabType.TOMATO_SEEDS, 2))),
-        createBuildable(PrefabType.TOMATO_CROP)
+        createCropType(CropTypeComponent.CropType.WHEAT),
+        createItemType(PrefabType.WHEAT_CROP),
+        createDrop(Arrays.asList(new ItemStack(PrefabType.WHEAT_SEEDS, 2))),
+        createBuildable(PrefabType.WHEAT_CROP)
     };
   }
 
-  private static Component[] createPotatoComponents() {
+  private static Component[] createBeetrootComponents() {
     return new Component[] {
-        createSprite("potato"),
+        createSprite("beetroot"),
         createGrowthStage(),
         new SizeComponent(1, 1),
         createTimeToGrow(40),
         createHarvestingComponent(),
-        createCropType(CropTypeComponent.CropType.POTATO),
-        createItemType(PrefabType.POTATO_CROP),
-        createDrop(Arrays.asList(new ItemDrop(PrefabType.POTATO_SEEDS, 2))),
-        createBuildable(PrefabType.POTATO_CROP)
+        createCropType(CropTypeComponent.CropType.BEETROOT),
+        createItemType(PrefabType.BEETROOT_CROP),
+        createDrop(Arrays.asList(new ItemStack(PrefabType.BEETROOT_SEEDS, 2))),
+        createBuildable(PrefabType.BEETROOT_CROP)
     };
   }
 }

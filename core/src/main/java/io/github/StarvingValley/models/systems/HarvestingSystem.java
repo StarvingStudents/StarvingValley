@@ -49,7 +49,7 @@ public class HarvestingSystem extends EntitySystem {
       PositionComponent cropPos = Mappers.position.get(crop);
       HarvestingComponent harvestingComponent = Mappers.harvesting.get(crop);
 
-      if (growthStageComponent.growthStage == 2
+      if (growthStageComponent.growthStage == 3
           && timeToGrowComponent.isMature()
           && harvestingComponent.canHarvest
           && isPlayerNearCrop(playerPos, cropPos)) {

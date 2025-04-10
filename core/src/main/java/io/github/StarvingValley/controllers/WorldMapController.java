@@ -1,7 +1,5 @@
 package io.github.StarvingValley.controllers;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.badlogic.ashley.core.Engine;
@@ -14,12 +12,11 @@ import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.entities.CameraFactory;
-import io.github.StarvingValley.models.entities.WorldMapUserFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
 import io.github.StarvingValley.models.systems.CameraSystem;
-import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
 import io.github.StarvingValley.models.systems.ClickSystem;
+import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
@@ -63,9 +60,6 @@ public class WorldMapController {
 
         engine.addEntity(camera);
 
-        // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
-        // batch etc), maybe we should have a GameContext class that holds them so we
-        // just pass around that?
         engine.addSystem(new ClickSystem(gameContext));
         engine.addSystem(new WorldMapTransitionSystem(gameContext));
         engine.addSystem(new CameraSystem());
@@ -130,6 +124,4 @@ public class WorldMapController {
     public void dispose() {
         batch.dispose();
     }
-
-
 }

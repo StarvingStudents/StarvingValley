@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.views.FarmView;
-import io.github.StarvingValley.views.WorldMapView;
 
 public class StarvingValley extends Game {
 
