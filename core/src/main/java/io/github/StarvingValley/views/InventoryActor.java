@@ -69,7 +69,7 @@ public class InventoryActor extends Actor {
             }
             return;
         }
-
+/*
         else if (inv != null) {
             inv.addItem("coin_id");  // Add 1 coins
             inv.addItem("coin_id");
@@ -84,6 +84,7 @@ public class InventoryActor extends Actor {
             Gdx.app.log("Inventory", inv.getItems().toString());
 
         }
+ */
 
         int index = 0;
         for (Map.Entry<String, Integer> entry : inv.getItems().entrySet()) {
