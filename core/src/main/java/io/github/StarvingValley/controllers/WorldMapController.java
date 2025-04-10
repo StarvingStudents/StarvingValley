@@ -1,5 +1,7 @@
 package io.github.StarvingValley.controllers;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.badlogic.ashley.core.Engine;
@@ -8,8 +10,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.config.Config;
+import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.WorldMapUserFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
 import io.github.StarvingValley.models.systems.CameraSystem;
@@ -63,6 +68,7 @@ public class WorldMapController {
         engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(eventBus));
 
+        // loadUserEntities();
     }
 
     public void update(float deltaTime) {
@@ -88,4 +94,32 @@ public class WorldMapController {
     public void dispose() {
         batch.dispose();
     }
+
+    public void loadUserEntities(IFirebaseRepository firebaseRepository) {
+        firebaseRepository.registerOrSignInWithDeviceId(
+                new AuthCallback() {
+                    @Override
+                    public void onSuccess() {
+                        firebaseRepository.getAllUserIds(
+                                new UserIdsCallback() {
+                                    @Override
+                                    public void onSuccess(List<String> data) {
+                                        MapUtils.loadWorldMapFarmEntities(data, engine);
+                                    }
+
+                                    @Override
+                                    public void onFailure(String errorMessage) {
+                                        System.err.println("Failed to load entities: " + errorMessage);
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        // TODO: Fail gracefully
+                        throw new RuntimeException("Authentication failed: " + errorMessage);
+                    }
+                });
+    }
+
 }

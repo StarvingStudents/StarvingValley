@@ -91,69 +91,8 @@ public class WorldMapView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    _firebaseRepository.registerOrSignInWithDeviceId(
-        new AuthCallback() {
-          @Override
-          public void onSuccess() {
-            // MapUtils.loadSyncedEntities(_firebaseRepository, controller.getEngine(),
-            // controller.getCamera());
-            _firebaseRepository.getAllUserIds(
-                new UserIdsCallback() {
-                  @Override
-                  public void onSuccess(List<String> data) {
-                    // for (String userId : data) {
-                    // System.out.println("User ID: " + userId);
-                    // }
-                    Collections.shuffle(data);
-                    // for (String userId : data) {
-                    // System.out.println("User ID: " + userId);
-                    // }
-                    List<int[]> gridPositions = new ArrayList<>();
-                    for (int y = 0; y < 2; y++) {
-                      for (int x = 0; x < 4; x++) {
-                        gridPositions.add(new int[] { x, y });
-                      }
-                    }
-                    Collections.shuffle(gridPositions);
+    controller.loadUserEntities(_firebaseRepository);
 
-                    int farmsToCreate = Math.min(Config.ATTACKABLE_FARMS, Math.min(data.size(), gridPositions.size()));
-                    for (int i = 0; i < farmsToCreate; i++) {
-                      int[] pos = gridPositions.get(i);
-                      float xCoord = pos[0] * 3 - 6; // adjust as needed
-                      float yCoord = pos[1] * 2 - 1.5f; // adjust as needed
-                      Entity entity = WorldMapUserFactory.create(data.get(i), xCoord, yCoord);
-                      engine.addEntity(entity);
-                    }
-
-                    // int farmNumber = 0;
-                    // for (int y = 0; y < 2; y++) {
-                    // for (int x = 0; x < 4; x++) {
-                    // if (data.size() <= farmNumber || farmNumber > Config.ATTACKABLE_FARMS) {
-                    // break;
-                    // }
-                    // // TODO: Variation in exact farm position
-                    // Entity entity = WorldMapUserFactory.create(data.get(farmNumber), x * 3 - 6, y
-                    // * 2 - 2);
-                    // engine.addEntity(entity);
-                    // farmNumber++;
-                    // }
-                    // }
-                  }
-                  // }
-
-                  @Override
-                  public void onFailure(String errorMessage) {
-                    System.err.println("Failed to load entities: " + errorMessage);
-                  }
-                });
-          }
-
-          @Override
-          public void onFailure(String errorMessage) {
-            // TODO: Fail gracefully
-            throw new RuntimeException("Authentication failed: " + errorMessage);
-          }
-        });
   }
 
   @Override
