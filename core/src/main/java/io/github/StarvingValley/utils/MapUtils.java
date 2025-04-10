@@ -1,6 +1,7 @@
 package io.github.StarvingValley.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
+import io.github.StarvingValley.models.entities.WorldMapUserFactory;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -130,6 +132,38 @@ public class MapUtils {
         SpriteComponent spriteComponent = Mappers.sprite.get(entity);
         if (spriteComponent != null && spriteComponent.getTexturePath() != null) {
             spriteComponent.previousTexturePath = spriteComponent.getTexturePath();
+        }
+    }
+
+    public static void loadWorldMapFarmEntities(List<String> data, Engine engine) {
+        Collections.shuffle(data);
+        List<int[]> gridPositions = new ArrayList<>();
+
+        int gridWidth = 4;
+        int gridHeight = 2;
+        for (int y = 0; y < gridHeight; y++) {
+            for (int x = 0; x < gridWidth; x++) {
+                gridPositions.add(new int[] { x, y });
+            }
+        }
+        Collections.shuffle(gridPositions);
+
+        int farmsToCreate = Math.min(Config.ATTACKABLE_FARMS,
+                Math.min(data.size(), gridPositions.size()));
+        for (int i = 0; i < farmsToCreate; i++) {
+            int[] pos = gridPositions.get(i);
+
+            int gridXSpacing = 3;
+            int gridYSpacing = 2;
+
+            float gridXOffset = -6f; // adjust as needed
+            float gridYOffset = -1.5f; // adjust as needed
+
+            float xCoord = pos[0] * gridXSpacing + gridXOffset; // adjust as needed
+            float yCoord = pos[1] * gridYSpacing + gridYOffset; // adjust as needed
+            Entity entity = WorldMapUserFactory.create(data.get(i), xCoord, yCoord);
+            engine.addEntity(entity);
+            System.out.println("Entity added");
         }
     }
 }

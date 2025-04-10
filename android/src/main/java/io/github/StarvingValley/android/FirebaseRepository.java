@@ -12,7 +12,10 @@ import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Interfaces.PushCallback;
+import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.dto.SyncEntity;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +31,7 @@ public class FirebaseRepository implements IFirebaseRepository {
 
   public FirebaseRepository() {
     _database = FirebaseDatabase.getInstance(Config.FIREBASE_DATABASE_URL);
-    _users = _database.getReference("users");
+    _users = _database.getReference("userEntities");
     _auth = FirebaseAuth.getInstance();
   }
 
@@ -245,6 +248,26 @@ public class FirebaseRepository implements IFirebaseRepository {
           }
         });
 
+    return true;
+  }
+
+  @Override
+  public boolean getAllUserIds(UserIdsCallback callback) {
+    _users.addListenerForSingleValueEvent(new ValueEventListener() {
+      @Override
+      public void onDataChange(DataSnapshot snapshot) {
+        List<String> userIds = new ArrayList<>();
+        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+          userIds.add(childSnapshot.getKey());
+        }
+        callback.onSuccess(userIds);
+      }
+
+      @Override
+      public void onCancelled(DatabaseError error) {
+        callback.onFailure(error.getMessage());
+      }
+    });
     return true;
   }
 }
