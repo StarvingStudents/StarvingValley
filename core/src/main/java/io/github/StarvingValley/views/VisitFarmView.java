@@ -22,16 +22,14 @@ public class VisitFarmView extends ScreenAdapter {
   public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
-  private InputAdapter inputAdapter; // temp
   private InputEventAdapter inputEventAdapter;
   private EventBus eventBus;
 
   private Engine engine;
   private EventDebugOverlay eventDebugOverlay;
   private VisitFarmController controller;
-  private String userId;
 
-  public VisitFarmView(IFirebaseRepository firebaseRepository) {
+  public VisitFarmView(IFirebaseRepository firebaseRepository, String userId) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);

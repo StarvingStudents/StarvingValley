@@ -36,7 +36,6 @@ public class VisitFarmController {
   public GameContext gameContext;
   private Entity camera;
   private Entity map;
-  private Entity player;
 
   public VisitFarmController(
       String visitedUserId,
@@ -90,7 +89,7 @@ public class VisitFarmController {
     }
 
     MapUtils.loadSyncedEntities(gameContext, camera);
-    MapUtils.loadSyncedEntitiesForUser(gameContext, getCamera(), "kA22VW0RofdBTDkHN09gCH355rI3");
+    MapUtils.loadSyncedEntitiesForUser(gameContext, camera, visitedUserId);
   }
 
   public Engine getEngine() {
