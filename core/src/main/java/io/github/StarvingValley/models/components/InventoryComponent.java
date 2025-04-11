@@ -12,8 +12,8 @@ public class InventoryComponent implements Component {
 
     public InventoryComponent() {
         inventory = new Inventory();
-        inventory.width = 8;
-        inventory.height = 4;
+        inventory.width = 6;
+        inventory.height = 3;
     }
 
     public InventoryComponent(List<InventorySlot> slots, int width, int height) {

@@ -28,10 +28,15 @@ public class InventoryController {
     private boolean inventoryIsVisible = false;
     private boolean hotbarIsVisible = false;
 
+    private final int SLOT_SIZE;
+
     public InventoryController(GameContext context) {
         this.context = context;
         this.batch = new SpriteBatch();
         this.inventoryView = new InventoryView(this, context);
+
+        int tileWidth = Gdx.graphics.getWidth() / Config.CAMERA_TILES_WIDE;
+        SLOT_SIZE = (int) (tileWidth * Config.INVENTORY_SLOT_TILE_SIZE_MULTIPLIER);
     }
 
     public void setInventoryVisible(boolean visible) {
@@ -58,20 +63,28 @@ public class InventoryController {
     public Vector2 calculateInventoryPosition(Inventory inventory) {
         int screenWidth = Gdx.graphics.getWidth();
         int screenHeight = Gdx.graphics.getHeight();
-        int tileWidth = screenWidth / Config.CAMERA_TILES_WIDE;
 
         return new Vector2(
-                (screenWidth - inventory.width * tileWidth) / 2f,
-                (screenHeight + inventory.height * tileWidth) / 2f + tileWidth / 2);
+                (screenWidth - inventory.width * SLOT_SIZE) / 2f,
+                (screenHeight + inventory.height * SLOT_SIZE) / 2f + SLOT_SIZE / 2);
     }
 
+    public boolean isInsideInventory(Vector2 screenPos, Inventory inv, Vector2 origin) {
+        float width = inv.width * SLOT_SIZE;
+        float height = inv.height * SLOT_SIZE;
+
+        return screenPos.x >= origin.x &&
+                screenPos.x < origin.x + width &&
+                screenPos.y >= origin.y - height &&
+                screenPos.y < origin.y;
+    }
+    
     public Vector2 calculateHotbarPosition(Inventory hotbar) {
         int screenWidth = Gdx.graphics.getWidth();
-        int tileWidth = screenWidth / Config.CAMERA_TILES_WIDE;
 
         return new Vector2(
-                (screenWidth - hotbar.width * tileWidth) / 2f,
-                tileWidth + tileWidth / 2);
+                (screenWidth - hotbar.width * SLOT_SIZE) / 2f,
+                SLOT_SIZE + SLOT_SIZE / 2);
     }
 
     public void update() {
@@ -100,7 +113,6 @@ public class InventoryController {
             InventorySlot draggedSlot,
             Inventory sourceInventory,
             Vector2 dropScreenPos) {
-        int tileWidth = Gdx.graphics.getWidth() / Config.CAMERA_TILES_WIDE;
 
         Inventory[] targets = new Inventory[] { getHotbar(), getInventory() };
 
@@ -112,7 +124,11 @@ public class InventoryController {
                     ? calculateInventoryPosition(target)
                     : calculateHotbarPosition(target);
 
-            GridPoint2 toSlot = screenToSlot(dropScreenPos, origin, target, tileWidth);
+            if (!isInsideInventory(dropScreenPos, target, origin)) {
+                continue;
+            }
+
+            GridPoint2 toSlot = screenToSlot(dropScreenPos, origin, target, SLOT_SIZE);
             if (toSlot == null)
                 continue;
 
@@ -196,5 +212,9 @@ public class InventoryController {
         if (context.player == null || !Mappers.hotbar.has(context.player))
             return null;
         return Mappers.hotbar.get(context.player).hotbar;
+    }
+
+    public int getSlotSize() {
+        return SLOT_SIZE;
     }
 }

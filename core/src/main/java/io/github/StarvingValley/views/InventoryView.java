@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.InventoryController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.types.GameContext;
@@ -66,8 +65,6 @@ public class InventoryView {
         }
 
         if (draggingSlot == null && Gdx.input.justTouched() && !dragJustCompleted) {
-            int tileWidth = Gdx.graphics.getWidth() / Config.CAMERA_TILES_WIDE;
-
             Inventory hotbar = getHotbarIfVisible();
             Inventory[] inventories = { inventory, hotbar };
 
@@ -76,7 +73,7 @@ public class InventoryView {
                     continue;
 
                 Vector2 origin = getInventoryPosition(inv);
-                GridPoint2 slotPos = controller.screenToSlot(mouse, origin, inv, tileWidth);
+                GridPoint2 slotPos = controller.screenToSlot(mouse, origin, inv, controller.getSlotSize());
 
                 if (slotPos != null) {
                     InventorySlot slot = inv.getSlotAt((int) slotPos.x, (int) slotPos.y);
@@ -91,49 +88,49 @@ public class InventoryView {
     }
 
     public void render(SpriteBatch batch) {
-        int tileWidth = Gdx.graphics.getWidth() / Config.CAMERA_TILES_WIDE;
-
         if (inventory != null && controller.isInventoryVisible()) {
-            drawInventory(batch, inventory, tileWidth);
+            drawInventory(batch, inventory, controller.getSlotSize());
         }
 
         Inventory hotbar = getHotbarIfVisible();
         if (hotbar != null) {
-            drawInventory(batch, hotbar, tileWidth);
+            drawInventory(batch, hotbar, controller.getSlotSize());
         }
 
         if (draggingSlot != null) {
             Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
             Sprite sprite = TextureUtils.getSpriteForPrefabType(draggingSlot.itemStack.type, context.assets);
             if (sprite != null) {
-                sprite.setSize(tileWidth, tileWidth);
-                sprite.setPosition(mouse.x - tileWidth / 2f, mouse.y - tileWidth / 2f);
+                sprite.setSize(controller.getSlotSize(), controller.getSlotSize());
+                sprite.setPosition(mouse.x - controller.getSlotSize() / 2f, mouse.y - controller.getSlotSize() / 2f);
                 sprite.draw(batch);
 
                 String text = String.valueOf(draggingSlot.itemStack.quantity);
-                font.draw(batch, text, sprite.getX() + tileWidth * 2 / 3f, sprite.getY() + tileWidth / 4f);
+                font.draw(batch, text,
+                        sprite.getX() + controller.getSlotSize() * 2 / 3f,
+                        sprite.getY() + controller.getSlotSize() / 4f);
             }
         }
     }
 
-    private void drawInventory(SpriteBatch batch, Inventory inv, int tileWidth) {
+    private void drawInventory(SpriteBatch batch, Inventory inv, int slotSize) {
         Vector2 origin = getInventoryPosition(inv);
 
         for (int y = 0; y < inv.height; y++) {
             for (int x = 0; x < inv.width; x++) {
-                float slotX = origin.x + x * tileWidth;
-                float slotY = origin.y - y * tileWidth;
+                float slotX = origin.x + x * slotSize;
+                float slotY = origin.y - y * slotSize;
 
-                boolean hide = draggingSlot != null
-                        && draggingFromInventory == inv
-                        && draggingSlot.x == x
-                        && draggingSlot.y == y;
+                boolean hide = draggingSlot != null &&
+                        draggingFromInventory == inv &&
+                        draggingSlot.x == x &&
+                        draggingSlot.y == y;
 
                 if (hide) {
-                    drawSlotBackground(batch, slotX, slotY, tileWidth);
+                    drawSlotBackground(batch, slotX, slotY, slotSize);
                 } else {
                     InventorySlot slot = inv.getSlotAt(x, y);
-                    drawInventorySlot(batch, slot, slotX, slotY, tileWidth);
+                    drawInventorySlot(batch, slot, slotX, slotY, slotSize);
                 }
             }
         }
