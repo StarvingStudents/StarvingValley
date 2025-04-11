@@ -31,7 +31,7 @@ public class Inventory {
   public boolean addItem(PrefabType type, int quantity) {
     List<InventorySlot> slots = findSlotsOfType(type);
     if (!slots.isEmpty()) {
-      slots.getFirst().itemStack.quantity += quantity;
+      slots.get(0).itemStack.quantity += quantity;
       return true;
     }
 

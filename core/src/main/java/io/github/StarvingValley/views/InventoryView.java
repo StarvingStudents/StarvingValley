@@ -6,10 +6,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
 import io.github.StarvingValley.controllers.InventoryController;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.Inventory;
 import io.github.StarvingValley.models.types.InventorySlot;
@@ -29,6 +30,9 @@ public class InventoryView {
 
     private Texture slotBackgroundTexture;
 
+    private Texture buttonTexture;
+    private Rectangle buttonBounds;
+
     public InventoryView(InventoryController controller, GameContext context) {
         this.controller = controller;
         this.context = context;
@@ -37,6 +41,7 @@ public class InventoryView {
         this.font.getData().setScale(4f);
 
         this.slotBackgroundTexture = context.assets.getTexture("inventory_slot.png");
+        this.buttonTexture = context.assets.getTexture("inventory_open_button.png");
     }
 
     public void setInventory(Inventory inventory) {
@@ -44,13 +49,38 @@ public class InventoryView {
     }
 
     public void update() {
+        Inventory hotbar = getHotbarIfVisible();
+
+        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
+
+        if (hotbar != null) {
+            Vector2 hotbarOrigin = controller.calculateHotbarPosition(hotbar);
+            float size = controller.getSlotSize();
+            float x = hotbarOrigin.x + hotbar.width * size + 10;
+            float y = hotbarOrigin.y - size;
+            buttonBounds = new Rectangle(x, y, size, size);
+
+            if (Gdx.input.justTouched()) {
+                if (buttonBounds != null && buttonBounds.contains(mouse)) {
+                    if (controller.isInventoryIsVisible()) {
+                        controller.setInventoryVisible(false);
+                    } else {
+                        InventoryComponent inventoryComponent = Mappers.inventory.get(context.player);
+                        if (inventoryComponent != null) {
+                            controller.setInventory(inventoryComponent.inventory);
+                            controller.setInventoryVisible(true);
+                        }
+                    }
+                }
+            }
+        }
+
         if (inventory == null || !controller.isInventoryVisible()) {
             draggingSlot = null;
             draggingFromInventory = null;
             return;
         }
 
-        Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
 
         if (!Gdx.input.isTouched()) {
             if (draggingSlot != null && !dragJustCompleted) {
@@ -65,7 +95,6 @@ public class InventoryView {
         }
 
         if (draggingSlot == null && Gdx.input.justTouched() && !dragJustCompleted) {
-            Inventory hotbar = getHotbarIfVisible();
             Inventory[] inventories = { inventory, hotbar };
 
             for (Inventory inv : inventories) {
@@ -110,6 +139,13 @@ public class InventoryView {
                         sprite.getX() + controller.getSlotSize() * 2 / 3f,
                         sprite.getY() + controller.getSlotSize() / 4f);
             }
+        }
+
+        if (buttonTexture != null && buttonBounds != null && hotbar != null) {
+            Sprite sprite = new Sprite(buttonTexture);
+            sprite.setSize(buttonBounds.width, buttonBounds.height);
+            sprite.setPosition(buttonBounds.x, buttonBounds.y);
+            sprite.draw(batch);
         }
     }
 

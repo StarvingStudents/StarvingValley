@@ -11,6 +11,7 @@ import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
 import io.github.StarvingValley.models.types.GameContext;
@@ -164,6 +165,8 @@ public class InventoryController {
                         (int) draggedSlot.y));
             }
 
+            context.eventBus.publish(new EntityUpdatedEvent(context.player));
+
             return;
         }
     }
@@ -175,7 +178,7 @@ public class InventoryController {
     private void handleEvents() {
         List<InventoryOpenEvent> openEvents = context.eventBus.getEvents(InventoryOpenEvent.class);
         if (!openEvents.isEmpty()) {
-            InventoryOpenEvent openEvent = openEvents.getLast();
+            InventoryOpenEvent openEvent = openEvents.get(openEvents.size() - 1);
 
             InventoryComponent inventoryComponent = Mappers.inventory.get(openEvent.targetEntity);
             HotbarComponent hotbarComponent = Mappers.hotbar.get(openEvent.targetEntity);
