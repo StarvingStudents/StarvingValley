@@ -13,6 +13,8 @@ import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.systems.ActionAnimationSystem;
+import io.github.StarvingValley.models.systems.AnimationSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.ClickSystem;
 import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
@@ -76,6 +78,7 @@ public class VillageController {
         engine.addSystem(new ClickSystem(gameContext));
         engine.addSystem(new MapRenderSystem());
         engine.addSystem(new VelocitySystem());
+        engine.addSystem(new AnimationSystem(gameContext));
         engine.addSystem(new EnvironmentCollisionSystem());
         engine.addSystem(new MovementSystem(gameContext));
         engine.addSystem(new CameraSystem());

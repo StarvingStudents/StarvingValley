@@ -38,7 +38,7 @@ public class VillageView extends ScreenAdapter {
     private final EventDebugger eventDebugger;
     private EventDebugOverlay eventDebugOverlay;
 
-    public VillageView(IFirebaseRepository firebaseRepository, StarvingValley game, Entity player) {
+    public VillageView(IFirebaseRepository firebaseRepository) {
         _firebaseRepository = firebaseRepository;
         eventDebugger = new EventDebugger();
         eventDebugOverlay = new EventDebugOverlay(eventDebugger);
@@ -51,6 +51,19 @@ public class VillageView extends ScreenAdapter {
         assetManager.load("tomato1.png", Texture.class);
         assetManager.load("potato1.png", Texture.class);
         assetManager.load("dirt.png", Texture.class);
+        assetManager.load("idle_down.png", Texture.class);
+        assetManager.load("idle_up.png", Texture.class);
+        assetManager.load("idle_left.png", Texture.class);
+        assetManager.load("idle_right.png", Texture.class);
+        assetManager.load("walking_down.png", Texture.class);
+        assetManager.load("walking_up.png", Texture.class);
+        assetManager.load("walking_left.png", Texture.class);
+        assetManager.load("walking_right.png", Texture.class);
+        assetManager.load("action_soil_down.png", Texture.class);
+        assetManager.load("action_soil_up.png", Texture.class);
+        assetManager.load("action_soil_left.png", Texture.class);
+        assetManager.load("action_soil_right.png", Texture.class);
+        assetManager.finishLoading();
 
         // TODO: Temp logic. When inventory is implemented it should handle this, and it
         //  should only be possible on entities
