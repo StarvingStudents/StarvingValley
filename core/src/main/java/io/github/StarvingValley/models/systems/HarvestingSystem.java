@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
@@ -18,7 +17,7 @@ import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
 import io.github.StarvingValley.models.events.ItemDroppedEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.types.ItemDrop;
+import io.github.StarvingValley.models.types.ItemStack;
 
 public class HarvestingSystem extends EntitySystem {
   private GameContext context;
@@ -39,9 +38,16 @@ public class HarvestingSystem extends EntitySystem {
     Entity player = players.first();
     PositionComponent playerPos = Mappers.position.get(player);
 
-    ImmutableArray<Entity> clickedCrops = engine
-        .getEntitiesFor(Family.all(ClickedComponent.class, GrowthStageComponent.class, TimeToGrowComponent.class,
-            PositionComponent.class, HarvestingComponent.class, ActiveWorldEntityComponent.class).get());
+    ImmutableArray<Entity> clickedCrops =
+        engine.getEntitiesFor(
+            Family.all(
+                    ClickedComponent.class,
+                    GrowthStageComponent.class,
+                    TimeToGrowComponent.class,
+                    PositionComponent.class,
+                    HarvestingComponent.class,
+                    ActiveWorldEntityComponent.class)
+                .get());
 
     for (Entity crop : clickedCrops) {
       GrowthStageComponent growthStageComponent = Mappers.growthStage.get(crop);
@@ -74,9 +80,9 @@ public class HarvestingSystem extends EntitySystem {
     // player the drops
     DropComponent drops = Mappers.drop.get(crop);
     if (drops != null) {
-      for (ItemDrop drop : drops.drops) {
+      for (ItemStack drop : drops.drops) {
         context.eventBus.publish(new ItemDroppedEvent(drop));
-        System.out.println("Dropped " + drop.count + " " + drop.type);
+        System.out.println("Dropped " + drop.quantity + " " + drop.type);
       }
     }
 

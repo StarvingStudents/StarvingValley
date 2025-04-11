@@ -11,7 +11,7 @@ import io.github.StarvingValley.models.components.TradingComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.ItemDroppedEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.types.ItemDrop;
+import io.github.StarvingValley.models.types.ItemStack;
 
 public class TradingSystem extends IteratingSystem {
     private final GameContext context;
@@ -39,7 +39,7 @@ public class TradingSystem extends IteratingSystem {
 
         economy.balance -= trading.trade.cost;
 
-        context.eventBus.publish(new ItemDroppedEvent(new ItemDrop(trading.trade.type, 1)));
+        context.eventBus.publish(new ItemDroppedEvent(new ItemStack(trading.trade.type, 1)));
         context.eventBus.publish(new EntityUpdatedEvent(context.player));
     }
 }

@@ -13,7 +13,6 @@ import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
-import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
@@ -32,15 +31,18 @@ import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HarvestingSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
+import io.github.StarvingValley.models.systems.InventorySystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.models.systems.RespawnSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.TradingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
+import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 
 public class FarmController {
@@ -54,7 +56,6 @@ public class FarmController {
 
     private Entity camera;
     private Entity map;
-    private Entity player;
 
     public FarmController(IFirebaseRepository firebaseRepository, EventBus eventBus, AssetManager assetManager) {
         this.firebaseRepository = firebaseRepository;
@@ -68,6 +69,7 @@ public class FarmController {
         gameContext.assetManager = this.assetManager;
         gameContext.firebaseRepository = this.firebaseRepository;
         gameContext.engine = this.engine;
+        gameContext.assets = new Assets(assetManager);
         initGame();
     }
 
@@ -87,6 +89,8 @@ public class FarmController {
 
         engine.addSystem(new ClickSystem(gameContext));
         engine.addSystem(new MapRenderSystem());
+        engine.addSystem(new InventorySystem(gameContext));
+        engine.addSystem(new RespawnSystem(eventBus));
         engine.addSystem(new BuildPreviewSystem(gameContext));
         engine.addSystem(new BuildPlacementSystem(gameContext));
         engine.addSystem(new AlphaPulseSystem());
@@ -109,9 +113,6 @@ public class FarmController {
         engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new ActionAnimationSystem(gameContext));
-
-        //player = PlayerFactory.createPlayer(10, 10, 1f, 1f, 3.5f, assetManager, camera);
-        //engine.addEntity(player);
 
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
@@ -145,7 +146,11 @@ public class FarmController {
     }
 
     public Entity getPlayer() {
-        return player;
+        return gameContext.player;
+    }
+
+    public GameContext getGameContext() {
+        return gameContext;
     }
 
     public void dispose() {
