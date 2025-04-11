@@ -17,6 +17,8 @@ import io.github.StarvingValley.models.events.InventoryOpenEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.Inventory;
 import io.github.StarvingValley.models.types.InventorySlot;
+import io.github.StarvingValley.models.types.PrefabType;
+import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.views.InventoryView;
 
 public class InventoryController {
@@ -30,6 +32,8 @@ public class InventoryController {
     private boolean hotbarIsVisible = false;
 
     private final int SLOT_SIZE;
+
+    private int selectedHotbarIndex = -1;
 
     public InventoryController(GameContext context) {
         this.context = context;
@@ -59,6 +63,29 @@ public class InventoryController {
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
         inventoryView.setInventory(inventory);
+    }
+
+    public int getSelectedHotbarIndex() {
+        return selectedHotbarIndex;
+    }
+
+    public void setSelectedHotbarIndex(int index) {
+        this.selectedHotbarIndex = index;
+
+        if (index == -1) {
+            BuildUtils.disableBuildPreview(context.engine);
+            return;
+        }
+
+        Inventory hotbar = getHotbar();
+        if (hotbar != null) {
+            InventorySlot slot = hotbar.getSlotAt(index, 0);
+            if (slot != null && slot.itemStack != null) {
+                PrefabType selectedType = slot.itemStack.type;
+
+                BuildUtils.enableBuildPreview(BuildUtils.getBuildsTypeFromType(selectedType), context.engine);
+            }
+        }
     }
 
     public Vector2 calculateInventoryPosition(Inventory inventory) {

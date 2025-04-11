@@ -53,6 +53,7 @@ public class FarmView extends ScreenAdapter {
     // assetManager.load("DogBasic.png", Texture.class);
     assetManager.load("dirt.png", Texture.class);
     assetManager.load("inventory_slot.png", Texture.class);
+    assetManager.load("inventory_slot_highlight.png", Texture.class);
     assetManager.load("inventory_open_button.png", Texture.class);
 
     assetManager.load("idle_down.png", Texture.class);
@@ -107,7 +108,7 @@ public class FarmView extends ScreenAdapter {
             }
 
             if (prefabType != null) {
-              BuildUtils.toggleBuildPreview(prefabType, engine);
+              BuildUtils.enableBuildPreview(prefabType, engine);
             }
 
             return true;

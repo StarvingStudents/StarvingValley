@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+
 import io.github.StarvingValley.controllers.InventoryController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.InventoryComponent;
@@ -16,6 +17,7 @@ import io.github.StarvingValley.models.types.Inventory;
 import io.github.StarvingValley.models.types.InventorySlot;
 import io.github.StarvingValley.utils.TextureUtils;
 
+//TODO: Check if its cleaner if inventory slots etc are ecs entities
 public class InventoryView {
     private final InventoryController controller;
     private final BitmapFont font;
@@ -29,6 +31,7 @@ public class InventoryView {
     private boolean dragJustCompleted = false;
 
     private Texture slotBackgroundTexture;
+    private Texture slotBackgroundHighlightedTexture;
 
     private Texture buttonTexture;
     private Rectangle buttonBounds;
@@ -41,6 +44,7 @@ public class InventoryView {
         this.font.getData().setScale(4f);
 
         this.slotBackgroundTexture = context.assets.getTexture("inventory_slot.png");
+        this.slotBackgroundHighlightedTexture = context.assets.getTexture("inventory_slot_highlight.png");
         this.buttonTexture = context.assets.getTexture("inventory_open_button.png");
     }
 
@@ -52,6 +56,22 @@ public class InventoryView {
         Inventory hotbar = getHotbarIfVisible();
 
         Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
+
+        // TODO: When selecting an item in inventory you also place
+        if (Gdx.input.justTouched()) {
+            if (hotbar != null) {
+                Vector2 origin = getInventoryPosition(hotbar);
+                GridPoint2 slot = controller.screenToSlot(mouse, origin, hotbar, controller.getSlotSize());
+
+                if (slot != null && slot.y == 0 && controller.isInsideInventory(mouse, hotbar, origin)) {
+                    if (controller.getSelectedHotbarIndex() == slot.x) {
+                        controller.setSelectedHotbarIndex(-1);
+                    } else {
+                        controller.setSelectedHotbarIndex(slot.x);
+                    }
+                }
+            }
+        }
 
         if (hotbar != null) {
             Vector2 hotbarOrigin = controller.calculateHotbarPosition(hotbar);
@@ -80,7 +100,6 @@ public class InventoryView {
             draggingFromInventory = null;
             return;
         }
-
 
         if (!Gdx.input.isTouched()) {
             if (draggingSlot != null && !dragJustCompleted) {
@@ -162,20 +181,25 @@ public class InventoryView {
                         draggingSlot.x == x &&
                         draggingSlot.y == y;
 
-                if (hide) {
-                    drawSlotBackground(batch, slotX, slotY, slotSize);
-                } else {
-                    InventorySlot slot = inv.getSlotAt(x, y);
-                    drawInventorySlot(batch, slot, slotX, slotY, slotSize);
-                }
+                InventorySlot slot = inv.getSlotAt(x, y);
+                drawInventorySlot(batch, slot, inv, slotX, slotY, slotSize, !hide, x, y);
             }
         }
     }
 
-    private void drawInventorySlot(SpriteBatch batch, InventorySlot slot, float x, float y, int size) {
-        drawSlotBackground(batch, x, y, size);
+    private void drawInventorySlot(SpriteBatch batch, InventorySlot slot, Inventory inv, float x, float y, int size,
+            boolean showIcon, int inventorySlotX, int inventorySlotY) {
+        boolean isSelectedHotbarSlot = inv == getHotbarIfVisible()
+                && controller.getSelectedHotbarIndex() == inventorySlotX
+                && inventorySlotY == 0;
 
-        if (slot == null)
+        if (isSelectedHotbarSlot) {
+            drawHighlight(batch, x, y, size);
+        } else {
+            drawSlotBackground(batch, x, y, size);
+        }
+
+        if (slot == null || !showIcon)
             return;
 
         Sprite sprite = TextureUtils.getSpriteForPrefabType(slot.itemStack.type, context.assets);
@@ -198,6 +222,15 @@ public class InventoryView {
     private void drawSlotBackground(SpriteBatch batch, float x, float y, int size) {
         if (slotBackgroundTexture != null) {
             Sprite bg = new Sprite(slotBackgroundTexture);
+            bg.setSize(size, size);
+            bg.setPosition(x, y - size);
+            bg.draw(batch);
+        }
+    }
+
+    private void drawHighlight(SpriteBatch batch, float x, float y, int size) {
+        if (slotBackgroundHighlightedTexture != null) {
+            Sprite bg = new Sprite(slotBackgroundHighlightedTexture);
             bg.setSize(size, size);
             bg.setPosition(x, y - size);
             bg.draw(batch);

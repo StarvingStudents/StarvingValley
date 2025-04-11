@@ -20,7 +20,7 @@ public class SeedFactory {
                 "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\wheat_seeds.png");
     }
 
-    public static Entity create(PrefabType type) {
+    public static Entity create(PrefabType type, PrefabType builds) {
         Entity seeds = new Entity();
 
         String texturePath = seedTypeToTexture.get(type);
@@ -30,7 +30,7 @@ public class SeedFactory {
         }
 
         seeds.add(new SpriteComponent(texturePath));
-        seeds.add(new BuildableComponent(type));
+        seeds.add(new BuildableComponent(builds));
 
         return seeds;
     }
