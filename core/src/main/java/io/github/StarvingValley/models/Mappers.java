@@ -33,6 +33,7 @@ import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.SyncDeletionRequestComponent;
+import io.github.StarvingValley.models.components.TextComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
@@ -71,6 +72,7 @@ public class Mappers {
         public static final ComponentMapper<ClickedComponent> clicked = ComponentMapper
                         .getFor(ClickedComponent.class);
         public static final ComponentMapper<SpriteComponent> sprite = ComponentMapper.getFor(SpriteComponent.class);
+public static final ComponentMapper<TextComponent> text = ComponentMapper.getFor(TextComponent.class);
         public static final ComponentMapper<TiledMapComponent> tiledMap = ComponentMapper
                         .getFor(TiledMapComponent.class);
         public static final ComponentMapper<TileOccupierComponent> tileOccupier = ComponentMapper
