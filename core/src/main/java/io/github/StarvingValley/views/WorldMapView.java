@@ -9,6 +9,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 
+import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.WorldMapController;
 import io.github.StarvingValley.models.Mappers;
@@ -16,6 +17,7 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.utils.EventDebugger;
+import io.github.StarvingValley.utils.FilteringInputMultiplexer;
 
 public class WorldMapView extends ScreenAdapter {
   public AssetManager assetManager;
@@ -30,7 +32,7 @@ public class WorldMapView extends ScreenAdapter {
 
   private final EventDebugger eventDebugger;
   private EventDebugOverlay eventDebugOverlay;
-
+  private GameMenuController gameMenuController;
   public WorldMapView(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
@@ -53,11 +55,16 @@ public class WorldMapView extends ScreenAdapter {
         Texture.class);
     assetManager.load("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\PurpleHouse1.png",
         Texture.class);
+    assetManager.load("GameMenu.png", Texture.class);
+
+    assetManager.finishLoading();
 
     controller = new WorldMapController(_firebaseRepository, eventBus, assetManager); // initializing this here to avoid
                                                                                       // problems with the temporal
                                                                                       // input handling
     engine = controller.getEngine();
+
+    gameMenuController = new GameMenuController(controller.gameContext);
 
     CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
     inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
@@ -66,7 +73,7 @@ public class WorldMapView extends ScreenAdapter {
   @Override
   public void show() {
 
-    InputMultiplexer multiplexer = new InputMultiplexer();
+    FilteringInputMultiplexer multiplexer = new FilteringInputMultiplexer(() -> gameMenuController.isVisible());
     multiplexer.addProcessor(inputEventAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
@@ -78,6 +85,7 @@ public class WorldMapView extends ScreenAdapter {
     assetManager.update();
 
     controller.update(delta);
+    gameMenuController.update();
 
     Gdx.gl.glClearColor(.753f, .831f, .439f, 0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -91,6 +99,7 @@ public class WorldMapView extends ScreenAdapter {
     }
 
     engine.update(delta);
+    gameMenuController.render();
     eventDebugOverlay.render();
   }
 

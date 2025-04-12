@@ -69,7 +69,7 @@ public class GameMenuController {
     }
 
     private void handleEvents() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             if (isVisible) {
                 context.eventBus.publish(new GameMenuCloseEvent());
             } else {
