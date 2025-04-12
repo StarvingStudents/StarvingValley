@@ -1,16 +1,11 @@
 package io.github.StarvingValley.models.entities;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
-import io.github.StarvingValley.models.components.ClickableComponent;
-import io.github.StarvingValley.models.components.DropComponent;
+
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
@@ -18,7 +13,6 @@ import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
-import io.github.StarvingValley.models.types.ItemDrop;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
@@ -44,12 +38,6 @@ public class FenceFactory {
         durability.maxHealth = 100;
         durability.health = durability.maxHealth;
         fence.add(durability);
-
-        /*// Add destroyable component
-        DestroyableComponent destroyable = new DestroyableComponent();
-        destroyable.destroyRange = 100.03f;
-        destroyable.canDestroy = true;
-        fence.add(destroyable);*/
 
         // Add buildable component
         fence.add(new BuildableComponent(PrefabType.FENCE));
