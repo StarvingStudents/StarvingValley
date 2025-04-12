@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.DragEndComponent;
@@ -15,10 +16,10 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.Inventory;
+import io.github.StarvingValley.models.types.InventorySlot;
 import io.github.StarvingValley.utils.InventoryUtils;
 import io.github.StarvingValley.utils.ScreenUtils;
 
-//TODO: Allow items to switch positions
 public class InventoryDragSystem extends EntitySystem {
     private final GameContext context;
 
@@ -63,28 +64,72 @@ public class InventoryDragSystem extends EntitySystem {
         }
     }
 
-    private void placeItemInSlot(Entity itemEntity, Inventory inventory, int screenX, int screenY, int originX,
+    private void placeItemInSlot(Entity draggedItem, Inventory inventory, int screenX, int screenY, int originX,
             int originY) {
-
         Entity matchingSlot = InventoryUtils.getSlotAtScreenPosition(getEngine(), screenX, screenY);
+        Vector3 draggedPos = Mappers.position.get(draggedItem).position;
+        InventoryItemComponent draggedItemData = Mappers.inventoryItem.get(draggedItem);
 
-        PositionComponent itemPos = Mappers.position.get(itemEntity);
-        InventoryItemComponent item = Mappers.inventoryItem.get(itemEntity);
-
-        if (matchingSlot != null) {
-            PositionComponent targetPos = Mappers.position.get(matchingSlot);
-            itemPos.position.set(targetPos.position.x, targetPos.position.y, itemPos.position.z);
-
-            InventorySlotComponent slotInfo = Mappers.inventorySlot.get(matchingSlot);
-            item.inventorySlot.x = slotInfo.slotX;
-            item.inventorySlot.y = slotInfo.slotY;
-        } else {
-            Vector2 slotPos = InventoryUtils.getPixelPositionForSlot(
-                    item.inventorySlot.x,
-                    item.inventorySlot.y,
-                    inventory.width, inventory.height);
-
-            itemPos.position.set(slotPos.x, slotPos.y, itemPos.position.z);
+        if (matchingSlot == null) {
+            resetItemPosition(draggedItemData, inventory, draggedPos);
+            return;
         }
+
+        InventorySlotComponent slotInfo = Mappers.inventorySlot.get(matchingSlot);
+        int targetX = slotInfo.slotX;
+        int targetY = slotInfo.slotY;
+
+        Entity itemAlreadyInSlot = getItemAlreadyInSlot(draggedItem, targetX, targetY);
+        if (itemAlreadyInSlot != null) {
+            placeOtherItemOnOrigin(itemAlreadyInSlot, draggedItemData, inventory);
+        }
+
+        Vector2 targetSlotPixel = InventoryUtils.getPixelPositionForSlot(
+                targetX, targetY, inventory.width, inventory.height);
+
+        draggedPos.set(targetSlotPixel.x, targetSlotPixel.y, draggedPos.z);
+        draggedItemData.inventorySlot.x = targetX;
+        draggedItemData.inventorySlot.y = targetY;
+    }
+
+    private Entity getItemAlreadyInSlot(Entity draggedItem, int targetX, int targetY) {
+        ImmutableArray<Entity> allItems = getEngine().getEntitiesFor(
+                Family.all(InventoryItemComponent.class, PositionComponent.class).get());
+
+        for (Entity other : allItems) {
+            if (other == draggedItem)
+                continue;
+
+            InventoryItemComponent otherData = Mappers.inventoryItem.get(other);
+            if (otherData.inventorySlot.x == targetX && otherData.inventorySlot.y == targetY) {
+                return other;
+            }
+        }
+
+        return null;
+    }
+
+    private void resetItemPosition(InventoryItemComponent draggedItemData, Inventory inventory,
+            Vector3 draggedPos) {
+        Vector2 originSlotPos = InventoryUtils.getPixelPositionForSlot(
+                draggedItemData.inventorySlot.x,
+                draggedItemData.inventorySlot.y,
+                inventory.width,
+                inventory.height);
+        draggedPos.set(originSlotPos.x, originSlotPos.y, draggedPos.z);
+    }
+
+    private void placeOtherItemOnOrigin(Entity itemAlreadyInSlot, InventoryItemComponent draggedItemData,
+            Inventory inventory) {
+        InventorySlot otherItemData = Mappers.inventoryItem.get(itemAlreadyInSlot).inventorySlot;
+        Vector3 otherItemPos = Mappers.position.get(itemAlreadyInSlot).position;
+
+        Vector2 originSlotPixel = InventoryUtils.getPixelPositionForSlot(
+                draggedItemData.inventorySlot.x, draggedItemData.inventorySlot.y,
+                inventory.width, inventory.height);
+
+        otherItemPos.set(originSlotPixel.x, originSlotPixel.y, otherItemPos.z);
+        otherItemData.x = draggedItemData.inventorySlot.x;
+        otherItemData.y = draggedItemData.inventorySlot.y;
     }
 }
