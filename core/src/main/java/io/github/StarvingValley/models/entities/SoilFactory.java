@@ -23,7 +23,7 @@ public class SoilFactory {
     soil.add(new TileOccupierComponent());
     soil.add(new SyncComponent());
     soil.add(new SizeComponent(1f, 1f));
-    soil.add(new SpriteComponent("dirt.png"));
+    soil.add(new SpriteComponent(PrefabType.SOIL.getIconName()));
     soil.add(new DropComponent(new ArrayList<>(List.of(new ItemStack(PrefabType.SOIL, 1)))));
     soil.add(new BuildableComponent(PrefabType.SOIL));
 
