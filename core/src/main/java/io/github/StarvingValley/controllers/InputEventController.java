@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import io.github.StarvingValley.models.events.DragStartEvent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.TapEvent;
-import io.github.StarvingValley.models.events.TouchDownEvent;
+import io.github.StarvingValley.utils.ScreenUtils;
 import io.github.StarvingValley.utils.TileUtils;
 
 public class InputEventController {
@@ -16,12 +16,6 @@ public class InputEventController {
     public InputEventController(OrthographicCamera camera, EventBus eventBus) {
         this.camera = camera;
         this.eventBus = eventBus;
-    }
-
-    public void handleTouchDown(int screenX, int screenY, int pointer, int button) {
-        GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
-        GridPoint2 screenTile = TileUtils.touchCoordinatesToScreenTile(screenX, screenY);
-        eventBus.publish(new TouchDownEvent(tile, screenTile, button));
     }
 
     public void handleTap(int screenX, int screenY, int pointer, int button) {
