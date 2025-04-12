@@ -1,14 +1,7 @@
 package io.github.StarvingValley.views;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
@@ -16,26 +9,13 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 
-import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.InputEventController;
-import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.WorldMapController;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
-import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.components.UnsyncedComponent;
-import io.github.StarvingValley.models.dto.SyncEntity;
-import io.github.StarvingValley.models.entities.PlayerFactory;
-import io.github.StarvingValley.models.entities.WorldMapUserFactory;
 import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.models.types.PrefabType;
-import io.github.StarvingValley.utils.BuildUtils;
-import io.github.StarvingValley.utils.EntitySerializer;
 import io.github.StarvingValley.utils.EventDebugger;
-import io.github.StarvingValley.utils.MapUtils;
 
 public class WorldMapView extends ScreenAdapter {
   public AssetManager assetManager;
