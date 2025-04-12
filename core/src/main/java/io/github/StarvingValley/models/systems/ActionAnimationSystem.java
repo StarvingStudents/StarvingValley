@@ -15,7 +15,7 @@ import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.events.EntityPlacedEvent;
-import io.github.StarvingValley.models.events.EntityDamagedEvent;
+import io.github.StarvingValley.models.events.PlayerAttackedEntityEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 
@@ -38,7 +38,7 @@ public class ActionAnimationSystem extends EntitySystem {
         });
 
         // "Axe" action resolver for damaging entities
-        resolvers.put(EntityDamagedEvent.class, (EntityDamagedEvent event) -> "axe");
+        resolvers.put(PlayerAttackedEntityEvent.class, (PlayerAttackedEntityEvent event) -> "axe");
 
         // For new events resolvers.put(AnotherEvent.class, (AnotherEvent e) -> "some_action");
     }

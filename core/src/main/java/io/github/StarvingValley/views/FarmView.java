@@ -51,7 +51,6 @@ public class FarmView extends ScreenAdapter {
     assetManager.load("tomato1.png", Texture.class);
     assetManager.load("potato1.png", Texture.class);
     assetManager.load("dirt.png", Texture.class);
-    assetManager.load("Fences.png", Texture.class);
 
     assetManager.load("idle_down.png", Texture.class);
     assetManager.load("idle_up.png", Texture.class);

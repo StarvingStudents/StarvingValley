@@ -3,10 +3,10 @@ package io.github.StarvingValley.models.events;
 import com.badlogic.ashley.core.Entity;
 import io.github.StarvingValley.models.Interfaces.Event;
 
-public class EntityDamagedEvent implements Event {
+public class PlayerAttackedEntityEvent implements Event {
     private final Entity entity;
 
-    public EntityDamagedEvent(Entity entity) {
+    public PlayerAttackedEntityEvent(Entity entity) {
         this.entity = entity;
     }
 
