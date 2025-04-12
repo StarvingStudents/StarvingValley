@@ -14,6 +14,7 @@ import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySlotComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.Inventory;
 import io.github.StarvingValley.models.types.InventorySlot;
@@ -55,24 +56,34 @@ public class InventoryDragSystem extends EntitySystem {
         ImmutableArray<Entity> droppedItems = getEngine().getEntitiesFor(
                 Family.all(InventoryItemComponent.class, DraggingComponent.class, DragEndComponent.class).get());
 
+        boolean inventoryHasChanged = false;
         for (Entity entity : droppedItems) {
             DragEndComponent dragEnd = Mappers.dragEnd.get(entity);
             DraggingComponent dragging = Mappers.dragging.get(entity);
 
-            placeItemInSlot(entity, inventory, dragEnd.dropScreenX, dragEnd.dropScreenY, dragging.originScreenX,
+            inventoryHasChanged |= placeItemInSlot(entity, inventory, dragEnd.dropScreenX, dragEnd.dropScreenY,
+                    dragging.originScreenX,
                     dragging.originScreenY);
+        }
+
+        if (inventoryHasChanged) {
+            context.eventBus.publish(new EntityUpdatedEvent(player));
         }
     }
 
-    private void placeItemInSlot(Entity draggedItem, Inventory inventory, int screenX, int screenY, int originX,
+    private boolean placeItemInSlot(Entity draggedItem, Inventory inventory, int screenX, int screenY, int originX,
             int originY) {
+
         Entity matchingSlot = InventoryUtils.getSlotAtScreenPosition(getEngine(), screenX, screenY);
         Vector3 draggedPos = Mappers.position.get(draggedItem).position;
         InventoryItemComponent draggedItemData = Mappers.inventoryItem.get(draggedItem);
 
+        int originSlotX = draggedItemData.inventorySlot.x;
+        int originSlotY = draggedItemData.inventorySlot.y;
+
         if (matchingSlot == null) {
             resetItemPosition(draggedItemData, inventory, draggedPos);
-            return;
+            return false;
         }
 
         InventorySlotComponent slotInfo = Mappers.inventorySlot.get(matchingSlot);
@@ -90,6 +101,8 @@ public class InventoryDragSystem extends EntitySystem {
         draggedPos.set(targetSlotPixel.x, targetSlotPixel.y, draggedPos.z);
         draggedItemData.inventorySlot.x = targetX;
         draggedItemData.inventorySlot.y = targetY;
+
+        return targetX != originSlotX || targetY != originSlotY;
     }
 
     private Entity getItemAlreadyInSlot(Entity draggedItem, int targetX, int targetY) {
