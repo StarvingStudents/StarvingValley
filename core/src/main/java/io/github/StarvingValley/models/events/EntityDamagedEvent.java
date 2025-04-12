@@ -1,0 +1,16 @@
+package io.github.StarvingValley.models.events;
+
+import com.badlogic.ashley.core.Entity;
+import io.github.StarvingValley.models.Interfaces.Event;
+
+public class EntityDamagedEvent implements Event {
+    private final Entity entity;
+
+    public EntityDamagedEvent(Entity entity) {
+        this.entity = entity;
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+} 

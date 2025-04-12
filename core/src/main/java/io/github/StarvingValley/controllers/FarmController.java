@@ -14,6 +14,7 @@ import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
+import io.github.StarvingValley.models.entities.FenceFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
@@ -42,6 +43,10 @@ import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.MapUtils;
+//import io.github.StarvingValley.models.systems.DestroySystem;
+import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.systems.DamageSystem;
+import io.github.StarvingValley.models.systems.EntityCleanupSystem;
 
 public class FarmController {
 
@@ -104,6 +109,8 @@ public class FarmController {
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new DurabilityRenderSystem(gameContext));
+        engine.addSystem(new DamageSystem(gameContext));
+        engine.addSystem(new EntityCleanupSystem(gameContext));
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new ClickedCleanupSystem());
