@@ -10,6 +10,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
+import io.github.StarvingValley.models.components.HudComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.events.TapEvent;
@@ -27,13 +28,33 @@ public class ClickSystem extends EntitySystem {
   public void update(float delta) {
     List<TapEvent> events = context.eventBus.getEvents(TapEvent.class);
 
-    ImmutableArray<Entity> clickableEntities =
-        getEngine()
-            .getEntitiesFor(
-                Family.all(PositionComponent.class, SizeComponent.class, ClickableComponent.class)
-                    .get());
+    ImmutableArray<Entity> clickableEntities = getEngine()
+        .getEntitiesFor(
+            Family.all(PositionComponent.class, SizeComponent.class, ClickableComponent.class)
+                .exclude(HudComponent.class)
+                .get());
+
+    ImmutableArray<Entity> clickableHudEntities = getEngine()
+        .getEntitiesFor(
+            Family.all(PositionComponent.class, SizeComponent.class, ClickableComponent.class, HudComponent.class)
+                .get());
 
     for (TapEvent clickEvent : events) {
+      boolean triggeredHud = false;
+      for (Entity entity : clickableHudEntities) {
+        PositionComponent position = Mappers.position.get(entity);
+        SizeComponent size = Mappers.size.get(entity);
+
+        if (TileUtils.isOverlappingTile(position.position.x, position.position.y, size.width, size.height,
+            clickEvent.screenTile)) {
+          entity.add(new ClickedComponent());
+          triggeredHud = true;
+        }
+      }
+
+      if (triggeredHud)
+        continue;
+
       for (Entity entity : clickableEntities) {
         PositionComponent position = Mappers.position.get(entity);
         SizeComponent size = Mappers.size.get(entity);

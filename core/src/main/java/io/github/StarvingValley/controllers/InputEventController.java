@@ -20,16 +20,19 @@ public class InputEventController {
 
     public void handleTouchDown(int screenX, int screenY, int pointer, int button) {
         GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
-        eventBus.publish(new TouchDownEvent(tile, button));
+        GridPoint2 screenTile = TileUtils.touchCoordinatesToScreenTile(screenX, screenY);
+        eventBus.publish(new TouchDownEvent(tile, screenTile, button));
     }
 
     public void handleTap(int screenX, int screenY, int pointer, int button) {
-        GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
-        eventBus.publish(new TapEvent(tile, button));
+        GridPoint2 worldTile = TileUtils.coordinatesToTile(screenX, screenY, camera);
+        GridPoint2 screenTile = TileUtils.touchCoordinatesToScreenTile(screenX, screenY);
+        eventBus.publish(new TapEvent(worldTile, screenTile, button));
     }
 
     public void handleDragStart(int screenX, int screenY, int pointer, int button) {
         GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
-        eventBus.publish(new DragStartEvent(tile, button));
+        GridPoint2 screenTile = TileUtils.touchCoordinatesToScreenTile(screenX, screenY);
+        eventBus.publish(new DragStartEvent(tile, screenTile, button));
     }
 }

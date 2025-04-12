@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import io.github.StarvingValley.config.Config;
+
 public class TileUtils {
   //TODO: Change overlapping tiles to a spatialgrid
   public static Set<GridPoint2> getOverlappingTiles(
@@ -45,6 +47,21 @@ public class TileUtils {
   public static GridPoint2 coordinatesToTile(int screenX, int screenY, OrthographicCamera camera) {
     Vector2 worldClick = ScreenUtils.getWorldPosition(camera, screenX, screenY);
     return worldToTile(worldClick);
+  }
+
+  public static GridPoint2 touchCoordinatesToScreenTile(int screenX, int screenY) {
+    Vector2 point = ScreenUtils.getScreenPositionFromTouchPosition(screenX, screenY);
+
+    int tilesWide = Config.CAMERA_TILES_WIDE;
+    int tilesHigh = MapUtils.calculateVerticalTileCount(tilesWide);
+
+    int screenTileWidth = Gdx.graphics.getWidth() / tilesWide;
+    int screenTileHeight = Gdx.graphics.getHeight() / tilesHigh;
+
+    int tileX = (int) point.x / screenTileWidth;
+    int tileY = (int) point.y / screenTileHeight;
+
+    return new GridPoint2(tileX, tileY);
   }
 
   public static boolean isOverlappingTile(
