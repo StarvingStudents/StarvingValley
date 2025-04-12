@@ -15,6 +15,11 @@ public class InventorySlot {
 
     }
 
+    public InventorySlot(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public PrefabType getType() {
         return itemStack != null ? itemStack.type : null;
     }

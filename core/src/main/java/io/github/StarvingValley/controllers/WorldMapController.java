@@ -15,8 +15,8 @@ import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
 import io.github.StarvingValley.models.systems.CameraSystem;
-import io.github.StarvingValley.models.systems.ClickSystem;
-import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
+import io.github.StarvingValley.models.systems.InputSystem;
+import io.github.StarvingValley.models.systems.InputCleanupSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
@@ -60,14 +60,14 @@ public class WorldMapController {
 
         engine.addEntity(camera);
 
-        engine.addSystem(new ClickSystem(gameContext));
+        engine.addSystem(new InputSystem(gameContext));
         engine.addSystem(new WorldMapTransitionSystem(gameContext));
         engine.addSystem(new CameraSystem());
         engine.addSystem(new RenderSystem(gameContext));
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
-        engine.addSystem(new ClickedCleanupSystem());
+        engine.addSystem(new InputCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
 
         loadUserEntities();

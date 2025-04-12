@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.Inventory;
 import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.models.types.PrefabType;
+import io.github.StarvingValley.utils.InventoryUtils;
 
 public class InventorySystem extends EntitySystem {
     private final GameContext context;
@@ -63,6 +64,11 @@ public class InventorySystem extends EntitySystem {
             inventory.printInventory();
 
             context.eventBus.publish(new EntityUpdatedEvent(player));
+
+            if (InventoryUtils.isInventoryOpen(getEngine())) {
+                InventoryUtils.closeInventory(getEngine());
+                InventoryUtils.openInventory(getEngine(), inventory);
+            }
         }
     }
 
@@ -70,24 +76,33 @@ public class InventorySystem extends EntitySystem {
         PrefabType type = stack.type;
         int quantity = stack.quantity;
 
-        boolean hotbarHasType = hotbar.hasStackOfType(type);
-        if (hotbarHasType) {
-            hotbar.addItem(type, quantity);
-            return true;
-        }
-
+        // TODO: remove this and uncomment below when added hotbar, this is just for
+        // testing
         boolean inventoryHasType = inventory.hasStackOfType(type);
         if (inventoryHasType) {
             inventory.addItem(type, quantity);
             return true;
         }
+        return inventory.addItem(type, quantity);
 
-        boolean added = hotbar.addItem(type, quantity);
-        if (!added) {
-            added = inventory.addItem(type, quantity);
-        }
+        // boolean hotbarHasType = hotbar.hasStackOfType(type);
+        // if (hotbarHasType) {
+        // hotbar.addItem(type, quantity);
+        // return true;
+        // }
 
-        return added;
+        // inventoryHasType = inventory.hasStackOfType(type);
+        // if (inventoryHasType) {
+        // inventory.addItem(type, quantity);
+        // return true;
+        // }
+
+        // boolean added = hotbar.addItem(type, quantity);
+        // if (!added) {
+        // added = inventory.addItem(type, quantity);
+        // }
+
+        // return added;
     }
 
     private boolean removeItems(ItemStack stack, Inventory hotbar, Inventory inventory) {

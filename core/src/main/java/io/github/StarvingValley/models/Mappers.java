@@ -12,6 +12,8 @@ import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
+import io.github.StarvingValley.models.components.DragEndComponent;
+import io.github.StarvingValley.models.components.DraggingComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
@@ -24,6 +26,8 @@ import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
+import io.github.StarvingValley.models.components.InventoryItemComponent;
+import io.github.StarvingValley.models.components.InventorySlotComponent;
 import io.github.StarvingValley.models.components.MapRenderComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -71,8 +75,12 @@ public class Mappers {
                         .getFor(ClickableComponent.class);
         public static final ComponentMapper<ClickedComponent> clicked = ComponentMapper
                         .getFor(ClickedComponent.class);
+        public static final ComponentMapper<DraggingComponent> dragging = ComponentMapper
+                        .getFor(DraggingComponent.class);
+        public static final ComponentMapper<DragEndComponent> dragEnd = ComponentMapper
+                        .getFor(DragEndComponent.class);
         public static final ComponentMapper<SpriteComponent> sprite = ComponentMapper.getFor(SpriteComponent.class);
-public static final ComponentMapper<TextComponent> text = ComponentMapper.getFor(TextComponent.class);
+        public static final ComponentMapper<TextComponent> text = ComponentMapper.getFor(TextComponent.class);
         public static final ComponentMapper<TiledMapComponent> tiledMap = ComponentMapper
                         .getFor(TiledMapComponent.class);
         public static final ComponentMapper<TileOccupierComponent> tileOccupier = ComponentMapper
@@ -110,6 +118,10 @@ public static final ComponentMapper<TextComponent> text = ComponentMapper.getFor
                         .getFor(EconomyComponent.class);
         public static final ComponentMapper<InventoryComponent> inventory = ComponentMapper
                         .getFor(InventoryComponent.class);
+        public static final ComponentMapper<InventoryItemComponent> inventoryItem = ComponentMapper
+                        .getFor(InventoryItemComponent.class);
+        public static final ComponentMapper<InventorySlotComponent> inventorySlot = ComponentMapper
+                        .getFor(InventorySlotComponent.class);
         public static final ComponentMapper<HotbarComponent> hotbar = ComponentMapper
                         .getFor(HotbarComponent.class);
 }

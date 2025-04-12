@@ -17,6 +17,7 @@ import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
@@ -24,12 +25,13 @@ import io.github.StarvingValley.models.events.InventoryOpenEvent;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
+import io.github.StarvingValley.utils.InventoryUtils;
 
 public class FarmView extends ScreenAdapter {
   public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
-  private InputAdapter inputAdapter; //temp
+  private InputAdapter inputAdapter; // temp
   private InputEventAdapter inputEventAdapter;
 
   private EventBus eventBus;
@@ -80,43 +82,44 @@ public class FarmView extends ScreenAdapter {
     inventoryController = new InventoryController(controller.getGameContext());
     inventoryController.setHotbarIsVisible(true);
 
-      // TODO: Temp logic. When inventory is implemented it should handle this, and it
+    // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
     // with BuildableComponent. Use BuildUtils.isBuildable
-    inputAdapter =
-        new InputAdapter() {
-          @Override
-          public boolean keyDown(int keycode) {
-            PrefabType prefabType = null;
+    inputAdapter = new InputAdapter() {
+      @Override
+      public boolean keyDown(int keycode) {
+        PrefabType prefabType = null;
 
-            switch (keycode) {
-              case Input.Keys.C:
-                prefabType = PrefabType.WHEAT_CROP;
-                break;
-              case Input.Keys.E:
-                prefabType = PrefabType.BEETROOT_CROP;
-                break;
-              case Input.Keys.F:
-                prefabType = PrefabType.SOIL;
-                break;
-              case Input.Keys.I:
-                if (inventoryController.isInventoryIsVisible()) {
-                  eventBus.publish(new InventoryCloseEvent());
-                } else {
-                  eventBus.publish(new InventoryOpenEvent(controller.getPlayer()));
-                }
+        switch (keycode) {
+          case Input.Keys.C:
+            prefabType = PrefabType.WHEAT_CROP;
+            break;
+          case Input.Keys.E:
+            prefabType = PrefabType.BEETROOT_CROP;
+            break;
+          case Input.Keys.F:
+            prefabType = PrefabType.SOIL;
+            break;
+          case Input.Keys.I:
+            InventoryComponent inventory = Mappers.inventory.get(controller.getPlayer());
+            InventoryUtils.toggleInventory(engine, inventory.inventory);
+            if (inventoryController.isInventoryIsVisible()) {
+              eventBus.publish(new InventoryCloseEvent());
+            } else {
+              eventBus.publish(new InventoryOpenEvent(controller.getPlayer()));
             }
+        }
 
-            if (prefabType != null) {
-              BuildUtils.enableBuildPreview(prefabType, engine);
-            }
+        if (prefabType != null) {
+          BuildUtils.enableBuildPreview(prefabType, engine);
+        }
 
-            return true;
-          }
-        };
+        return true;
+      }
+    };
 
-      CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
-      inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
+    CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
+    inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
   }
 
   @Override
@@ -129,7 +132,7 @@ public class FarmView extends ScreenAdapter {
 
     InputMultiplexer multiplexer = new InputMultiplexer();
     multiplexer.addProcessor(inputEventAdapter);
-    multiplexer.addProcessor(inputAdapter); //temp
+    multiplexer.addProcessor(inputAdapter); // temp
     multiplexer.addProcessor(joystickInputAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
@@ -143,7 +146,7 @@ public class FarmView extends ScreenAdapter {
   @Override
   public void render(float delta) {
     assetManager.update();
-    inventoryController.update();
+    // inventoryController.update();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -153,13 +156,13 @@ public class FarmView extends ScreenAdapter {
 
     CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
     if (cameraComponent != null) {
-        controller.getBatch().setProjectionMatrix(cameraComponent.camera.combined);
+      controller.getBatch().setProjectionMatrix(cameraComponent.camera.combined);
     }
 
     engine.update(delta);
     joystickOverlay.render();
     eventDebugOverlay.render();
-    inventoryController.render();
+    // inventoryController.render();
   }
 
   @Override
