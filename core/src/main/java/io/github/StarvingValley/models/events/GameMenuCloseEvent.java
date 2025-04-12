@@ -1,4 +1,6 @@
 package io.github.StarvingValley.models.events;
 
-public class GameMenuCloseEvent {
+import io.github.StarvingValley.models.Interfaces.Event;
+
+public class GameMenuCloseEvent implements Event {
 }
