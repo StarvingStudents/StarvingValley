@@ -6,6 +6,7 @@ import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
+import io.github.StarvingValley.models.components.ButtonComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
@@ -105,4 +106,6 @@ public class Mappers {
         public static final ComponentMapper<EconomyComponent> economy = ComponentMapper.getFor(EconomyComponent.class);
         public static final ComponentMapper<WorldMapFarmComponent> worldMapFarm = ComponentMapper
                         .getFor(WorldMapFarmComponent.class);
+        public static final ComponentMapper<ButtonComponent> button = ComponentMapper
+                        .getFor(ButtonComponent.class);
 }
