@@ -21,7 +21,6 @@ import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
-import io.github.StarvingValley.utils.FilteringInputMultiplexer;
 
 public class FarmView extends ScreenAdapter {
   public AssetManager assetManager;

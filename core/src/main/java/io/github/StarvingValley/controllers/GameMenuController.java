@@ -24,13 +24,15 @@ public class GameMenuController {
     }
 
     public void update() {
-        handleEvents();
-
         if (isVisible) {
             uiBatch.begin();
             view.update();
             uiBatch.end();
+        } else {
+            view.update();
         }
+        handleEvents();
+
     }
 
     public void render() {
@@ -67,18 +69,17 @@ public class GameMenuController {
     public void onSettingsPressed() {
         // Settings logic TBD
     }
+    public void onToggleMenuRequested() {
+        toggleVisibility();
+        if (isVisible) {
+            context.eventBus.publish(new GameMenuOpenEvent());
+        } else {
+            context.eventBus.publish(new GameMenuCloseEvent());
+        }
+    }
 
     private void handleEvents() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            if (isVisible) {
-                context.eventBus.publish(new GameMenuCloseEvent());
-            } else {
-                context.eventBus.publish(new GameMenuOpenEvent());
-            }
-        }
-
         if (!context.eventBus.getEvents(GameMenuOpenEvent.class).isEmpty()) {
-            Gdx.app.log("GameMenu", "Opening menu"); //debug
             setVisible(true);
         }
 
@@ -86,4 +87,6 @@ public class GameMenuController {
             setVisible(false);
         }
     }
+
+
 }

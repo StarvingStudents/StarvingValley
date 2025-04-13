@@ -1,4 +1,4 @@
-package io.github.StarvingValley.utils;
+package io.github.StarvingValley.views;
 
 import com.badlogic.gdx.InputMultiplexer;
 

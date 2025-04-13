@@ -1,6 +1,7 @@
 package io.github.StarvingValley.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -54,6 +55,10 @@ public class GameMenuView {
             } else if (exitButtonBounds.contains(touch)) {
                 controller.onExitPressed();
             }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            controller.onToggleMenuRequested();
         }
     }
 
