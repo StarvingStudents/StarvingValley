@@ -4,10 +4,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.StarvingValley.models.events.DragEndEvent;
 import io.github.StarvingValley.models.events.DragStartEvent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.TapEvent;
-import io.github.StarvingValley.models.events.TouchDownEvent;
 import io.github.StarvingValley.utils.ScreenUtils;
 import io.github.StarvingValley.utils.TileUtils;
 
@@ -20,11 +20,6 @@ public class InputEventController {
         this.eventBus = eventBus;
     }
 
-    public void handleTouchDown(int screenX, int screenY, int pointer, int button) {
-        GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
-        eventBus.publish(new TouchDownEvent(tile, button));
-    }
-
     public void handleTap(int screenX, int screenY, int pointer, int button) {
         GridPoint2 worldTile = TileUtils.coordinatesToTile(screenX, screenY, camera);
         Vector2 screenPos = ScreenUtils.getScreenPositionFromTouchPosition(screenX, screenY);
@@ -33,6 +28,13 @@ public class InputEventController {
 
     public void handleDragStart(int screenX, int screenY, int pointer, int button) {
         GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
-        eventBus.publish(new DragStartEvent(tile, button));
+        Vector2 screenPos = ScreenUtils.getScreenPositionFromTouchPosition(screenX, screenY);
+        eventBus.publish(new DragStartEvent(tile, screenPos, button));
+    }
+
+    public void handleDragEnd(int screenX, int screenY, int pointer, int button) {
+        GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
+        Vector2 screenPos = ScreenUtils.getScreenPositionFromTouchPosition(screenX, screenY);
+        eventBus.publish(new DragEndEvent(tile, screenPos, button));
     }
 }
