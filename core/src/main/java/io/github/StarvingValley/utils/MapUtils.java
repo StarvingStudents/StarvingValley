@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.entities.MapFactory;
@@ -107,6 +108,8 @@ public class MapUtils {
 
               Entity entity =
                   EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+
+              entity.remove(SyncComponent.class);
 
               skipSpriteSyncOnLoad(entity);
               context.engine.addEntity(entity);

@@ -8,8 +8,10 @@ import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
+import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
@@ -36,6 +38,7 @@ public class VisitFarmController {
   public GameContext gameContext;
   private Entity camera;
   private Entity map;
+  private Entity player;
 
   public VisitFarmController(
       String visitedUserId,
@@ -87,8 +90,11 @@ public class VisitFarmController {
     for (String asset : assetManager.getAssetNames()) {
       System.out.println("- " + asset);
     }
+    TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
+    MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
 
-    MapUtils.loadSyncedEntities(gameContext, camera);
+    player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, assetManager, camera);
+    engine.addEntity(player);
     MapUtils.loadSyncedEntitiesForUser(gameContext, camera, visitedUserId);
   }
 

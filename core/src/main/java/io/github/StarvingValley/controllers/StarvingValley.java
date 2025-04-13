@@ -3,7 +3,7 @@ package io.github.StarvingValley.controllers;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.views.WorldMapView;
+import io.github.StarvingValley.views.FarmView;
 
 public class StarvingValley extends Game {
 
@@ -17,8 +17,8 @@ public class StarvingValley extends Game {
   @Override
   public void create() {
     // TODO: Comment out FarmView and uncomment WorldMapView to test the world map
-    //    setScreen(new FarmView(_firebaseRepository));
-    setScreen(new WorldMapView(this, _firebaseRepository));
+        setScreen(new FarmView(_firebaseRepository));
+//    setScreen(new WorldMapView(this, _firebaseRepository));
     //    setScreen(new VisitFarmView(_firebaseRepository, "kA22VW0RofdBTDkHN09gCH355rI3"));
   }
 
