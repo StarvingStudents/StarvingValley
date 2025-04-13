@@ -3,12 +3,12 @@ package io.github.StarvingValley.controllers;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.github.StarvingValley.models.events.DragStartEvent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.TapEvent;
 import io.github.StarvingValley.models.events.TouchDownEvent;
+import io.github.StarvingValley.utils.ScreenUtils;
 import io.github.StarvingValley.utils.TileUtils;
 
 public class InputEventController {
