@@ -12,6 +12,7 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.events.EventBus;
@@ -29,6 +30,9 @@ import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
+import io.github.StarvingValley.models.systems.HUDButtonPressHandlingSystem;
+import io.github.StarvingValley.models.systems.HUDButtonPressSystem;
+import io.github.StarvingValley.models.systems.HUDRenderSystem;
 import io.github.StarvingValley.models.systems.HarvestingSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
@@ -104,14 +108,20 @@ public class FarmController {
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new DurabilityRenderSystem(gameContext));
+        engine.addSystem(new HUDRenderSystem());
+        engine.addSystem(new HUDButtonPressSystem(gameContext));
+        engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new ActionAnimationSystem(gameContext));
 
-        //player = PlayerFactory.createPlayer(10, 10, 1f, 1f, 3.5f, assetManager, camera);
-        //engine.addEntity(player);
+        // engine.addEntity();
+
+        // player = PlayerFactory.createPlayer(10, 10, 1f, 1f, 3.5f, assetManager,
+        // camera);
+        // engine.addEntity(player);
 
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
