@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.views.FarmView;
+import io.github.StarvingValley.views.WorldMapView;
 
 public class StarvingValley extends Game {
 
@@ -17,8 +18,10 @@ public class StarvingValley extends Game {
   @Override
   public void create() {
     // TODO: Comment out FarmView and uncomment WorldMapView to test the world map
-        setScreen(new FarmView(_firebaseRepository));
-//    setScreen(new WorldMapView(this, _firebaseRepository));
+        //setScreen(new FarmView(_firebaseRepository));
+
+
+    setScreen(new WorldMapView(this, _firebaseRepository));
     //    setScreen(new VisitFarmView(_firebaseRepository, "kA22VW0RofdBTDkHN09gCH355rI3"));
   }
 
@@ -26,6 +29,7 @@ public class StarvingValley extends Game {
     // Prevent disposing of the same screen
     if (getScreen() == newScreen) {
       return;
+
     }
 
     // is this needed? switching view only works when this is not included

@@ -2,17 +2,15 @@ package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import io.github.StarvingValley.controllers.FarmController;
+import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
@@ -38,6 +36,7 @@ public class FarmView extends ScreenAdapter {
   private final EventDebugger eventDebugger;
   private EventDebugOverlay eventDebugOverlay;
 
+  private GameMenuController gameMenuController;
   public FarmView(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
@@ -64,6 +63,9 @@ public class FarmView extends ScreenAdapter {
     assetManager.load("action_soil_up.png", Texture.class);
     assetManager.load("action_soil_left.png", Texture.class);
     assetManager.load("action_soil_right.png", Texture.class);
+
+    assetManager.load("GameMenu.png", Texture.class);
+
     assetManager.finishLoading();
 
 
@@ -99,6 +101,8 @@ public class FarmView extends ScreenAdapter {
       controller = new FarmController(_firebaseRepository, eventBus, assetManager); //initializing this here to avoid problems with the temporal input handling
       engine = controller.getEngine();
 
+      gameMenuController = new GameMenuController(controller.getGameContext());
+
       CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
       inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
   }
@@ -111,7 +115,7 @@ public class FarmView extends ScreenAdapter {
 
     InputAdapter joystickInputAdapter = joystickOverlay.getInputAdapter();
 
-    InputMultiplexer multiplexer = new InputMultiplexer();
+    FilteringInputMultiplexer multiplexer = new FilteringInputMultiplexer(() -> gameMenuController.isVisible());
     multiplexer.addProcessor(inputEventAdapter);
     multiplexer.addProcessor(inputAdapter); //temp
     multiplexer.addProcessor(joystickInputAdapter);
@@ -126,6 +130,7 @@ public class FarmView extends ScreenAdapter {
   @Override
   public void render(float delta) {
     assetManager.update();
+    gameMenuController.update();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -140,6 +145,7 @@ public class FarmView extends ScreenAdapter {
 
     engine.update(delta);
     joystickOverlay.render();
+    gameMenuController.render();
     eventDebugOverlay.render();
   }
 
