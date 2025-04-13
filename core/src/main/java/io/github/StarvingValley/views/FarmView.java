@@ -12,14 +12,19 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+
+import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.ButtonType;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
@@ -28,12 +33,14 @@ public class FarmView extends ScreenAdapter {
   public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
-  private InputAdapter inputAdapter; //temp
+  private InputAdapter inputAdapter; // temp
   private InputEventAdapter inputEventAdapter;
 
   private EventBus eventBus;
   private FarmController controller;
   private Engine engine;
+
+  private GameContext context;
 
   private final EventDebugger eventDebugger;
   private EventDebugOverlay eventDebugOverlay;
@@ -47,7 +54,7 @@ public class FarmView extends ScreenAdapter {
     // pre-load some assets that we know we always need.
     // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
-    //assetManager.load("DogBasic.png", Texture.class);
+    // assetManager.load("DogBasic.png", Texture.class);
     assetManager.load("tomato1.png", Texture.class);
     assetManager.load("potato1.png", Texture.class);
     assetManager.load("dirt.png", Texture.class);
@@ -66,41 +73,41 @@ public class FarmView extends ScreenAdapter {
     assetManager.load("action_soil_right.png", Texture.class);
     assetManager.finishLoading();
 
-
-      // TODO: Temp logic. When inventory is implemented it should handle this, and it
+    // TODO: Temp logic. When inventory is implemented it should handle this, and it
     // should only be possible on entities
     // with BuildableComponent. Use BuildUtils.isBuildable
-    inputAdapter =
-        new InputAdapter() {
-          @Override
-          public boolean keyDown(int keycode) {
-            PrefabType prefabType = null;
+    inputAdapter = new InputAdapter() {
+      @Override
+      public boolean keyDown(int keycode) {
+        PrefabType prefabType = null;
 
-            switch (keycode) {
-              case Input.Keys.C:
-                prefabType = PrefabType.TOMATO_CROP;
-                break;
-              case Input.Keys.E:
-                prefabType = PrefabType.POTATO_CROP;
-                break;
-              case Input.Keys.F:
-                prefabType = PrefabType.SOIL;
-                break;
-            }
+        switch (keycode) {
+          case Input.Keys.C:
+            prefabType = PrefabType.TOMATO_CROP;
+            break;
+          case Input.Keys.E:
+            prefabType = PrefabType.POTATO_CROP;
+            break;
+          case Input.Keys.F:
+            prefabType = PrefabType.SOIL;
+            break;
+        }
 
-            if (prefabType != null) {
-              BuildUtils.toggleBuildPreview(prefabType, engine);
-            }
+        if (prefabType != null) {
+          BuildUtils.toggleBuildPreview(prefabType, engine);
+        }
 
-            return true;
-          }
-        };
+        return true;
+      }
+    };
 
-      controller = new FarmController(_firebaseRepository, eventBus, assetManager); //initializing this here to avoid problems with the temporal input handling
-      engine = controller.getEngine();
+    controller = new FarmController(_firebaseRepository, eventBus, assetManager); // initializing this here to avoid
+                                                                                  // problems with the temporal input
+                                                                                  // handling
+    engine = controller.getEngine();
 
-      CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
-      inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
+    CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
+    inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
   }
 
   @Override
@@ -113,7 +120,7 @@ public class FarmView extends ScreenAdapter {
 
     InputMultiplexer multiplexer = new InputMultiplexer();
     multiplexer.addProcessor(inputEventAdapter);
-    multiplexer.addProcessor(inputAdapter); //temp
+    multiplexer.addProcessor(inputAdapter); // temp
     multiplexer.addProcessor(joystickInputAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
@@ -121,6 +128,12 @@ public class FarmView extends ScreenAdapter {
     // Temp until we have villageview
     Entity trader = TraderFactory.create(30, 13);
     engine.addEntity(trader);
+
+    Entity eatingButton = HUDButtonFactory.createHUDButton(-3, 5, 1, 1,
+        "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\Objects\\Egg_item.png", context,
+        ButtonType.EATING_BUTTON);
+
+    engine.addEntity(eatingButton);
   }
 
   @Override
@@ -135,7 +148,7 @@ public class FarmView extends ScreenAdapter {
 
     CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
     if (cameraComponent != null) {
-        controller.getBatch().setProjectionMatrix(cameraComponent.camera.combined);
+      controller.getBatch().setProjectionMatrix(cameraComponent.camera.combined);
     }
 
     engine.update(delta);
