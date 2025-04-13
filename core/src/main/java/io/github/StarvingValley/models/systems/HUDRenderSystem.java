@@ -42,9 +42,13 @@ public class HUDRenderSystem extends EntitySystem {
             sprite.setSize(tileWidth * entity.getComponent(SizeComponent.class).width, tileWidth * entity
                     .getComponent(SizeComponent.class).width);
 
-            Vector2 renderPos = ScreenUtils.getScreenPositionFromTouchPosition(
-                    screenWidth + (tileWidth * (int) entity.getComponent(PositionComponent.class).position.x),
-                    tileWidth * (int) entity.getComponent(PositionComponent.class).position.y);
+            // Vector2 renderPos = ScreenUtils.getScreenPositionFromTouchPosition(
+            // screenWidth + (tileWidth * (int)
+            // entity.getComponent(PositionComponent.class).position.x),
+            // tileWidth * (int) entity.getComponent(PositionComponent.class).position.y);
+
+            Vector2 renderPos = new Vector2(entity.getComponent(PositionComponent.class).position.x,
+                    entity.getComponent(PositionComponent.class).position.y);
 
             sprite.setPosition(renderPos.x, renderPos.y);
             if (sprite.getTexture() != null) {
