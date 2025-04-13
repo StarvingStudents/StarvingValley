@@ -14,7 +14,6 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Interfaces.PushCallback;
 import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.dto.SyncEntity;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -250,6 +249,36 @@ public class FirebaseRepository implements IFirebaseRepository {
 
     return true;
   }
+
+    @Override
+    public boolean getEntitiesForUser(String userId, EntityDataCallback callback) {
+        if (userId == null || userId.isEmpty()) {
+            callback.onFailure("Invalid user ID");
+            return false;
+        }
+
+        DatabaseReference userEntityRef = _database.getReference("userEntities").child(userId);
+
+        userEntityRef.addListenerForSingleValueEvent(
+            new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    Map<String, SyncEntity> result = new HashMap<>();
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        SyncEntity entity = child.getValue(SyncEntity.class);
+                        result.put(child.getKey(), entity);
+                    }
+                    callback.onSuccess(result);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    callback.onFailure(error.getMessage());
+                }
+            });
+
+        return true;
+    }
 
   @Override
   public boolean getAllUserIds(UserIdsCallback callback) {
