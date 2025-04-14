@@ -8,6 +8,4 @@ public class FoodItemComponent implements Component {
     public FoodItemComponent(float foodPoints) {
         this.foodPoints = foodPoints;
     }
-    // public float eatingSpeed; // Number of food points added per second
-    // public boolean isHeld; // Whether the food item is currently held by the player
 }
