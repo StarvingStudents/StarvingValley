@@ -66,6 +66,11 @@ public class SyncEntity {
 
     public Float balance;
 
+    public Float damageAmount;
+    public Float attackRange;
+    public Float attackSpeed;
+    public Float cooldownTimer;
+
     // Required: no-arg constructor for Firebase
     public SyncEntity() {
     }

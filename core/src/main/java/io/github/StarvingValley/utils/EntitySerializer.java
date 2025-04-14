@@ -37,6 +37,8 @@ import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.components.DamageComponent;
+import io.github.StarvingValley.config.Config;
 
 public class EntitySerializer {
 
@@ -155,6 +157,15 @@ public class EntitySerializer {
     EconomyComponent economy = Mappers.economy.get(entity);
     if (economy != null) {
       dto.balance = economy.balance;
+    }
+
+    // Damage
+    DamageComponent damage = Mappers.damage.get(entity);
+    if (damage != null) {
+      dto.damageAmount = damage.damageAmount;
+      dto.attackRange = damage.attackRange;
+      dto.attackSpeed = damage.attackSpeed;
+      dto.cooldownTimer = damage.cooldownTimer;
     }
 
     dto.isCollidable = Mappers.collidable.has(entity);
@@ -287,6 +298,16 @@ public class EntitySerializer {
     // Economy
     if (dto.balance != null) {
       entity.add(new EconomyComponent(dto.balance));
+    }
+
+    // Damage
+    if (dto.damageAmount != null) {
+      float damageAmount = dto.damageAmount != null ? dto.damageAmount : Config.DEFAULT_DAMAGE_AMOUNT;
+      float attackRange = dto.attackRange != null ? dto.attackRange : Config.DEFAULT_ATTACK_RANGE;
+      float attackSpeed = dto.attackSpeed != null ? dto.attackSpeed : Config.DEFAULT_ATTACK_SPEED;
+      DamageComponent damage = new DamageComponent(damageAmount, attackRange, attackSpeed);
+      damage.cooldownTimer = dto.cooldownTimer != null ? dto.cooldownTimer : 0f;
+      entity.add(damage);
     }
 
     // Boolean tags
