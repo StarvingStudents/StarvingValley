@@ -10,7 +10,6 @@ import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
-import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
@@ -26,36 +25,34 @@ import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.AnimationFactory;
 
-
 public class PlayerFactory {
   public static Entity createPlayer(
       float x, float y, float width, float height, float speed, AssetManager assetManager, Entity camera) {
 
-      Entity entity = new Entity();
+    Entity entity = new Entity();
 
-      entity.add(new PositionComponent(x, y, 100));
-      entity.add(new SpeedComponent(speed));
-      entity.add(new VelocityComponent(new Vector2()));
-      entity.add(new SizeComponent(width, height));
-      entity.add(new CollidableComponent());
-      entity.add(new HungerComponent());
-      entity.add(new TileOccupierComponent());
-      entity.add(new InputComponent());
-      entity.add(new WorldLayerComponent(WorldLayer.CHARACTER));
-      entity.add(new SyncComponent());
-      entity.add(new PlayerComponent());
-      entity.add(new ActiveWorldEntityComponent());
-      entity.add(new EconomyComponent(Config.STARTING_BALANCE));
+    entity.add(new PositionComponent(x, y, 100));
+    entity.add(new SpeedComponent(speed));
+    entity.add(new VelocityComponent(new Vector2()));
+    entity.add(new SizeComponent(width, height));
+    entity.add(new CollidableComponent());
+    entity.add(new HungerComponent());
+    entity.add(new TileOccupierComponent());
+    entity.add(new InputComponent());
+    entity.add(new WorldLayerComponent(WorldLayer.CHARACTER));
+    entity.add(new SyncComponent());
+    entity.add(new PlayerComponent());
+    entity.add(new ActiveWorldEntityComponent());
+    entity.add(new EconomyComponent(Config.STARTING_BALANCE));
 
     CameraFollowComponent cameraFollowComponent = new CameraFollowComponent(camera);
     cameraFollowComponent.targetCamera = camera;
 
-      entity.add(cameraFollowComponent);
+    entity.add(cameraFollowComponent);
 
-      AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER, assetManager);
-      entity.add(anim);
+    AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER, assetManager);
+    entity.add(anim);
 
-
-      return entity;
-    }
+    return entity;
+  }
 }
