@@ -42,43 +42,46 @@ public class InventorySystem extends EntitySystem {
         Inventory inventory = Mappers.inventory.get(player).inventory;
         Inventory hotbar = Mappers.hotbar.get(player).hotbar;
 
-        boolean entityUpdated = false;
+        ChangeResult result = new ChangeResult();
 
         List<ItemDroppedEvent> itemsDroppedEvents = context.eventBus.getEvents(ItemDroppedEvent.class);
         for (ItemDroppedEvent itemDroppedEvent : itemsDroppedEvents) {
-            boolean added = addItems(itemDroppedEvent.itemDrop, hotbar, inventory);
+            ChangeResult addResult = addItems(itemDroppedEvent.itemDrop, hotbar, inventory);
 
-            if (!added) {
+            if (!addResult.changedHotbar && !addResult.changedInventory) {
                 System.out.println("Inventory and hotbar full, could not add " + itemDroppedEvent.itemDrop.type);
             } else {
-                entityUpdated = true;
+                result.changedHotbar = addResult.changedHotbar;
+                result.changedInventory = addResult.changedInventory;
             }
         }
 
         List<ItemUsedEvent> itemsUsedEvents = context.eventBus.getEvents(ItemUsedEvent.class);
         for (ItemUsedEvent itemUsedEvent : itemsUsedEvents) {
-            boolean removed = removeItems(itemUsedEvent.itemStack, hotbar, inventory);
+            ChangeResult removeResult = removeItems(itemUsedEvent.itemStack, hotbar, inventory);
 
-            if (!removed) {
+            if (!removeResult.changedHotbar && !removeResult.changedInventory) {
                 System.out.println(
                         "Could not remove " + itemUsedEvent.itemStack.quantity + " of " + itemUsedEvent.itemStack.type);
             } else {
-                entityUpdated = true;
+                result.changedHotbar = removeResult.changedHotbar;
+                result.changedInventory = removeResult.changedInventory;
             }
         }
 
-        if (entityUpdated) {
-            System.out.println("Hotbar:");
-            hotbar.printInventory();
-
-            System.out.println("Inventory:");
-            inventory.printInventory();
-
+        if (result.changedInventory) {
             context.eventBus.publish(new EntityUpdatedEvent(player));
 
             if (InventoryUtils.isInventoryOpen(getEngine())) {
                 InventoryUtils.closeInventory(getEngine());
                 InventoryUtils.addInventoryToEngine(getEngine(), inventory);
+            }
+        } else if (result.changedHotbar) {
+            context.eventBus.publish(new EntityUpdatedEvent(player));
+
+            if (InventoryUtils.isHotbarOpen(getEngine())) {
+                InventoryUtils.closeHotbar(getEngine());
+                InventoryUtils.addHotbarToEngine(getEngine(), hotbar);
             }
         }
     }
@@ -103,46 +106,47 @@ public class InventorySystem extends EntitySystem {
         }
     }
 
-    private boolean addItems(ItemStack stack, Inventory hotbar, Inventory inventory) {
+    private ChangeResult addItems(ItemStack stack, Inventory hotbar, Inventory inventory) {
         PrefabType type = stack.type;
         int quantity = stack.quantity;
 
-        // TODO: remove this and uncomment below when added hotbar, this is just for
-        // testing
+        ChangeResult result = new ChangeResult();
+
+        boolean hotbarHasType = hotbar.hasStackOfType(type);
+        if (hotbarHasType) {
+            hotbar.addItem(type, quantity);
+            result.changedHotbar = true;
+            return result;
+        }
         boolean inventoryHasType = inventory.hasStackOfType(type);
+        inventoryHasType = inventory.hasStackOfType(type);
         if (inventoryHasType) {
             inventory.addItem(type, quantity);
-            return true;
+            result.changedInventory = true;
+            return result;
         }
-        return inventory.addItem(type, quantity);
 
-        // boolean hotbarHasType = hotbar.hasStackOfType(type);
-        // if (hotbarHasType) {
-        // hotbar.addItem(type, quantity);
-        // return true;
-        // }
+        result.changedHotbar = hotbar.addItem(type, quantity);
+        if (!result.changedHotbar) {
+            result.changedInventory = inventory.addItem(type, quantity);
+        }
 
-        // inventoryHasType = inventory.hasStackOfType(type);
-        // if (inventoryHasType) {
-        // inventory.addItem(type, quantity);
-        // return true;
-        // }
-
-        // boolean added = hotbar.addItem(type, quantity);
-        // if (!added) {
-        // added = inventory.addItem(type, quantity);
-        // }
-
-        // return added;
+        return result;
     }
 
-    private boolean removeItems(ItemStack stack, Inventory hotbar, Inventory inventory) {
-        boolean removed = hotbar.removeItem(stack.type, stack.quantity);
+    private ChangeResult removeItems(ItemStack stack, Inventory hotbar, Inventory inventory) {
+        ChangeResult result = new ChangeResult();
+        result.changedHotbar = hotbar.removeItem(stack.type, stack.quantity);
 
-        if (!removed) {
-            removed = inventory.removeItem(stack.type, stack.quantity);
+        if (!result.changedHotbar) {
+            result.changedInventory = inventory.removeItem(stack.type, stack.quantity);
         }
 
-        return removed;
+        return result;
+    }
+
+    private class ChangeResult {
+        public boolean changedInventory = false;
+        public boolean changedHotbar = false;
     }
 }
