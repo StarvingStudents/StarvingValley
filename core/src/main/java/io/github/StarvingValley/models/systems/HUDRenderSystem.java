@@ -14,13 +14,12 @@ import io.github.StarvingValley.models.components.HudComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
-// import io.github.StarvingValley.models.components.TextComponent;
 
-public class HudRenderSystem extends EntitySystem {
+public class HUDRenderSystem extends EntitySystem {
     private SpriteBatch batch;
     private BitmapFont font;
 
-    public HudRenderSystem() {
+    public HUDRenderSystem() {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.getData().setScale(4f);
@@ -35,28 +34,6 @@ public class HudRenderSystem extends EntitySystem {
         for (int i = 0; i < entities.size(); i++) {
             sortedEntities.add(entities.get(i));
         }
-
-        // First render items being dragged, then items, then inventory slots.
-        // TODO: Maybe this would be cleaner with a z-index
-        sortedEntities.sort((a, b) -> {
-            boolean aDragging = Mappers.dragging.has(a);
-            boolean bDragging = Mappers.dragging.has(b);
-
-            boolean aSlot = Mappers.inventorySlot.has(a);
-            boolean bSlot = Mappers.inventorySlot.has(b);
-
-            if (aDragging && !bDragging)
-                return 1;
-            if (!aDragging && bDragging)
-                return -1;
-
-            if (aSlot && !bSlot)
-                return -1;
-            if (!aSlot && bSlot)
-                return 1;
-
-            return 0;
-        });
 
         batch.begin();
 
@@ -74,14 +51,6 @@ public class HudRenderSystem extends EntitySystem {
                     sprite.sprite.setSize(size.width, size.height);
                     sprite.sprite.draw(batch);
                 }
-            }
-
-            if (Mappers.text.has(entity)) {
-                TextComponent text = Mappers.text.get(entity);
-                font.draw(batch,
-                        text.text,
-                        pos.position.x + text.offsetX,
-                        pos.position.y + text.offsetY);
             }
         }
 

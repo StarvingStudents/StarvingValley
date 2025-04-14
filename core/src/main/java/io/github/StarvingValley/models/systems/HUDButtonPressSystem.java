@@ -31,42 +31,6 @@ public class HUDButtonPressSystem extends EntitySystem {
 
   @Override
   public void update(float delta) {
-    // List<TapEvent> tapEvents = context.eventBus.getEvents(TapEvent.class);
-
-    // ImmutableArray<Entity> clickableEntities = getEngine()
-    // .getEntitiesFor(
-    // Family.all(ButtonComponent.class, ClickableComponent.class)
-    // .get());
-
-    // ImmutableArray<Entity> clickableWorldEntities = getEngine().getEntitiesFor(
-    // Family.all(PositionComponent.class, SizeComponent.class,
-    // ClickableComponent.class)
-    // .exclude(ButtonComponent.class).get());
-
-    // for (TapEvent clickEvent : events) {
-    // for (Entity entity : clickableEntities) {
-    // PositionComponent position = Mappers.position.get(entity);
-    // SizeComponent size = Mappers.size.get(entity);
-
-    // if (isOverlapping(position, size, clickEvent.tile)) {
-    // // tile coordinate system as the button.
-    // entity.add(new ClickedComponent());
-    // }
-    // }
-    // }
-    // }
-
-    // for(TapEvent event:tapEvents)
-    // {
-    // boolean handledHud = attachComponentIfOverlapping(clickableEntities,
-    // event.screenPos, ClickedComponent::new);
-    // if (!handledHud) {
-    // attachComponentIfOverlapping(clickableWorldEntities, event.tile,
-    // ClickedComponent::new);
-    // }
-    // }
-    // }
-
     processTapEvents();
   }
 
@@ -79,31 +43,14 @@ public class HUDButtonPressSystem extends EntitySystem {
                 SpriteComponent.class)
             .get());
 
-    // Print out the clickable entities for debugging
-    for (int i = 0; i < clickableHudEntities.size(); i++) {
-      Entity entity = clickableHudEntities.get(i);
-      System.out.println("Clickable HUD Entity: " + entity.getComponent(SpriteComponent.class).getTexturePath());
-      // Print out position of entity
-      PositionComponent position = Mappers.position.get(entity);
-      SizeComponent size = Mappers.size.get(entity);
-      System.out.println("Position: " + position.position.x + ", " + position.position.y);
-      // System.out.println("Converted position: " + position.position.x * + ", " +
-      // position.position.y);
-      System.out.println("Size: " + size.width + ", " + size.height);
-    }
-
     ImmutableArray<Entity> clickableWorldEntities = getEngine().getEntitiesFor(
         Family.all(PositionComponent.class, SizeComponent.class, ClickableComponent.class)
             .exclude(ButtonComponent.class).get());
 
     for (TapEvent event : tapEvents) {
-      System.out.println("Tap events processed");
-
       boolean handledHud = attachComponentIfOverlapping(clickableHudEntities, event.screenPos, ClickedComponent::new);
-      System.out.println("screenPos: " + event.screenPos);
-      System.out.println("Handled HUD: " + handledHud);
       if (!handledHud) {
-        attachComponentIfOverlapping(clickableWorldEntities, event.tile, ClickedComponent::new);
+        attachComponentIfOverlapping(clickableWorldEntities, event.screenPos, ClickedComponent::new);
       }
     }
   }

@@ -24,15 +24,12 @@ public class HUDButtonPressHandlingSystem extends IteratingSystem {
         ButtonComponent button = Mappers.button.get(entity);
         ClickedComponent clicked = Mappers.clicked.get(entity);
 
-        System.out.println("HUDBUTTONPRESSHANDLINGSYSTEM");
-
         if (button == null || clicked == null) {
             System.out.println("HUDButtonPressHandlingSystem: Button or Clicked component is null");
             return;
         }
 
         if (button.buttonType == ButtonType.EATING_BUTTON) {
-            System.out.println("HUDBUTTONPRESSHANDLINGSYSTEM");
             context.eventBus.publish(new EatingButtonPressedEvent());
         }
     }
