@@ -66,34 +66,6 @@ public class VillageView extends ScreenAdapter {
         assetManager.load("action_soil_right.png", Texture.class);
         assetManager.finishLoading();
 
-        // TODO: Temp logic. When inventory is implemented it should handle this, and it
-        //  should only be possible on entities
-        //  with BuildableComponent. Use BuildUtils.isBuildable
-        inputAdapter = new InputAdapter() {
-            @Override
-            public boolean keyDown(int keycode) {
-                PrefabType prefabType = null;
-
-                switch (keycode) {
-                    case Input.Keys.C:
-                        prefabType = PrefabType.TOMATO_CROP;
-                        break;
-                    case Input.Keys.E:
-                        prefabType = PrefabType.POTATO_CROP;
-                        break;
-                    case Input.Keys.F:
-                        prefabType = PrefabType.SOIL;
-                        break;
-                }
-
-                if (prefabType != null) {
-                    BuildUtils.toggleBuildPreview(prefabType, engine);
-                }
-
-                return true;
-            }
-        };
-
         controller = new VillageController(game, _firebaseRepository, eventBus, assetManager);
         // to avoid
         // problems with the temporal
