@@ -9,6 +9,8 @@ import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
+import io.github.StarvingValley.models.components.DamageComponent;
+import io.github.StarvingValley.models.components.CooldownTimerComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
@@ -45,6 +47,8 @@ public class PlayerFactory {
       entity.add(new PlayerComponent());
       entity.add(new ActiveWorldEntityComponent());
       entity.add(new EconomyComponent(Config.STARTING_BALANCE));
+      entity.add(new DamageComponent(Config.DEFAULT_DAMAGE_AMOUNT, Config.DEFAULT_ATTACK_RANGE, Config.DEFAULT_ATTACK_SPEED));
+      entity.add(new CooldownTimerComponent(1f));
 
     CameraFollowComponent cameraFollowComponent = new CameraFollowComponent(camera);
     cameraFollowComponent.targetCamera = camera;
