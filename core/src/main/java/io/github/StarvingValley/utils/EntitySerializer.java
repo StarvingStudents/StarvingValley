@@ -165,7 +165,6 @@ public class EntitySerializer {
       dto.damageAmount = damage.damageAmount;
       dto.attackRange = damage.attackRange;
       dto.attackSpeed = damage.attackSpeed;
-      dto.cooldownTimer = damage.cooldownTimer;
     }
 
     dto.isCollidable = Mappers.collidable.has(entity);
@@ -301,13 +300,8 @@ public class EntitySerializer {
     }
 
     // Damage
-    if (dto.damageAmount != null) {
-      float damageAmount = dto.damageAmount != null ? dto.damageAmount : Config.DEFAULT_DAMAGE_AMOUNT;
-      float attackRange = dto.attackRange != null ? dto.attackRange : Config.DEFAULT_ATTACK_RANGE;
-      float attackSpeed = dto.attackSpeed != null ? dto.attackSpeed : Config.DEFAULT_ATTACK_SPEED;
-      DamageComponent damage = new DamageComponent(damageAmount, attackRange, attackSpeed);
-      damage.cooldownTimer = dto.cooldownTimer != null ? dto.cooldownTimer : 0f;
-      entity.add(damage);
+    if (dto.damageAmount != null && dto.attackRange != null && dto.attackSpeed != null) {
+      entity.add(new DamageComponent(dto.damageAmount, dto.attackRange, dto.attackSpeed));
     }
 
     // Boolean tags
