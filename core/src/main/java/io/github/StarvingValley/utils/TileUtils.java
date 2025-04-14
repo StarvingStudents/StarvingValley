@@ -53,21 +53,6 @@ public class TileUtils {
     return worldToTile(worldClick);
   }
 
-  public static GridPoint2 touchCoordinatesToScreenTile(int screenX, int screenY) {
-    Vector2 point = ScreenUtils.getScreenPositionFromTouchPosition(screenX, screenY);
-
-    int tilesWide = Config.CAMERA_TILES_WIDE;
-    int tilesHigh = MapUtils.calculateVerticalTileCount(tilesWide);
-
-    int screenTileWidth = Gdx.graphics.getWidth() / tilesWide;
-    int screenTileHeight = Gdx.graphics.getHeight() / tilesHigh;
-
-    int tileX = (int) point.x / screenTileWidth;
-    int tileY = (int) point.y / screenTileHeight;
-
-    return new GridPoint2(tileX, tileY);
-  }
-
   public static boolean isOverlappingTile(
       float x, float y, float width, float height, GridPoint2 tile) {
 

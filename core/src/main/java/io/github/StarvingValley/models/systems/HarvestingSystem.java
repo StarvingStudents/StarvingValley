@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
@@ -14,8 +15,8 @@ import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.models.events.AddItemToInventoryEvent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
-import io.github.StarvingValley.models.events.ItemDroppedEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemStack;
 
@@ -81,7 +82,7 @@ public class HarvestingSystem extends EntitySystem {
     DropComponent drops = Mappers.drop.get(crop);
     if (drops != null) {
       for (ItemStack drop : drops.drops) {
-        context.eventBus.publish(new ItemDroppedEvent(drop));
+        context.eventBus.publish(new AddItemToInventoryEvent(drop));
         System.out.println("Dropped " + drop.quantity + " " + drop.type);
       }
     }

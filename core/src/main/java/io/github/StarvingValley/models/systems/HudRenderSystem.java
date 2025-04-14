@@ -37,7 +37,6 @@ public class HudRenderSystem extends EntitySystem {
         }
 
         // First render items being dragged, then items, then inventory slots.
-        // TODO: Maybe this would be cleaner with a z-index
         sortedEntities.sort((a, b) -> {
             boolean aDragging = Mappers.dragging.has(a);
             boolean bDragging = Mappers.dragging.has(b);

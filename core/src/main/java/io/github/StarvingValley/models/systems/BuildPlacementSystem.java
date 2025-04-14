@@ -17,7 +17,7 @@ import io.github.StarvingValley.models.components.SelectedHotbarItemComponent;
 import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.models.events.EntityAddedEvent;
 import io.github.StarvingValley.models.events.EntityPlacedEvent;
-import io.github.StarvingValley.models.events.ItemUsedEvent;
+import io.github.StarvingValley.models.events.RemoveItemFromInventoryEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.utils.BuildUtils;
@@ -56,7 +56,7 @@ public class BuildPlacementSystem extends IteratingSystem {
 
     context.eventBus.publish(new EntityPlacedEvent(entityToPlace));
     context.eventBus.publish(new EntityAddedEvent(entityToPlace));
-    context.eventBus.publish(new ItemUsedEvent(new ItemStack(buildPreview.madeFromPrefabType, 1)));
+    context.eventBus.publish(new RemoveItemFromInventoryEvent(new ItemStack(buildPreview.madeFromPrefabType, 1)));
 
     ImmutableArray<Entity> selectedHotbarItems = engine
         .getEntitiesFor(Family.all(SelectedHotbarItemComponent.class, InventoryItemComponent.class).get());

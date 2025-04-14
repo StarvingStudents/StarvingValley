@@ -36,7 +36,6 @@ public class CropGrowthSystem extends IteratingSystem {
     GrowthStageComponent growthStage = Mappers.growthStage.get(cropEntity);
     SpriteComponent spriteComponent = Mappers.sprite.get(cropEntity);
     CropTypeComponent cropType = Mappers.cropType.get(cropEntity);
-    SizeComponent sizeComponent = Mappers.size.get(cropEntity);
 
     growthTime.accumulateGrowth(deltaTime);
 

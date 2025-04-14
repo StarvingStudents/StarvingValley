@@ -10,11 +10,11 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.InventoryToggleButtonComponent;
+import io.github.StarvingValley.models.events.AddItemToInventoryEvent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
-import io.github.StarvingValley.models.events.ItemDroppedEvent;
-import io.github.StarvingValley.models.events.ItemUsedEvent;
+import io.github.StarvingValley.models.events.RemoveItemFromInventoryEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.Inventory;
 import io.github.StarvingValley.models.types.ItemStack;
@@ -44,25 +44,27 @@ public class InventorySystem extends EntitySystem {
 
         ChangeResult result = new ChangeResult();
 
-        List<ItemDroppedEvent> itemsDroppedEvents = context.eventBus.getEvents(ItemDroppedEvent.class);
-        for (ItemDroppedEvent itemDroppedEvent : itemsDroppedEvents) {
-            ChangeResult addResult = addItems(itemDroppedEvent.itemDrop, hotbar, inventory);
+        List<AddItemToInventoryEvent> addItemEvents = context.eventBus.getEvents(AddItemToInventoryEvent.class);
+        for (AddItemToInventoryEvent addItemEvent : addItemEvents) {
+            ChangeResult addResult = addItems(addItemEvent.itemStack, hotbar, inventory);
 
             if (!addResult.changedHotbar && !addResult.changedInventory) {
-                System.out.println("Inventory and hotbar full, could not add " + itemDroppedEvent.itemDrop.type);
+                System.out.println("Inventory and hotbar full, could not add " + addItemEvent.itemStack.type);
             } else {
                 result.changedHotbar = addResult.changedHotbar;
                 result.changedInventory = addResult.changedInventory;
             }
         }
 
-        List<ItemUsedEvent> itemsUsedEvents = context.eventBus.getEvents(ItemUsedEvent.class);
-        for (ItemUsedEvent itemUsedEvent : itemsUsedEvents) {
-            ChangeResult removeResult = removeItems(itemUsedEvent.itemStack, hotbar, inventory);
+        List<RemoveItemFromInventoryEvent> removeItemEvents = context.eventBus
+                .getEvents(RemoveItemFromInventoryEvent.class);
+        for (RemoveItemFromInventoryEvent removeItemEvent : removeItemEvents) {
+            ChangeResult removeResult = removeItems(removeItemEvent.itemStack, hotbar, inventory);
 
             if (!removeResult.changedHotbar && !removeResult.changedInventory) {
                 System.out.println(
-                        "Could not remove " + itemUsedEvent.itemStack.quantity + " of " + itemUsedEvent.itemStack.type);
+                        "Could not remove " + removeItemEvent.itemStack.quantity + " of "
+                                + removeItemEvent.itemStack.type);
             } else {
                 result.changedHotbar = removeResult.changedHotbar;
                 result.changedInventory = removeResult.changedInventory;

@@ -26,7 +26,6 @@ import io.github.StarvingValley.models.types.UiInventoryLayout;
 import io.github.StarvingValley.utils.InventoryUtils;
 import io.github.StarvingValley.utils.ScreenUtils;
 
-//TODO: Mark clicked as selected, maybe in different system tho
 public class InventoryDragSystem extends EntitySystem {
     private final GameContext context;
 

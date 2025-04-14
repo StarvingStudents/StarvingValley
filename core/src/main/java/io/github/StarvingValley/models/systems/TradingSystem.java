@@ -8,8 +8,8 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.TradingComponent;
+import io.github.StarvingValley.models.events.AddItemToInventoryEvent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
-import io.github.StarvingValley.models.events.ItemDroppedEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemStack;
 
@@ -39,7 +39,7 @@ public class TradingSystem extends IteratingSystem {
 
         economy.balance -= trading.trade.cost;
 
-        context.eventBus.publish(new ItemDroppedEvent(new ItemStack(trading.trade.type, 1)));
+        context.eventBus.publish(new AddItemToInventoryEvent(new ItemStack(trading.trade.type, 1)));
         context.eventBus.publish(new EntityUpdatedEvent(context.player));
     }
 }

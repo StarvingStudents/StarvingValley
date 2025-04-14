@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.Texture;
 
 import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.InputEventController;
-import io.github.StarvingValley.controllers.InventoryController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
@@ -40,9 +39,6 @@ public class FarmView extends ScreenAdapter {
 
   private final EventDebugger eventDebugger;
   private EventDebugOverlay eventDebugOverlay;
-
-  private InventoryController inventoryController;
-
   public FarmView(IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
@@ -72,19 +68,11 @@ public class FarmView extends ScreenAdapter {
     assetManager.load("action_soil_right.png", Texture.class);
     assetManager.finishLoading();
 
-    // initializing this here to avoid
-    // problems with the temporal input
-    // handling
     controller = new FarmController(_firebaseRepository, eventBus, assetManager);
 
     engine = controller.getEngine();
 
-    inventoryController = new InventoryController(controller.getGameContext());
-    inventoryController.setHotbarIsVisible(true);
-
-    // TODO: Temp logic. When inventory is implemented it should handle this, and it
-    // should only be possible on entities
-    // with BuildableComponent. Use BuildUtils.isBuildable
+    // TODO: Keeping this to make dev easier
     inputAdapter = new InputAdapter() {
       @Override
       public boolean keyDown(int keycode) {
@@ -160,7 +148,6 @@ public class FarmView extends ScreenAdapter {
   public void render(float delta) {
     assetManager.update();
     showHotbar();
-    // inventoryController.update();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -176,7 +163,6 @@ public class FarmView extends ScreenAdapter {
     engine.update(delta);
     joystickOverlay.render();
     eventDebugOverlay.render();
-    // inventoryController.render();
   }
 
   @Override

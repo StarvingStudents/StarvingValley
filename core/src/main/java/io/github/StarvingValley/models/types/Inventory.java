@@ -91,20 +91,4 @@ public class Inventory {
 
     return null;
   }
-
-  // TODO: Remove, only for debugging
-  public void printInventory() {
-    System.out.println("Inventory:");
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
-        InventorySlot slot = getSlotAt(x, y);
-        if (slot == null) {
-          System.out.print("[ EMPTY ] ");
-        } else {
-          System.out.printf("[ %s(%d) ] ", slot.itemStack.type.name(), slot.getQuantity());
-        }
-      }
-      System.out.println();
-    }
-  }
 }
