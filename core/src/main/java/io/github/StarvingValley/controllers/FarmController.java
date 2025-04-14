@@ -27,6 +27,7 @@ import io.github.StarvingValley.models.systems.ClickSystem;
 import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
 import io.github.StarvingValley.models.systems.CropGrowthSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
+import io.github.StarvingValley.models.systems.EatingSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
@@ -108,20 +109,15 @@ public class FarmController {
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new DurabilityRenderSystem(gameContext));
-        engine.addSystem(new HUDRenderSystem());
         engine.addSystem(new HUDButtonPressSystem(gameContext));
+        engine.addSystem(new HUDRenderSystem());
         engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
+        engine.addSystem(new EatingSystem(eventBus));
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new ActionAnimationSystem(gameContext));
-
-        // engine.addEntity();
-
-        // player = PlayerFactory.createPlayer(10, 10, 1f, 1f, 3.5f, assetManager,
-        // camera);
-        // engine.addEntity(player);
 
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
