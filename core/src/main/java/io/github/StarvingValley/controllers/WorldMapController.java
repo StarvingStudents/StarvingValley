@@ -100,7 +100,6 @@ public class WorldMapController {
                   @Override
                   public void onSuccess(List<String> data) {
                     data.remove(firebaseRepository.getCurrentUserId());
-                    System.out.println(firebaseRepository.getCurrentUserId());
                     MapUtils.loadWorldMapFarmEntities(data, engine);
                   }
 
