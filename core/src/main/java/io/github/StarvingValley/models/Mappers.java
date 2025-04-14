@@ -15,15 +15,16 @@ import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
-import io.github.StarvingValley.models.components.EatingComponent;
-import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
+import io.github.StarvingValley.models.components.HudComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
+import io.github.StarvingValley.models.components.InventoryItemComponent;
+import io.github.StarvingValley.models.components.InventorySelectedItemComponent;
 import io.github.StarvingValley.models.components.MapRenderComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -60,7 +61,6 @@ public class Mappers {
         public static final ComponentMapper<SyncComponent> sync = ComponentMapper.getFor(SyncComponent.class);
         public static final ComponentMapper<MapRenderComponent> mapRender = ComponentMapper
                         .getFor(MapRenderComponent.class);
-        public static final ComponentMapper<EatingComponent> eating = ComponentMapper.getFor(EatingComponent.class);
         public static final ComponentMapper<PlayerComponent> player = ComponentMapper.getFor(PlayerComponent.class);
         public static final ComponentMapper<SpeedComponent> speed = ComponentMapper.getFor(SpeedComponent.class);
         public static final ComponentMapper<ActiveWorldEntityComponent> activeWorldEntity = ComponentMapper
@@ -108,4 +108,9 @@ public class Mappers {
                         .getFor(WorldMapFarmComponent.class);
         public static final ComponentMapper<ButtonComponent> button = ComponentMapper
                         .getFor(ButtonComponent.class);
+        public static final ComponentMapper<HudComponent> hud = ComponentMapper.getFor(HudComponent.class);
+        public static final ComponentMapper<InventoryItemComponent> inventoryItem = ComponentMapper
+                        .getFor(InventoryItemComponent.class);
+        public static final ComponentMapper<InventorySelectedItemComponent> inventorySelectedItem = ComponentMapper
+                        .getFor(InventorySelectedItemComponent.class);
 }
