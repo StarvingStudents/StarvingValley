@@ -55,7 +55,7 @@ public class FarmController {
     private final EventBus eventBus;
     private final AssetManager assetManager;
     private final IFirebaseRepository firebaseRepository;
-    public GameContext gameContext;
+    private GameContext gameContext;
 
     private Entity camera;
     private Entity map;

@@ -2,13 +2,14 @@ package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 
+import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
+import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.controllers.WorldMapController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
@@ -17,18 +18,18 @@ import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.utils.EventDebugger;
 
 public class WorldMapView extends ScreenAdapter {
+  private final EventDebugger eventDebugger;
   public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
   private InputEventAdapter inputEventAdapter;
-
   private EventBus eventBus;
   private WorldMapController controller;
   private Engine engine;
-
-  private final EventDebugger eventDebugger;
   private EventDebugOverlay eventDebugOverlay;
+  private GameMenuController gameMenuController;
 
-  public WorldMapView(IFirebaseRepository firebaseRepository) {
+  public WorldMapView(StarvingValley game, IFirebaseRepository firebaseRepository) {
+
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
@@ -38,23 +39,35 @@ public class WorldMapView extends ScreenAdapter {
     // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
     assetManager.load("DogBasic.png", Texture.class);
-    assetManager.load("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\BlueHouse.png",
+    assetManager.load(
+        "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\BlueHouse.png",
         Texture.class);
-    assetManager.load("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\GreenHouse.png",
+    assetManager.load(
+        "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\GreenHouse.png",
         Texture.class);
-    assetManager.load("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\House.png",
+    assetManager.load(
+        "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\House.png",
         Texture.class);
-    assetManager.load("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\OrangeHouse.png",
+    assetManager.load(
+        "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\OrangeHouse.png",
         Texture.class);
-    assetManager.load("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\PinkHouse.png",
+    assetManager.load(
+        "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\PinkHouse.png",
         Texture.class);
-    assetManager.load("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\PurpleHouse1.png",
+    assetManager.load(
+        "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\PurpleHouse1.png",
         Texture.class);
+    assetManager.load("GameMenu.png", Texture.class);
 
-    controller = new WorldMapController(_firebaseRepository, eventBus, assetManager); // initializing this here to avoid
-                                                                                      // problems with the temporal
-                                                                                      // input handling
+    assetManager.finishLoading();
+
+    controller = new WorldMapController(
+        game, _firebaseRepository, eventBus, assetManager); // initializing this here to avoid
+    // problems with the temporal
+    // input handling
     engine = controller.getEngine();
+
+    gameMenuController = new GameMenuController(controller.gameContext);
 
     CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
     inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
@@ -63,7 +76,7 @@ public class WorldMapView extends ScreenAdapter {
   @Override
   public void show() {
 
-    InputMultiplexer multiplexer = new InputMultiplexer();
+    FilteringInputMultiplexer multiplexer = new FilteringInputMultiplexer(() -> gameMenuController.isVisible());
     multiplexer.addProcessor(inputEventAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
@@ -75,6 +88,7 @@ public class WorldMapView extends ScreenAdapter {
     assetManager.update();
 
     controller.update(delta);
+    gameMenuController.update();
 
     Gdx.gl.glClearColor(.753f, .831f, .439f, 0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -88,6 +102,7 @@ public class WorldMapView extends ScreenAdapter {
     }
 
     engine.update(delta);
+    gameMenuController.render();
     eventDebugOverlay.render();
   }
 
