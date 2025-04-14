@@ -5,15 +5,18 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ScreenType;
+import io.github.StarvingValley.utils.MapUtils;
 
 public class FarmToVillageTransitionSystem extends IteratingSystem {
     private final float FARM_TO_VILLAGE_BOUNDARY = 39.5f;
     private final float VILLAGE_TO_FARM_BOUNDARY = 0f;
+    private final float SPAWN_OFFSET = 0.5f;
     private final GameContext context;
 
     public FarmToVillageTransitionSystem(GameContext context) {
@@ -27,11 +30,11 @@ public class FarmToVillageTransitionSystem extends IteratingSystem {
 
         if (position.position.x > FARM_TO_VILLAGE_BOUNDARY) {
             context.eventBus.publish(new ScreenTransitionEvent(ScreenType.VILLAGE));
-            position.position.x = VILLAGE_TO_FARM_BOUNDARY;
+            position.position.x = VILLAGE_TO_FARM_BOUNDARY + SPAWN_OFFSET;
             FirebaseSyncSystem.forcePlayerSync();
         } else if (position.position.x < VILLAGE_TO_FARM_BOUNDARY) {
             context.eventBus.publish(new ScreenTransitionEvent(ScreenType.FARM));
-            position.position.x = FARM_TO_VILLAGE_BOUNDARY;
+            position.position.x = FARM_TO_VILLAGE_BOUNDARY - SPAWN_OFFSET;
             FirebaseSyncSystem.forcePlayerSync();
         }
     }
