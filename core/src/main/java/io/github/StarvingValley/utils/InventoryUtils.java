@@ -16,6 +16,7 @@ import io.github.StarvingValley.models.components.InventorySlotComponent;
 import io.github.StarvingValley.models.components.InventoryUiComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SelectedHotbarItemComponent;
+import io.github.StarvingValley.models.components.SelectedHotbarSlotComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TextComponent;
@@ -264,9 +265,33 @@ public class InventoryUtils {
         }
     }
 
-    private static void unselectSelectedHotbarItems(Engine engine) {
+    public static void unselectSelectedHotbarItems(Engine engine) {
         for (Entity selectedItem : engine.getEntitiesFor(Family.all(SelectedHotbarItemComponent.class).get())) {
             selectedItem.remove(SelectedHotbarItemComponent.class);
         }
+
+        for (Entity selectedSlot : engine.getEntitiesFor(Family.all(SelectedHotbarSlotComponent.class).get())) {
+            selectedSlot.remove(SelectedHotbarSlotComponent.class);
+
+            SpriteComponent sprite = Mappers.sprite.get(selectedSlot);
+            if (sprite != null) {
+                sprite.setTexturePath("inventory_slot.png");
+            }
+        }
+    }
+
+    public static Entity getSlotEntity(Engine engine, int x, int y, boolean hotbar) {
+        ImmutableArray<Entity> slots = engine.getEntitiesFor(
+                Family.all(InventorySlotComponent.class, PositionComponent.class).get());
+
+        for (Entity slot : slots) {
+            if (Mappers.hotbarUi.has(slot) != hotbar)
+                continue;
+            InventorySlotComponent s = Mappers.inventorySlot.get(slot);
+            if (s.slotX == x && s.slotY == y)
+                return slot;
+        }
+
+        return null;
     }
 }

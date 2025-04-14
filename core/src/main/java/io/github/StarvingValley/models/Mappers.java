@@ -36,6 +36,7 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.PrefabTypeComponent;
 import io.github.StarvingValley.models.components.PulseAlphaComponent;
 import io.github.StarvingValley.models.components.SelectedHotbarItemComponent;
+import io.github.StarvingValley.models.components.SelectedHotbarSlotComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
@@ -132,8 +133,10 @@ public class Mappers {
                         .getFor(HotbarUiComponent.class);
         public static final ComponentMapper<InventoryUiComponent> inventoryUi = ComponentMapper
                         .getFor(InventoryUiComponent.class);
-        public static final ComponentMapper<SelectedHotbarItemComponent> inventorySelectedItem = ComponentMapper
+        public static final ComponentMapper<SelectedHotbarItemComponent> selectedHotbarItem = ComponentMapper
                         .getFor(SelectedHotbarItemComponent.class);
         public static final ComponentMapper<PrefabTypeComponent> prefabType = ComponentMapper
                         .getFor(PrefabTypeComponent.class);
+        public static final ComponentMapper<SelectedHotbarSlotComponent> selectedHotbarSlot = ComponentMapper
+                        .getFor(SelectedHotbarSlotComponent.class);
 }
