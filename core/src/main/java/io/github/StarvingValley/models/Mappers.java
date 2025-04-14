@@ -17,6 +17,7 @@ import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
+import io.github.StarvingValley.models.components.FoodItemComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
@@ -113,4 +114,6 @@ public class Mappers {
                         .getFor(InventoryItemComponent.class);
         public static final ComponentMapper<InventorySelectedItemComponent> inventorySelectedItem = ComponentMapper
                         .getFor(InventorySelectedItemComponent.class);
+        public static final ComponentMapper<FoodItemComponent> foodItem = ComponentMapper
+                        .getFor(FoodItemComponent.class);
 }
