@@ -99,6 +99,7 @@ public class WorldMapController {
                 new UserIdsCallback() {
                   @Override
                   public void onSuccess(List<String> data) {
+                    data.remove(firebaseRepository.getCurrentUserId());
                     MapUtils.loadWorldMapFarmEntities(data, engine);
                   }
 
