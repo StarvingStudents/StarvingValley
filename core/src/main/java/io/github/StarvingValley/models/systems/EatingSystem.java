@@ -6,15 +6,12 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-import io.github.StarvingValley.models.components.ButtonComponent;
-import io.github.StarvingValley.models.components.ClickableComponent;
-import io.github.StarvingValley.models.components.ClickedComponent;
-import io.github.StarvingValley.models.components.EatingComponent;
+import io.github.StarvingValley.models.components.FoodItemComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
+import io.github.StarvingValley.models.components.InventoryItemComponent;
+import io.github.StarvingValley.models.components.InventorySelectedItemComponent;
 import io.github.StarvingValley.models.events.EatingButtonPressedEvent;
-import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.utils.DiffUtils;
 
 public class EatingSystem extends IteratingSystem {
     private EventBus eventBus;
@@ -28,16 +25,42 @@ public class EatingSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         List<EatingButtonPressedEvent> events = eventBus.getEvents(EatingButtonPressedEvent.class);
         if (events.size() > 0) {
-            System.out.println(events.get((0)));
 
-            // HungerComponent hunger = entity.getComponent(HungerComponent.class);
-            // float oldHunger = hunger.hungerPoints;
+            // Get entity with HungerComponent:
+            Entity playerEntity = getEngine().getEntitiesFor(Family.all(HungerComponent.class).get()).first();
+            HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
 
-            // hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
-            // events.get(0).foodPoints);
+            // TODO: Combine with inventory system
+            // Held item should have InventorySelectedItemComponent
+            // Edible items should have FoodItemComponent
 
-            // if (DiffUtils.hasChanged(hunger.hungerPoints, oldHunger))
-            // eventBus.publish(new EntityUpdatedEvent(entity));
+            // Check that there is at least one selected item:
+            if (getEngine()
+                    .getEntitiesFor(
+                            Family.all(InventorySelectedItemComponent.class, InventoryItemComponent.class).get())
+                    .size() == 0) {
+                return;
+            }
+
+            // Get the item with InventorySelectedItemComponent and InventoryItemComponent
+            Entity selectedItemEntity = getEngine()
+                    .getEntitiesFor(
+                            Family.all(InventorySelectedItemComponent.class,
+                                    InventoryItemComponent.class).get())
+                    .first();
+
+            // Check if selectedItemEntity has FoodItemComponent:
+            if (selectedItemEntity.getComponent(FoodItemComponent.class) != null) {
+                // Get the food points from the selected item:
+                FoodItemComponent foodItem = selectedItemEntity.getComponent(FoodItemComponent.class);
+                float foodPoints = foodItem.foodPoints;
+
+                // Update hunger points:
+                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
+                        foodPoints);
+
+                // TODO : Remove the consumed food item from the inventory:
+            }
         }
     }
 }
