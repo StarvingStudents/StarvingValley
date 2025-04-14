@@ -12,6 +12,7 @@ import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.components.DamageComponent;
+import io.github.StarvingValley.models.components.CooldownTimerComponent;
 
 public class DamageSystem extends IteratingSystem {
     private final GameContext context;
@@ -23,9 +24,10 @@ public class DamageSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        // Get player's damage component
+        // Get player's components
         DamageComponent playerDamage = Mappers.damage.get(context.player);
-        if (playerDamage == null) return;
+        CooldownTimerComponent playerCooldown = Mappers.cooldownTimer.get(context.player);
+        if (playerDamage == null || playerCooldown == null) return;
 
         // Check distance
         PositionComponent playerPos = Mappers.position.get(context.player);
@@ -34,9 +36,8 @@ public class DamageSystem extends IteratingSystem {
         if (!isPlayerNearEntity(playerPos, entityPos, playerDamage.attackRange)) return;
 
         // Update and check cooldown
-        playerDamage.cooldownTimer += deltaTime;
-        float cooldownDuration = 1f / playerDamage.attackSpeed;
-        if (playerDamage.cooldownTimer < cooldownDuration) return;
+        playerCooldown.cooldownTimer += deltaTime;
+        if (!playerCooldown.isReady()) return;
 
         // Apply damage
         DurabilityComponent durability = Mappers.durability.get(entity);
@@ -47,7 +48,7 @@ public class DamageSystem extends IteratingSystem {
         context.eventBus.publish(new EntityUpdatedEvent(entity));
 
         // Reset cooldown
-        playerDamage.cooldownTimer = 0f;
+        playerCooldown.reset();
     }
 
     private boolean isPlayerNearEntity(PositionComponent playerPos, PositionComponent entityPos, float attackRange) {

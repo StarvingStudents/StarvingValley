@@ -40,6 +40,7 @@ import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.components.WorldMapFarmComponent;
 import io.github.StarvingValley.models.components.DamageComponent;
+import io.github.StarvingValley.models.components.CooldownTimerComponent;
 
 public class Mappers {
         public static final ComponentMapper<PositionComponent> position = ComponentMapper
@@ -106,4 +107,5 @@ public class Mappers {
         public static final ComponentMapper<EconomyComponent> economy = ComponentMapper
                         .getFor(EconomyComponent.class);
         public static final ComponentMapper<DamageComponent> damage = ComponentMapper.getFor(DamageComponent.class);
+        public static final ComponentMapper<CooldownTimerComponent> cooldownTimer = ComponentMapper.getFor(CooldownTimerComponent.class);
 }
