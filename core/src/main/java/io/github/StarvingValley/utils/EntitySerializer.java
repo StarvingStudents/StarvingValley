@@ -16,7 +16,6 @@ import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
-import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
@@ -93,12 +92,6 @@ public class EntitySerializer {
       dto.hungerPoints = hunger.hungerPoints;
       dto.maxHungerPoints = hunger.maxHungerPoints;
       dto.hungerDecayRate = hunger.decayRate;
-    }
-
-    // Eating
-    EatingComponent eating = Mappers.eating.get(entity);
-    if (eating != null) {
-      dto.foodPoints = eating.foodPoints;
     }
 
     // Texture
@@ -218,23 +211,17 @@ public class EntitySerializer {
       entity.add(hunger);
     }
 
-    // Eating
-    if (dto.foodPoints != null) {
-      EatingComponent eating = new EatingComponent(dto.foodPoints);
-      entity.add(eating);
-    }
-
-      // Animation OR Sprite
-      if (dto.builds != null) {
-          AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds,assetManager );
-          if (anim != null) {
-              entity.add(anim);
-          } else if (dto.texture != null) {
-              entity.add(new SpriteComponent(dto.texture));
-          }
+    // Animation OR Sprite
+    if (dto.builds != null) {
+      AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds, assetManager);
+      if (anim != null) {
+        entity.add(anim);
       } else if (dto.texture != null) {
-          entity.add(new SpriteComponent(dto.texture));
+        entity.add(new SpriteComponent(dto.texture));
       }
+    } else if (dto.texture != null) {
+      entity.add(new SpriteComponent(dto.texture));
+    }
 
     // Layer
     if (dto.worldLayer != null) {
@@ -290,15 +277,22 @@ public class EntitySerializer {
     }
 
     // Boolean tags
-    if (Boolean.TRUE.equals(dto.isCollidable)) entity.add(new CollidableComponent());
+    if (Boolean.TRUE.equals(dto.isCollidable))
+      entity.add(new CollidableComponent());
     if (Boolean.TRUE.equals(dto.isEnvironmentCollidable))
       entity.add(new EnvironmentCollidableComponent());
-    if (Boolean.TRUE.equals(dto.isHidden)) entity.add(new HiddenComponent());
-    if (Boolean.TRUE.equals(dto.occupiesTiles)) entity.add(new TileOccupierComponent());
-    if (Boolean.TRUE.equals(dto.isPlayer)) entity.add(new PlayerComponent());
-    if (Boolean.TRUE.equals(dto.hasInput)) entity.add(new InputComponent());
-    if (Boolean.TRUE.equals(dto.cameraShouldFollow)) entity.add(new CameraFollowComponent(camera));
-    if (Boolean.TRUE.equals(dto.hasVelocity)) entity.add(new VelocityComponent());
+    if (Boolean.TRUE.equals(dto.isHidden))
+      entity.add(new HiddenComponent());
+    if (Boolean.TRUE.equals(dto.occupiesTiles))
+      entity.add(new TileOccupierComponent());
+    if (Boolean.TRUE.equals(dto.isPlayer))
+      entity.add(new PlayerComponent());
+    if (Boolean.TRUE.equals(dto.hasInput))
+      entity.add(new InputComponent());
+    if (Boolean.TRUE.equals(dto.cameraShouldFollow))
+      entity.add(new CameraFollowComponent(camera));
+    if (Boolean.TRUE.equals(dto.hasVelocity))
+      entity.add(new VelocityComponent());
     if (Boolean.TRUE.equals(dto.isClickable))
       entity.add(new ClickableComponent());
     if (Boolean.TRUE.equals(dto.isActiveWorldEntity))
