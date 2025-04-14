@@ -83,7 +83,7 @@ public class InventoryController {
             if (slot != null && slot.itemStack != null) {
                 PrefabType selectedType = slot.itemStack.type;
 
-                BuildUtils.enableBuildPreview(BuildUtils.getBuildsTypeFromType(selectedType), context.engine);
+                // BuildUtils.enableBuildPreview(BuildUtils.getBuildsTypeFromType(selectedType), context.engine);
             }
         }
     }
@@ -136,7 +136,6 @@ public class InventoryController {
         return inventoryIsVisible;
     }
 
-    // TODO: Sync
     public void onDragCompleted(
             InventorySlot draggedSlot,
             Inventory sourceInventory,
@@ -220,8 +219,6 @@ public class InventoryController {
         if (!closeEvents.isEmpty()) {
             setInventoryVisible(false);
         }
-
-        // TODO: Events for hotbar?
     }
 
     public GridPoint2 screenToSlot(Vector2 screen, Vector2 origin, Inventory inv, int tileWidth) {

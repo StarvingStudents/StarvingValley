@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.DragEndComponent;
 import io.github.StarvingValley.models.components.DraggingComponent;
 import io.github.StarvingValley.models.components.HotbarUiComponent;
@@ -16,6 +17,7 @@ import io.github.StarvingValley.models.components.InventorySlotComponent;
 import io.github.StarvingValley.models.components.InventoryUiComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
+import io.github.StarvingValley.models.entities.InventoryFactory;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.Inventory;
@@ -136,8 +138,10 @@ public class InventoryDragSystem extends EntitySystem {
             if (originIsHotbar && !Mappers.hotbarUi.has(itemAlreadyInSlot)) {
                 itemAlreadyInSlot.remove(InventoryUiComponent.class);
                 itemAlreadyInSlot.add(new HotbarUiComponent());
+                draggedItem.add(new ClickableComponent());
             } else if (!originIsHotbar && !Mappers.inventoryUi.has(itemAlreadyInSlot)) {
                 itemAlreadyInSlot.remove(HotbarUiComponent.class);
+                draggedItem.remove(ClickableComponent.class);
                 itemAlreadyInSlot.add(new InventoryUiComponent());
             }
         }
@@ -153,17 +157,26 @@ public class InventoryDragSystem extends EntitySystem {
                 targetLayout);
         draggedPos.set(targetPixelPos.x, targetPixelPos.y, draggedPos.z);
 
-        targetInventory.addOrReplaceSlot(new InventorySlot(draggedItemData.type, draggedItemData.quantity,
-                draggedItemData.slotX, draggedItemData.slotY));
+        InventorySlot newSlot = new InventorySlot(draggedItemData.type, draggedItemData.quantity,
+                draggedItemData.slotX, draggedItemData.slotY);
+        targetInventory.addOrReplaceSlot(newSlot);
 
         if (originIsHotbar != targetIsHotbar) {
-            if (originIsHotbar) {
-                draggedItem.remove(HotbarUiComponent.class);
-                draggedItem.add(new InventoryUiComponent());
+            Entity newEntity;
+
+            float size = Mappers.size.get(draggedItem).width;
+            if (targetIsHotbar) {
+                newEntity = InventoryFactory.createHotbarItem(
+                        newSlot,
+                        draggedPos.x, draggedPos.y, size);
             } else {
-                draggedItem.remove(InventoryUiComponent.class);
-                draggedItem.add(new HotbarUiComponent());
+                newEntity = InventoryFactory.createInventoryItem(
+                        newSlot,
+                        draggedPos.x, draggedPos.y, size);
             }
+
+            getEngine().removeEntity(draggedItem);
+            getEngine().addEntity(newEntity);
         }
 
         return true;

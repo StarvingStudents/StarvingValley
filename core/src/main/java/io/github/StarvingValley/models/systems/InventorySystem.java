@@ -71,17 +71,13 @@ public class InventorySystem extends EntitySystem {
 
         if (result.changedInventory) {
             context.eventBus.publish(new EntityUpdatedEvent(player));
-
             if (InventoryUtils.isInventoryOpen(getEngine())) {
-                InventoryUtils.closeInventory(getEngine());
-                InventoryUtils.addInventoryToEngine(getEngine(), inventory);
+                InventoryUtils.refreshInventory(getEngine(), inventory);
             }
         } else if (result.changedHotbar) {
             context.eventBus.publish(new EntityUpdatedEvent(player));
-
             if (InventoryUtils.isHotbarOpen(getEngine())) {
-                InventoryUtils.closeHotbar(getEngine());
-                InventoryUtils.addHotbarToEngine(getEngine(), hotbar);
+                InventoryUtils.refreshHotbar(getEngine(), hotbar);
             }
         }
     }

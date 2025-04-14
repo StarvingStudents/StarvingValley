@@ -114,7 +114,7 @@ public class FarmView extends ScreenAdapter {
         }
 
         if (prefabType != null) {
-          BuildUtils.enableBuildPreview(prefabType, engine);
+          BuildUtils.enableBuildPreview(prefabType, prefabType, engine);
         }
 
         return true;

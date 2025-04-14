@@ -1,5 +1,7 @@
 package io.github.StarvingValley.utils;
 
+import java.util.List;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -9,10 +11,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.HotbarUiComponent;
+import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySlotComponent;
 import io.github.StarvingValley.models.components.InventoryUiComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.components.SelectedHotbarItemComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
+import io.github.StarvingValley.models.components.TextComponent;
 import io.github.StarvingValley.models.entities.InventoryFactory;
 import io.github.StarvingValley.models.types.Inventory;
 import io.github.StarvingValley.models.types.InventorySlot;
@@ -39,6 +45,9 @@ public class InventoryUtils {
                 }
             }
         }
+
+        unselectSelectedHotbarItems(engine);
+        BuildUtils.disableBuildPreview(engine);
     }
 
     public static void addHotbarToEngine(Engine engine, Inventory hotbar) {
@@ -130,10 +139,6 @@ public class InventoryUtils {
                 Family.all(HotbarUiComponent.class).get()).size() > 0;
     }
 
-    // TODO: Make refreshInventory(Engine engine, Inventory inventory) that doesn't
-    // remove and add entities but just update existing ones to match given
-    // inventory
-
     public static Entity getSlotAtScreenPosition(Engine engine, int screenX, int screenY) {
         Vector2 mousePos = new Vector2(screenX, screenY);
 
@@ -167,5 +172,101 @@ public class InventoryUtils {
         float posY = layout.startY + flippedY * layout.slotSizePx;
 
         return new Vector2(posX, posY);
+    }
+
+    public static void refreshInventory(Engine engine, Inventory inventory) {
+        ImmutableArray<Entity> inventoryItems = engine.getEntitiesFor(
+                Family.all(InventoryItemComponent.class, InventoryUiComponent.class, PositionComponent.class,
+                        SpriteComponent.class, TextComponent.class).get());
+
+        List<InventorySlot> slots = inventory.slots;
+
+        for (InventorySlot slot : slots) {
+            boolean found = false;
+            for (Entity entity : inventoryItems) {
+                InventoryItemComponent item = Mappers.inventoryItem.get(entity);
+                PositionComponent pos = Mappers.position.get(entity);
+                SpriteComponent sprite = Mappers.sprite.get(entity);
+                TextComponent text = Mappers.text.get(entity);
+
+                if (item.slotX == slot.x && item.slotY == slot.y && item.type == slot.getType()) {
+                    item.quantity = slot.getQuantity();
+                    text.text = String.valueOf(slot.getQuantity());
+                    Vector2 newPos = InventoryUtils.getPixelPositionForSlot(item.slotX, item.slotY,
+                            InventoryUtils.getInventoryLayout(inventory));
+                    pos.position.set(newPos.x, newPos.y, pos.position.z);
+                    sprite.sprite.setAlpha(1f);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                Vector2 pos = InventoryUtils.getPixelPositionForSlot(slot.x, slot.y,
+                        InventoryUtils.getInventoryLayout(inventory));
+                Entity newItem = InventoryFactory.createInventoryItem(slot, pos.x, pos.y,
+                        InventoryUtils.getInventoryLayout(inventory).slotSizePx);
+                engine.addEntity(newItem);
+            }
+        }
+
+        for (Entity entity : inventoryItems) {
+            InventoryItemComponent item = Mappers.inventoryItem.get(entity);
+            InventorySlot slot = inventory.getSlotAt(item.slotX, item.slotY);
+            if (slot == null || slot.itemStack.quantity <= 0) {
+                engine.removeEntity(entity);
+            }
+        }
+    }
+
+    public static void refreshHotbar(Engine engine, Inventory hotbar) {
+        ImmutableArray<Entity> hotbarItems = engine.getEntitiesFor(
+                Family.all(InventoryItemComponent.class, HotbarUiComponent.class, PositionComponent.class,
+                        SpriteComponent.class, TextComponent.class).get());
+
+        List<InventorySlot> hotbarSlots = hotbar.slots;
+
+        for (InventorySlot slot : hotbarSlots) {
+            boolean found = false;
+            for (Entity entity : hotbarItems) {
+                InventoryItemComponent item = Mappers.inventoryItem.get(entity);
+                PositionComponent pos = Mappers.position.get(entity);
+                SpriteComponent sprite = Mappers.sprite.get(entity);
+                TextComponent text = Mappers.text.get(entity);
+
+                if (item.slotX == slot.x && item.slotY == slot.y && item.type == slot.getType()) {
+                    item.quantity = slot.getQuantity();
+                    text.text = String.valueOf(slot.getQuantity());
+                    Vector2 newPos = InventoryUtils.getPixelPositionForSlot(item.slotX, item.slotY,
+                            InventoryUtils.getHotbarLayout(hotbar));
+                    pos.position.set(newPos.x, newPos.y, pos.position.z);
+                    sprite.sprite.setAlpha(1f);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                Vector2 pos = InventoryUtils.getPixelPositionForSlot(slot.x, slot.y,
+                        InventoryUtils.getHotbarLayout(hotbar));
+                Entity newItem = InventoryFactory.createHotbarItem(slot, pos.x, pos.y,
+                        InventoryUtils.getHotbarLayout(hotbar).slotSizePx);
+                engine.addEntity(newItem);
+            }
+        }
+
+        for (Entity entity : hotbarItems) {
+            InventoryItemComponent item = Mappers.inventoryItem.get(entity);
+            InventorySlot slot = hotbar.getSlotAt(item.slotX, item.slotY);
+            if (slot == null || slot.itemStack.quantity <= 0) {
+                engine.removeEntity(entity);
+            }
+        }
+    }
+
+    private static void unselectSelectedHotbarItems(Engine engine) {
+        for (Entity selectedItem : engine.getEntitiesFor(Family.all(SelectedHotbarItemComponent.class).get())) {
+            selectedItem.remove(SelectedHotbarItemComponent.class);
+        }
     }
 }

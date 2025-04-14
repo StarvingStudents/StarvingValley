@@ -69,6 +69,7 @@ public class InventoryFactory {
         entity.add(new SpriteComponent(slot.getType().getIconName()));
         entity.add(new HudComponent());
         entity.add(new DraggableComponent());
+        entity.add(new ClickableComponent());
         entity.add(new InventoryItemComponent(slot.getType(), slot.getQuantity(), slot.x, slot.y));
         entity.add(new HotbarUiComponent());
         entity.add(new TextComponent(String.valueOf(slot.getQuantity()), size * 3 / 4, size / 4));
