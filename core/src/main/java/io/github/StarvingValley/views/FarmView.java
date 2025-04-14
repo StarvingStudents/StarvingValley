@@ -12,6 +12,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.controllers.FarmController;
@@ -20,6 +21,10 @@ import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.FoodItemComponent;
+import io.github.StarvingValley.models.components.InventoryItemComponent;
+import io.github.StarvingValley.models.components.InventorySelectedItemComponent;
+import io.github.StarvingValley.models.entities.CropFactory;
 import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
@@ -28,6 +33,9 @@ import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
+
+// TEMP: 
+import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
 
 public class FarmView extends ScreenAdapter {
   public AssetManager assetManager;
@@ -129,8 +137,9 @@ public class FarmView extends ScreenAdapter {
     Entity trader = TraderFactory.create(30, 13);
     engine.addEntity(trader);
 
-    Entity eatingButton = HUDButtonFactory.createHUDButton(-3, 5, 1, 1,
-        "Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\Objects\\Egg_item.png", context,
+    Entity eatingButton = HUDButtonFactory.createHUDButton((int) (Gdx.graphics.getWidth() * 0.80),
+        (int) (Gdx.graphics.getHeight() * 0.2), 250, 250,
+        "EAT_egg.png", context,
         ButtonType.EATING_BUTTON);
 
     engine.addEntity(eatingButton);
