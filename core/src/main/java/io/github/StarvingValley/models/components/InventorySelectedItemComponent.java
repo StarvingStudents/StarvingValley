@@ -1,5 +1,7 @@
 package io.github.StarvingValley.models.components;
 
-public class InventorySelectedItemComponent {
+import com.badlogic.ashley.core.Component;
+
+public class InventorySelectedItemComponent implements Component {
 
 }
