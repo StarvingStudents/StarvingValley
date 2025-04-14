@@ -34,33 +34,32 @@ public class EatingSystem extends IteratingSystem {
             // Held item should have InventorySelectedItemComponent
             // Edible items should have FoodItemComponent
 
-            // Check that there is at least one selected item:
+            // Check that there is at least one selected item in inventory that is edible,
+            // returns if not.
             if (getEngine()
                     .getEntitiesFor(
-                            Family.all(InventorySelectedItemComponent.class, InventoryItemComponent.class).get())
+                            Family.all(InventorySelectedItemComponent.class, InventoryItemComponent.class,
+                                    FoodItemComponent.class).get())
                     .size() == 0) {
                 return;
             }
 
-            // Get the item with InventorySelectedItemComponent and InventoryItemComponent
+            // Get that entity if it exists.
             Entity selectedItemEntity = getEngine()
                     .getEntitiesFor(
                             Family.all(InventorySelectedItemComponent.class,
-                                    InventoryItemComponent.class).get())
+                                    InventoryItemComponent.class, FoodItemComponent.class).get())
                     .first();
 
-            // Check if selectedItemEntity has FoodItemComponent:
-            if (selectedItemEntity.getComponent(FoodItemComponent.class) != null) {
-                // Get the food points from the selected item:
-                FoodItemComponent foodItem = selectedItemEntity.getComponent(FoodItemComponent.class);
-                float foodPoints = foodItem.foodPoints;
+            // Get the food points from the selected item:
+            FoodItemComponent foodItem = selectedItemEntity.getComponent(FoodItemComponent.class);
+            float foodPoints = foodItem.foodPoints;
 
-                // Update hunger points:
-                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
-                        foodPoints);
+            // Update hunger points:
+            hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
+                    foodPoints);
 
-                // TODO : Remove the consumed food item from the inventory:
-            }
+            // TODO : Remove the consumed food item from the inventory:
         }
     }
 }
