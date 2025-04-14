@@ -5,13 +5,17 @@ import java.util.List;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.utils.ImmutableArray;
 
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.FoodItemComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySelectedItemComponent;
+import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.models.events.EatingButtonPressedEvent;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.entities.BuildPreviewFactory;
 
 public class EatingSystem extends IteratingSystem {
     private EventBus eventBus;
@@ -32,24 +36,24 @@ public class EatingSystem extends IteratingSystem {
 
             // TODO: Combine with inventory system
             // Held item should have InventorySelectedItemComponent
-            // Edible items should have FoodItemComponent
+            // Edible items should have FoodItemComponent (foodItem)
 
-            // Check that there is at least one selected item in inventory that is edible,
-            // returns if not.
-            if (getEngine()
+            ImmutableArray<Entity> selectedItemEntities = getEngine()
                     .getEntitiesFor(
-                            Family.all(InventorySelectedItemComponent.class, InventoryItemComponent.class,
-                                    FoodItemComponent.class).get())
-                    .size() == 0) {
+                            Family.all(InventorySelectedItemComponent.class, InventoryItemComponent.class).get());
+
+            if (selectedItemEntities.size() == 0) {
                 return;
             }
 
-            // Get that entity if it exists.
-            Entity selectedItemEntity = getEngine()
-                    .getEntitiesFor(
-                            Family.all(InventorySelectedItemComponent.class,
-                                    InventoryItemComponent.class, FoodItemComponent.class).get())
-                    .first();
+            Entity selectedItemEntity = selectedItemEntities.first();
+
+            // Check that that entity has foodItem component
+            Entity prototype = EntityFactoryRegistry
+                    .create(selectedItemEntity.getComponent(InventoryItemComponent.class).type);
+            if (!Mappers.foodItem.has(prototype)) {
+                return;
+            }
 
             // Get the food points from the selected item:
             FoodItemComponent foodItem = selectedItemEntity.getComponent(FoodItemComponent.class);
