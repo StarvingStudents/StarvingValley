@@ -17,6 +17,7 @@ import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
@@ -108,6 +109,11 @@ public class FarmView extends ScreenAdapter {
             } else {
               eventBus.publish(new InventoryOpenEvent(controller.getPlayer()));
             }
+            break;
+          case Input.Keys.H:
+            HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
+            InventoryUtils.toggleHotbar(engine, hotbar.hotbar);
+            break;
         }
 
         if (prefabType != null) {
@@ -122,9 +128,18 @@ public class FarmView extends ScreenAdapter {
     inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
   }
 
+  // TODO: Maybe this shouldn't be in the view, but then we need a way to either
+  // know player is initalized inside farmcontroller, or add a playerloaded
+  // callback
+  private void showHotbar() {
+    if (controller.getPlayer() != null && !InventoryUtils.isHotbarOpen(engine)) {
+      HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
+      InventoryUtils.addHotbarToEngine(engine, hotbar.hotbar);
+    }
+  }
+
   @Override
   public void show() {
-
     JoystickController joystickController = new JoystickController(engine);
     joystickOverlay = new JoystickOverlay(joystickController);
 
@@ -146,6 +161,7 @@ public class FarmView extends ScreenAdapter {
   @Override
   public void render(float delta) {
     assetManager.update();
+    showHotbar();
     // inventoryController.update();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);

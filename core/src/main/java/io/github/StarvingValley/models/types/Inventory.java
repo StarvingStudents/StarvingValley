@@ -28,6 +28,15 @@ public class Inventory {
     return slots.stream().anyMatch(slot -> slot.getType() == type);
   }
 
+  public void addOrReplaceSlot(InventorySlot newSlot) {
+    removeSlotAt(newSlot.x, newSlot.y);
+    slots.add(newSlot);
+  }
+
+  public void removeSlotAt(int x, int y) {
+    slots.removeIf(slot -> slot.x == x && slot.y == y);
+  }
+
   public boolean addItem(PrefabType type, int quantity) {
     List<InventorySlot> slots = findSlotsOfType(type);
     if (!slots.isEmpty()) {

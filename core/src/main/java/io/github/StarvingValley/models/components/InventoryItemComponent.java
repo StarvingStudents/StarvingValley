@@ -2,13 +2,18 @@ package io.github.StarvingValley.models.components;
 
 import com.badlogic.ashley.core.Component;
 
-import io.github.StarvingValley.models.types.InventorySlot;
+import io.github.StarvingValley.models.types.PrefabType;
 
-//TODO: Maybe change all inventory-related components to be flat
 public class InventoryItemComponent implements Component {
-    public InventorySlot inventorySlot;
+    public PrefabType type;
+    public int quantity;
+    public int slotX;
+    public int slotY;
 
-    public InventoryItemComponent(InventorySlot inventorySlot) {
-        this.inventorySlot = inventorySlot;
+    public InventoryItemComponent(PrefabType type, int quantity, int slotX, int slotY) {
+        this.type = type;
+        this.quantity = quantity;
+        this.slotX = slotX;
+        this.slotY = slotY;
     }
 }

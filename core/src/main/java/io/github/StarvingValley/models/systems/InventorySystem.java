@@ -67,7 +67,7 @@ public class InventorySystem extends EntitySystem {
 
             if (InventoryUtils.isInventoryOpen(getEngine())) {
                 InventoryUtils.closeInventory(getEngine());
-                InventoryUtils.openInventory(getEngine(), inventory);
+                InventoryUtils.addInventoryToEngine(getEngine(), inventory);
             }
         }
     }

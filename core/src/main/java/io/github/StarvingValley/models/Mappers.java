@@ -23,11 +23,13 @@ import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.HotbarComponent;
+import io.github.StarvingValley.models.components.HotbarUiComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySlotComponent;
+import io.github.StarvingValley.models.components.InventoryUiComponent;
 import io.github.StarvingValley.models.components.MapRenderComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -124,4 +126,8 @@ public class Mappers {
                         .getFor(InventorySlotComponent.class);
         public static final ComponentMapper<HotbarComponent> hotbar = ComponentMapper
                         .getFor(HotbarComponent.class);
+        public static final ComponentMapper<HotbarUiComponent> hotbarUi = ComponentMapper
+                        .getFor(HotbarUiComponent.class);
+        public static final ComponentMapper<InventoryUiComponent> inventoryUi = ComponentMapper
+                        .getFor(InventoryUiComponent.class);
 }
