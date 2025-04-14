@@ -8,7 +8,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.*;
+import io.github.StarvingValley.models.components.DragEndComponent;
+import io.github.StarvingValley.models.components.DraggingComponent;
+import io.github.StarvingValley.models.components.HotbarUiComponent;
+import io.github.StarvingValley.models.components.InventoryItemComponent;
+import io.github.StarvingValley.models.components.InventorySlotComponent;
+import io.github.StarvingValley.models.components.InventoryUiComponent;
+import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.Inventory;
@@ -17,6 +24,7 @@ import io.github.StarvingValley.models.types.UiInventoryLayout;
 import io.github.StarvingValley.utils.InventoryUtils;
 import io.github.StarvingValley.utils.ScreenUtils;
 
+//TODO: Mark clicked as selected, maybe in different system tho
 public class InventoryDragSystem extends EntitySystem {
     private final GameContext context;
 
@@ -34,6 +42,19 @@ public class InventoryDragSystem extends EntitySystem {
         ImmutableArray<Entity> draggedItems = getEngine().getEntitiesFor(
                 Family.all(InventoryItemComponent.class, DraggingComponent.class, PositionComponent.class)
                         .exclude(DragEndComponent.class).get());
+
+        if (!InventoryUtils.isInventoryOpen(getEngine())) {
+            for (Entity entity : draggedItems) {
+                boolean originIsHotbar = Mappers.hotbarUi.has(entity);
+                Inventory originInventory = originIsHotbar
+                        ? Mappers.hotbar.get(context.player).hotbar
+                        : Mappers.inventory.get(context.player).inventory;
+
+                resetItemPosition(entity, originInventory, originIsHotbar);
+            }
+
+            return;
+        }
 
         Vector2 mousePos = ScreenUtils.getMouseScreenPosition();
 

@@ -203,18 +203,18 @@ public class InventoryController {
     }
 
     private void handleEvents() {
-        List<InventoryOpenEvent> openEvents = context.eventBus.getEvents(InventoryOpenEvent.class);
-        if (!openEvents.isEmpty()) {
-            InventoryOpenEvent openEvent = openEvents.get(openEvents.size() - 1);
+        // List<InventoryOpenEvent> openEvents = context.eventBus.getEvents(InventoryOpenEvent.class);
+        // if (!openEvents.isEmpty()) {
+        //     InventoryOpenEvent openEvent = openEvents.get(openEvents.size() - 1);
 
-            InventoryComponent inventoryComponent = Mappers.inventory.get(openEvent.targetEntity);
-            HotbarComponent hotbarComponent = Mappers.hotbar.get(openEvent.targetEntity);
+        //     InventoryComponent inventoryComponent = Mappers.inventory.get(openEvent.targetEntity);
+        //     HotbarComponent hotbarComponent = Mappers.hotbar.get(openEvent.targetEntity);
 
-            if (inventoryComponent != null && hotbarComponent != null) {
-                setInventory(inventoryComponent.inventory);
-                setInventoryVisible(true);
-            }
-        }
+        //     if (inventoryComponent != null && hotbarComponent != null) {
+        //         setInventory(inventoryComponent.inventory);
+        //         setInventoryVisible(true);
+        //     }
+        // }
 
         List<InventoryCloseEvent> closeEvents = context.eventBus.getEvents(InventoryCloseEvent.class);
         if (!closeEvents.isEmpty()) {

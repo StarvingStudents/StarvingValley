@@ -4,9 +4,15 @@ import java.util.List;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ClickedComponent;
+import io.github.StarvingValley.models.components.InventoryToggleButtonComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
+import io.github.StarvingValley.models.events.InventoryCloseEvent;
+import io.github.StarvingValley.models.events.InventoryOpenEvent;
 import io.github.StarvingValley.models.events.ItemDroppedEvent;
 import io.github.StarvingValley.models.events.ItemUsedEvent;
 import io.github.StarvingValley.models.types.GameContext;
@@ -25,7 +31,12 @@ public class InventorySystem extends EntitySystem {
     @Override
     public void update(float deltaTime) {
         Entity player = context.player;
-        if (player == null || !Mappers.inventory.has(player) || !Mappers.hotbar.has(player))
+        if (player == null || !Mappers.inventory.has(player))
+            return;
+
+        handleToggleEvents(player);
+
+        if (!Mappers.hotbar.has(player))
             return;
 
         Inventory inventory = Mappers.inventory.get(player).inventory;
@@ -69,6 +80,26 @@ public class InventorySystem extends EntitySystem {
                 InventoryUtils.closeInventory(getEngine());
                 InventoryUtils.addInventoryToEngine(getEngine(), inventory);
             }
+        }
+    }
+
+    private void handleToggleEvents(Entity player) {
+        Inventory inventory = Mappers.inventory.get(player).inventory;
+
+        ImmutableArray<Entity> clickedToggleButtons = getEngine()
+                .getEntitiesFor(Family.all(InventoryToggleButtonComponent.class, ClickedComponent.class).get());
+        for (int i = 0; i < clickedToggleButtons.size(); i++) {
+            InventoryUtils.toggleInventory(getEngine(), inventory);
+        }
+
+        List<InventoryOpenEvent> openEvents = context.eventBus.getEvents(InventoryOpenEvent.class);
+        if (!openEvents.isEmpty()) {
+            InventoryUtils.addInventoryToEngine(getEngine(), inventory);
+        }
+
+        List<InventoryCloseEvent> closeEvents = context.eventBus.getEvents(InventoryCloseEvent.class);
+        if (!closeEvents.isEmpty()) {
+            InventoryUtils.closeInventory(getEngine());
         }
     }
 

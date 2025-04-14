@@ -18,7 +18,6 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.HotbarComponent;
-import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
@@ -102,12 +101,10 @@ public class FarmView extends ScreenAdapter {
             prefabType = PrefabType.SOIL;
             break;
           case Input.Keys.I:
-            InventoryComponent inventory = Mappers.inventory.get(controller.getPlayer());
-            InventoryUtils.toggleInventory(engine, inventory.inventory);
-            if (inventoryController.isInventoryIsVisible()) {
+            if (InventoryUtils.isInventoryOpen(engine)) {
               eventBus.publish(new InventoryCloseEvent());
             } else {
-              eventBus.publish(new InventoryOpenEvent(controller.getPlayer()));
+              eventBus.publish(new InventoryOpenEvent());
             }
             break;
           case Input.Keys.H:
@@ -135,6 +132,7 @@ public class FarmView extends ScreenAdapter {
     if (controller.getPlayer() != null && !InventoryUtils.isHotbarOpen(engine)) {
       HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
       InventoryUtils.addHotbarToEngine(engine, hotbar.hotbar);
+      InventoryUtils.addInventoryToggleButtonToEngine(engine, hotbar.hotbar);
     }
   }
 

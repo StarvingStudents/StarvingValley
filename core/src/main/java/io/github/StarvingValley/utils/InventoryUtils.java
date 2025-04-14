@@ -63,9 +63,12 @@ public class InventoryUtils {
         }
     }
 
+    public static void addInventoryToggleButtonToEngine(Engine engine, Inventory hotbar) {
+      engine.addEntity(InventoryFactory.createInventoryToggleButton(hotbar));
+    }
+
     public static UiInventoryLayout getInventoryLayout(Inventory inventory) {
-        // TODO: Centralize this somehow
-        float slotSize = TileUtils.getTileWidth() * 1.2f;
+        float slotSize = getSlotSize();
 
         int screenWidth = Gdx.graphics.getWidth();
         int screenHeight = Gdx.graphics.getHeight();
@@ -79,7 +82,7 @@ public class InventoryUtils {
     }
 
     public static UiInventoryLayout getHotbarLayout(Inventory hotbar) {
-        float slotSize = TileUtils.getTileWidth() * 1.2f;
+        float slotSize = getSlotSize();
         float screenWidth = Gdx.graphics.getWidth();
 
         float hotbarWidthPx = hotbar.width * slotSize;
@@ -87,6 +90,10 @@ public class InventoryUtils {
         float startY = 20f;
 
         return new UiInventoryLayout(startX, startY, slotSize, hotbar.width, hotbar.height);
+    }
+
+    public static float getSlotSize() {
+        return TileUtils.getTileWidth() * 1.2f;
     }
 
     public static void closeInventory(Engine engine) {
