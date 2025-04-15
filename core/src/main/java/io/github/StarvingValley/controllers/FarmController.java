@@ -27,6 +27,7 @@ import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HarvestingSystem;
 import io.github.StarvingValley.models.systems.HotbarItemClickSystem;
+import io.github.StarvingValley.models.systems.HudRenderSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.InputCleanupSystem;
@@ -110,6 +111,7 @@ public class FarmController {
         engine.addSystem(new HungerSystem(gameContext));
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new HungerRenderSystem(gameContext));
+        engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new InputCleanupSystem());
