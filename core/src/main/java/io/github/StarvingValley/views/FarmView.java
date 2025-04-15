@@ -13,6 +13,8 @@ import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
+import io.github.StarvingValley.controllers.StarvingValley;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
@@ -42,7 +44,7 @@ public class FarmView extends ScreenAdapter {
 
   private GameMenuController gameMenuController;
 
-  public FarmView(IFirebaseRepository firebaseRepository) {
+  public FarmView(StarvingValley game, IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
@@ -78,7 +80,7 @@ public class FarmView extends ScreenAdapter {
 
     assetManager.finishLoading();
 
-    controller = new FarmController(_firebaseRepository, eventBus, assetManager);
+    controller = new FarmController(game, _firebaseRepository, eventBus, assetManager);
 
     engine = controller.getEngine();
 
@@ -162,6 +164,8 @@ public class FarmView extends ScreenAdapter {
   @Override
   public void render(float delta) {
     assetManager.update();
+    controller.update(delta);
+
     showHotbar();
     gameMenuController.update();
 

@@ -19,6 +19,7 @@ import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DamageComponent;
+import io.github.StarvingValley.models.components.CurrentScreenComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
@@ -65,6 +66,12 @@ public class EntitySerializer {
       dto.x = pos.x;
       dto.y = pos.y;
       dto.z = pos.z;
+    }
+
+    // CurrentScreen
+    CurrentScreenComponent screen = Mappers.currScreen.get(entity);
+    if (screen != null) {
+      dto.screen = screen.currentScreen;
     }
 
     // Speed
@@ -207,6 +214,12 @@ public class EntitySerializer {
     if (dto.x != null && dto.y != null) {
       PositionComponent position = new PositionComponent(dto.x, dto.y, dto.z != null ? dto.z : 0f);
       entity.add(position);
+    }
+
+    // CurrentScreen
+    if (dto.screen != null) {
+      CurrentScreenComponent screen = new CurrentScreenComponent(dto.screen);
+      entity.add(screen);
     }
 
     // Speed

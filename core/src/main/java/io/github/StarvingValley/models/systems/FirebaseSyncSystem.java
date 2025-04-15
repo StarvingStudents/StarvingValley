@@ -22,12 +22,12 @@ import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.EntitySerializer;
 
 public class FirebaseSyncSystem extends IntervalSystem {
-  private GameContext context;
+    private GameContext context;
 
-  public FirebaseSyncSystem(GameContext context) {
-    super(Config.FIREBASE_SYNC_INTERVAL);
-    this.context = context;
-  }
+    public FirebaseSyncSystem(GameContext context) {
+        super(Config.FIREBASE_SYNC_INTERVAL);
+        this.context = context;
+    }
 
   @Override
   protected void updateInterval() {
@@ -95,4 +95,5 @@ public class FirebaseSyncSystem extends IntervalSystem {
       });
     }
   }
+
 }
