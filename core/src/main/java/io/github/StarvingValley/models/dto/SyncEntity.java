@@ -1,5 +1,7 @@
 package io.github.StarvingValley.models.dto;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
@@ -54,9 +56,9 @@ public class SyncEntity {
 
     public Boolean canHarvest;
 
-    public Integer timeToGrow;
-    public Integer growthProgress;
-    public Float growthTimeAccumulator;
+    public String plantedTimestamp;
+
+    public Long growthDurationSeconds;
 
     public Boolean isClickable;
     public Boolean isActiveWorldEntity;

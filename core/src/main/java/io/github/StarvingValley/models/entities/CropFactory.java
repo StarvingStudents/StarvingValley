@@ -1,5 +1,6 @@
 package io.github.StarvingValley.models.entities;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,8 +64,8 @@ public class CropFactory {
     return new GrowthStageComponent();
   }
 
-  private static TimeToGrowComponent createTimeToGrow(int time) {
-    return new TimeToGrowComponent(time);
+  private static TimeToGrowComponent createTimeToGrow(int seconds) {
+    return new TimeToGrowComponent(Duration.ofSeconds(seconds));
   }
 
   private static HarvestingComponent createHarvestingComponent() {

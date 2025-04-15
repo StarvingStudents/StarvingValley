@@ -2,6 +2,8 @@ package io.github.StarvingValley.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.UUID;
 
 import com.badlogic.ashley.core.Entity;
@@ -140,9 +142,10 @@ public class EntitySerializer {
     // Time to grow
     TimeToGrowComponent timeToGrow = Mappers.timeToGrow.get(entity);
     if (timeToGrow != null) {
-      dto.timeToGrow = timeToGrow.timeToGrow;
-      dto.growthProgress = timeToGrow.growthProgress;
-      dto.growthTimeAccumulator = timeToGrow.growthTimeAccumulator;
+        dto.plantedTimestamp = timeToGrow.plantedTime != null ?
+            timeToGrow.plantedTime.toString() : null;
+        dto.growthDurationSeconds = timeToGrow.growthDuration != null ?
+            timeToGrow.growthDuration.getSeconds() : null;
     }
 
     // Buildable
@@ -291,12 +294,10 @@ public class EntitySerializer {
     }
 
     // Time to grow
-    if (dto.timeToGrow != null && dto.growthProgress != null && dto.growthTimeAccumulator != null) {
-      TimeToGrowComponent timeToGrowComponent = new TimeToGrowComponent(0);
-      timeToGrowComponent.timeToGrow = dto.timeToGrow;
-      timeToGrowComponent.growthProgress = dto.growthProgress;
-      timeToGrowComponent.growthTimeAccumulator = dto.growthTimeAccumulator;
-
+    if (dto.plantedTimestamp != null && dto.growthDurationSeconds != null) {
+      Instant plantedTime = Instant.parse(dto.plantedTimestamp);
+      Duration growthDuration = Duration.ofSeconds(dto.growthDurationSeconds);
+      TimeToGrowComponent timeToGrowComponent = new TimeToGrowComponent(plantedTime, growthDuration);
       entity.add(timeToGrowComponent);
     }
 
