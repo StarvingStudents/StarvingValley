@@ -122,19 +122,7 @@ public class FarmController {
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
         MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
-        firebaseRepository.registerOrSignInWithDeviceId(
-                new AuthCallback() {
-                    @Override
-                    public void onSuccess() {
-                        MapUtils.loadSyncedEntities(gameContext, getCamera());
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        // TODO: Fail gracefully
-                        throw new RuntimeException("Authentication failed: " + errorMessage);
-                    }
-                });
+        MapUtils.loadSyncedEntities(gameContext, getCamera());
     }
 
     public Engine getEngine() {
