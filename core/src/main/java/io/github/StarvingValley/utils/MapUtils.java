@@ -1,5 +1,10 @@
 package io.github.StarvingValley.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
@@ -8,9 +13,10 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+
 import io.github.StarvingValley.config.Config;
-import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
@@ -22,10 +28,6 @@ import io.github.StarvingValley.models.entities.WorldMapUserFactory;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class MapUtils {
   public static void loadEnvCollidables(TiledMap map, float unitScale, Engine engine) {
@@ -77,6 +79,8 @@ public class MapUtils {
               player.add(new UnsyncedComponent());
               skipSpriteSyncOnLoad(player);
               context.engine.addEntity(player);
+
+              context.player = player;
             }
           }
 
