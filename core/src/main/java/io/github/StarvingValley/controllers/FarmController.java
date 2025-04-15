@@ -2,18 +2,25 @@ package io.github.StarvingValley.controllers;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.List;
+
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.PlayerComponent;
+import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.FarmToVillageTransitionEvent;
+import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
 import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.AnimationSystem;
@@ -38,14 +45,17 @@ import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.RespawnSystem;
+import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.TradingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.types.ViewType;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
+import io.github.StarvingValley.views.VillageView;
 
 public class FarmController {
 
@@ -59,7 +69,10 @@ public class FarmController {
     private Entity camera;
     private Entity map;
 
-    public FarmController(IFirebaseRepository firebaseRepository, EventBus eventBus, AssetManager assetManager) {
+    private StarvingValley game;
+
+    public FarmController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus, AssetManager assetManager) {
+        this.game = game;
         this.firebaseRepository = firebaseRepository;
         this.eventBus = eventBus;
         this.assetManager = assetManager;
@@ -117,12 +130,35 @@ public class FarmController {
         engine.addSystem(new InputCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new ActionAnimationSystem(gameContext));
+        engine.addSystem(new FarmToVillageTransitionSystem(gameContext));
 
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
         MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
-        MapUtils.loadSyncedEntities(gameContext, getCamera());
+        MapUtils.loadSyncedEntities(gameContext, getCamera()); // TODO this line causes the issue of the player moving
+    }
+
+    public void update(float deltaTime) {
+        List<FarmToVillageTransitionEvent> events = eventBus.getEvents(FarmToVillageTransitionEvent.class);
+        if (events.isEmpty())
+            return;
+
+        if  (events.get(0).getTargetView() == ViewType.VILLAGE) {
+
+            ImmutableArray<Entity> players = engine.getEntitiesFor(
+                Family.all(PlayerComponent.class, PositionComponent.class).get() // currentMapComponent
+            );
+            if (players.size() == 0) {
+                return;
+            }
+
+            // TODO we also need to alter X coordinates => probably here
+            //  Entity player = players.first();
+            //  PositionComponent positionComponent = Mappers.position.get(player);
+            //  positionComponent.position.x = 0;
+            game.requestViewSwitch(ViewType.VILLAGE);
+        }
     }
 
     public Engine getEngine() {

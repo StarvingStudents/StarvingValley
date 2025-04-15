@@ -19,6 +19,7 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
@@ -38,7 +39,7 @@ public class VillageView extends ScreenAdapter {
     private final EventDebugger eventDebugger;
     private EventDebugOverlay eventDebugOverlay;
 
-    public VillageView(IFirebaseRepository firebaseRepository) {
+    public VillageView(StarvingValley game, IFirebaseRepository firebaseRepository) {
         _firebaseRepository = firebaseRepository;
         eventDebugger = new EventDebugger();
         eventDebugOverlay = new EventDebugOverlay(eventDebugger);
@@ -93,7 +94,7 @@ public class VillageView extends ScreenAdapter {
             }
         };
 
-        controller = new VillageController(_firebaseRepository, eventBus, assetManager);
+        controller = new VillageController(game, _firebaseRepository, eventBus, assetManager);
         // to avoid
         // problems with the temporal
         // input handling
@@ -122,6 +123,7 @@ public class VillageView extends ScreenAdapter {
     @Override
     public void render(float delta) {
         assetManager.update();
+        controller.update(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
