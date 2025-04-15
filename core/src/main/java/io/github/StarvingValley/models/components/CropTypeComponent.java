@@ -10,7 +10,7 @@ public class CropTypeComponent implements Component {
   }
 
   public enum CropType {
-    TOMATO,
-    POTATO
+    WHEAT,
+    BEETROOT
   }
 }

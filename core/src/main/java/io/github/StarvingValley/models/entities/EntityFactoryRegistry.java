@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import com.badlogic.ashley.core.Entity;
 
-import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
 import io.github.StarvingValley.models.types.PrefabType;
 
 public class EntityFactoryRegistry {
@@ -14,8 +13,10 @@ public class EntityFactoryRegistry {
 
     static {
         factories.put(PrefabType.SOIL, SoilFactory::createSoil);
-        factories.put(PrefabType.TOMATO_CROP, () -> CropFactory.createCrop(CropType.TOMATO));
-        factories.put(PrefabType.POTATO_CROP, () -> CropFactory.createCrop(CropType.POTATO));
+        factories.put(PrefabType.WHEAT_CROP, () -> CropFactory.createCrop(PrefabType.WHEAT_CROP));
+        factories.put(PrefabType.BEETROOT_CROP, () -> CropFactory.createCrop(PrefabType.BEETROOT_CROP));
+        factories.put(PrefabType.BEETROOT_SEEDS, () -> SeedFactory.create(PrefabType.BEETROOT_SEEDS, PrefabType.BEETROOT_CROP));
+        factories.put(PrefabType.WHEAT_SEEDS, () -> SeedFactory.create(PrefabType.WHEAT_SEEDS, PrefabType.WHEAT_CROP));
     }
 
     public static Entity create(PrefabType type) {

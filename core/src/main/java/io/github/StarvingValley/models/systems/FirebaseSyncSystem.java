@@ -22,77 +22,77 @@ import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.EntitySerializer;
 
 public class FirebaseSyncSystem extends IntervalSystem {
-    private GameContext context;
+  private GameContext context;
 
-    public FirebaseSyncSystem(GameContext context) {
-        super(Config.FIREBASE_SYNC_INTERVAL);
-        this.context = context;
+  public FirebaseSyncSystem(GameContext context) {
+    super(Config.FIREBASE_SYNC_INTERVAL);
+    this.context = context;
+  }
+
+  @Override
+  protected void updateInterval() {
+    Engine engine = getEngine();
+
+    ImmutableArray<Entity> unsyncedEntities = engine
+        .getEntitiesFor(Family.all(SyncComponent.class, UnsyncedComponent.class).get());
+
+    ImmutableArray<Entity> entitiesMarkedForRemoval = engine
+        .getEntitiesFor(Family.all(SyncDeletionRequestComponent.class).get());
+
+    Map<String, Object> batchData = new HashMap<>();
+
+    Set<String> batchDeletionIds = new HashSet<>();
+    for (Entity entity : entitiesMarkedForRemoval) {
+      SyncDeletionRequestComponent syncDeletionRequest = Mappers.syncDeletionRequest.get(entity);
+      batchDeletionIds.add(syncDeletionRequest.id);
     }
 
-    @Override
-    protected void updateInterval() {
-        Engine engine = getEngine();
+    for (Entity entity : unsyncedEntities) {
+      SyncComponent sync = Mappers.sync.get(entity);
+      if (batchDeletionIds.contains(sync.id)) {
+        continue;
+      }
 
-        ImmutableArray<Entity> unsyncedEntities = engine
-                .getEntitiesFor(Family.all(SyncComponent.class, UnsyncedComponent.class).get());
+      Object serialized = EntitySerializer.serialize(entity);
+      batchData.put(sync.id, serialized);
+    }
 
-        ImmutableArray<Entity> entitiesMarkedForRemoval = engine
-                .getEntitiesFor(Family.all(SyncDeletionRequestComponent.class).get());
-
-        Map<String, Object> batchData = new HashMap<>();
-
-        Set<String> batchDeletionIds = new HashSet<>();
-        for (Entity entity : entitiesMarkedForRemoval) {
-            SyncDeletionRequestComponent syncDeletionRequest = Mappers.syncDeletionRequest.get(entity);
-            batchDeletionIds.add(syncDeletionRequest.id);
-        }
-
-        for (Entity entity : unsyncedEntities) {
+    if (!batchData.isEmpty()) {
+      context.firebaseRepository.pushEntities(batchData, new PushCallback() {
+        @Override
+        public void onSuccess() {
+          for (Entity entity : unsyncedEntities) {
             SyncComponent sync = Mappers.sync.get(entity);
-            if (batchDeletionIds.contains(sync.id)) {
-                continue;
-            }
 
-            Object serialized = EntitySerializer.serialize(entity);
-            batchData.put(sync.id, serialized);
+            entity.remove(UnsyncedComponent.class);
+            System.out.println("Synced entity " + sync.id);
+
+          }
         }
 
-        if (!batchData.isEmpty()) {
-            context.firebaseRepository.pushEntities(batchData, new PushCallback() {
-                @Override
-                public void onSuccess() {
-                    for (Entity entity : unsyncedEntities) {
-                        SyncComponent sync = Mappers.sync.get(entity);
-
-                        entity.remove(UnsyncedComponent.class);
-                        System.out.println("Synced entity " + sync.id);
-
-                    }
-                }
-
-                @Override
-                public void onFailure(String error) {
-                    System.err.println("Firebase sync failed: " + error);
-                }
-            });
+        @Override
+        public void onFailure(String error) {
+          System.err.println("Firebase sync failed: " + error);
         }
-
-        if (!batchDeletionIds.isEmpty()) {
-            context.firebaseRepository.pushEntityDeletions(new ArrayList<>(batchDeletionIds), new PushCallback() {
-                @Override
-                public void onSuccess() {
-                    for (Entity entity : entitiesMarkedForRemoval) {
-                        SyncDeletionRequestComponent syncDeletionRequest = Mappers.syncDeletionRequest.get(entity);
-                        engine.removeEntity(entity);
-                        System.out.println("Deleted entity " + syncDeletionRequest.id);
-                    }
-                }
-
-                @Override
-                public void onFailure(String error) {
-                    System.err.println("Firebase deletion failed: " + error);
-                }
-            });
-        }
+      });
     }
+
+    if (!batchDeletionIds.isEmpty()) {
+      context.firebaseRepository.pushEntityDeletions(new ArrayList<>(batchDeletionIds), new PushCallback() {
+        @Override
+        public void onSuccess() {
+          for (Entity entity : entitiesMarkedForRemoval) {
+            SyncDeletionRequestComponent syncDeletionRequest = Mappers.syncDeletionRequest.get(entity);
+            engine.removeEntity(entity);
+            System.out.println("Deleted entity " + syncDeletionRequest.id);
+          }
+        }
+
+        @Override
+        public void onFailure(String error) {
+          System.err.println("Firebase deletion failed: " + error);
+        }
+      });
+    }
+  }
 }
