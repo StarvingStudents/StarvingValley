@@ -14,7 +14,7 @@ import io.github.StarvingValley.models.types.ScreenType;
 public class FarmToVillageTransitionSystem extends IteratingSystem {
     private final float FARM_TO_VILLAGE_BOUNDARY = 39.5f;
     private final float VILLAGE_TO_FARM_BOUNDARY = 0f;
-    private GameContext context;
+    private final GameContext context;
 
     public FarmToVillageTransitionSystem(GameContext context) {
         super(Family.all(PlayerComponent.class, PositionComponent.class).get());
@@ -26,13 +26,13 @@ public class FarmToVillageTransitionSystem extends IteratingSystem {
         PositionComponent position = Mappers.position.get(entity);
 
         if (position.position.x > FARM_TO_VILLAGE_BOUNDARY) {
-            context.eventBus.publish(new ScreenTransitionEvent(
-                ScreenType.VILLAGE
-            ));
+            context.eventBus.publish(new ScreenTransitionEvent(ScreenType.VILLAGE));
+            position.position.x = VILLAGE_TO_FARM_BOUNDARY;
+            FirebaseSyncSystem.forcePlayerSync();
         } else if (position.position.x < VILLAGE_TO_FARM_BOUNDARY) {
-            context.eventBus.publish(new ScreenTransitionEvent(
-                ScreenType.FARM
-            ));
+            context.eventBus.publish(new ScreenTransitionEvent(ScreenType.FARM));
+            position.position.x = FARM_TO_VILLAGE_BOUNDARY;
+            FirebaseSyncSystem.forcePlayerSync();
         }
     }
 }

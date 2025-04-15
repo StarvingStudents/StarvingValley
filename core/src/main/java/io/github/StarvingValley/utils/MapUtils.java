@@ -114,12 +114,6 @@ public class MapUtils {
                             context.player = entity;
                             AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
                             entity.add(anim);
-
-                            // Adjust x coordinates if we are in transition zone
-                            PositionComponent p = Mappers.position.get(entity);
-                            if (p.position.x < VILLAGE_TO_FARM_BOUNDARY) {
-                                p.position.x = FARM_TO_VILLAGE_BOUNDARY + 1.5f;
-                            }
                         }
 
                         skipSpriteSyncOnLoad(entity);
@@ -154,13 +148,6 @@ public class MapUtils {
                             context.player = entity;
                             AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
                             entity.add(anim);
-
-                            // Adjust x coordinates if we are in transition zone
-                            PositionComponent p = Mappers.position.get(entity);
-                            if (p.position.x > FARM_TO_VILLAGE_BOUNDARY) {
-                                p.position.x = VILLAGE_TO_FARM_BOUNDARY - 1.5f;
-                            }
-
                             skipSpriteSyncOnLoad(entity);
                             context.engine.addEntity(entity);
 
