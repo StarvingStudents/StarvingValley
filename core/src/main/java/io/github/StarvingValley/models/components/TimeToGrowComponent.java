@@ -19,28 +19,31 @@ public class TimeToGrowComponent implements Component {
         this.growthDuration = growthDuration;
     }
 
-  public int getGrowthStage() {
-      int GROWTH_STAGE_MATURE = 2;
-      int GROWTH_STAGE_GROWNING = 1;
+    public int getGrowthStage() {
+        int GROWTH_STAGE_MATURE = 3;
+        int GROWTH_STAGE_GROWNING_75 = 2;
+        int GROWTH_STAGE_GROWNING_50 = 1;
         int GROWTH_STAGE_SPROUT = 0;
 
 
-      Instant now = Instant.now();
-      Duration elapsed = Duration.between(plantedTime, now);
+        Instant now = Instant.now();
+        Duration elapsed = Duration.between(plantedTime, now);
 
-      if (elapsed.compareTo(growthDuration) >= 0) {
-          return GROWTH_STAGE_MATURE;
-      }
+        if (elapsed.compareTo(growthDuration) >= 0) {
+            return GROWTH_STAGE_MATURE;
+        }
 
-      double ratio = (double) elapsed.toMillis() / growthDuration.toMillis();
-      if (ratio >= 0.5) {
-          return GROWTH_STAGE_GROWNING;
-      }
+        double ratio = (double) elapsed.toMillis() / growthDuration.toMillis();
+        if (ratio >= 0.75) {
+            return GROWTH_STAGE_GROWNING_75;
+        } else if (ratio >= 0.5) {
+            return GROWTH_STAGE_GROWNING_50;
+        }
 
-      return GROWTH_STAGE_SPROUT;
-  }
+        return GROWTH_STAGE_SPROUT;
+    }
 
-  public boolean isMature() {
+    public boolean isMature() {
         return Instant.now().isAfter(plantedTime.plus(growthDuration));
-  }
+    }
 }
