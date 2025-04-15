@@ -9,12 +9,13 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+
 import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
@@ -86,6 +87,9 @@ public class FarmView extends ScreenAdapter {
               case Input.Keys.C:
                 prefabType = PrefabType.TOMATO_CROP;
                 break;
+              case Input.Keys.W:
+                prefabType = PrefabType.WALL;
+                break;
               case Input.Keys.E:
                 prefabType = PrefabType.POTATO_CROP;
                 break;
@@ -134,7 +138,8 @@ public class FarmView extends ScreenAdapter {
   @Override
   public void render(float delta) {
     assetManager.update();
-    gameMenuController.update();
+    //TODO: Commented out gamemenu logic because of the bug, will fix and add back in issue #62
+    // gameMenuController.update();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -149,7 +154,7 @@ public class FarmView extends ScreenAdapter {
 
     engine.update(delta);
     joystickOverlay.render();
-    gameMenuController.render();
+    // gameMenuController.render();
     eventDebugOverlay.render();
   }
 

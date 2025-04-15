@@ -6,5 +6,6 @@ public enum PrefabType {
     POTATO_CROP,
     TOMATO_CROP,
     TOMATO_SEEDS,
-    SOIL
+    SOIL,
+    WALL
 }

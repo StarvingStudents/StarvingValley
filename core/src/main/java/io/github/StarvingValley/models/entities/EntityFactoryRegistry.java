@@ -16,6 +16,7 @@ public class EntityFactoryRegistry {
         factories.put(PrefabType.SOIL, SoilFactory::createSoil);
         factories.put(PrefabType.TOMATO_CROP, () -> CropFactory.createCrop(CropType.TOMATO));
         factories.put(PrefabType.POTATO_CROP, () -> CropFactory.createCrop(CropType.POTATO));
+        factories.put(PrefabType.WALL, () -> WallFactory.createWall());
     }
 
     public static Entity create(PrefabType type) {
