@@ -103,13 +103,11 @@ public class VillageController {
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new FarmToVillageTransitionSystem(gameContext));
 
-        // engine.addEntity(player); TODO see if this works
-
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
         MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
-        MapUtils.loadSyncedEntities(gameContext, getCamera()); // TODO might ccreate a new player on each transition => maybe just have to pass it
+        MapUtils.loadSyncedVillageEntities(gameContext, getCamera());
     }
 
 
@@ -127,10 +125,6 @@ public class VillageController {
                 return;
             }
 
-            // TODO we also need to alter X coordinates => probably here
-            //  Entity player = players.first();
-            //  PositionComponent positionComponent = Mappers.position.get(player);
-            //  positionComponent.position.x = 0;
             game.requestViewSwitch(ViewType.FARM);
         }
     }

@@ -50,7 +50,6 @@ public class StarvingValley extends Game {
                 oldScreen.dispose();
             }
 
-            // Create new screen based on type
             if (pendingViewType == ViewType.VILLAGE) {
                 setScreen(new VillageView(this, _firebaseRepository));
             } else if (pendingViewType == ViewType.FARM) {
@@ -58,7 +57,7 @@ public class StarvingValley extends Game {
             }
 
             pendingViewType = null;
-        } // else if (isAuthenticated && getScreen() == null) {
+        }
     }
 
     // TODO phase out - use requestViewSwitch insted => switches view at end of render loop

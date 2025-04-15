@@ -136,7 +136,7 @@ public class FarmController {
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
         MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
-        MapUtils.loadSyncedEntities(gameContext, getCamera()); // TODO this line causes the issue of the player moving
+        MapUtils.loadSyncedFarmEntities(gameContext, getCamera());
     }
 
     public void update(float deltaTime) {
@@ -153,10 +153,6 @@ public class FarmController {
                 return;
             }
 
-            // TODO we also need to alter X coordinates => probably here
-            //  Entity player = players.first();
-            //  PositionComponent positionComponent = Mappers.position.get(player);
-            //  positionComponent.position.x = 0;
             game.requestViewSwitch(ViewType.VILLAGE);
         }
     }
