@@ -1,6 +1,6 @@
 package io.github.StarvingValley.models.types;
 
-public enum ViewType {
+public enum ScreenType {
     FARM,
     VILLAGE
 }

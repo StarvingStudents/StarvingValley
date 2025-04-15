@@ -5,17 +5,16 @@ import com.badlogic.gdx.Screen;
 
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.models.types.ViewType;
+import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.views.FarmView;
 import io.github.StarvingValley.views.VillageView;
 
 public class StarvingValley extends Game {
-
     IFirebaseRepository _firebaseRepository;
     StarvingValley game;
 
     private boolean isAuthenticated = false;
-    private ViewType pendingViewType = ViewType.FARM;
+    private ScreenType pendingScreenType = ScreenType.FARM;
 
     public StarvingValley(IFirebaseRepository firebaseRepository) {
         _firebaseRepository = firebaseRepository;
@@ -38,25 +37,25 @@ public class StarvingValley extends Game {
             });
     }
 
-    @Override
-    public void render() {
-        super.render();
+  @Override
+  public void render() {
+    super.render();
 
-        // Process pending view switch at the end of the render cycle => avoid potential buffer errors
-        if (isAuthenticated && pendingViewType != null) {
-            Screen oldScreen = getScreen();
-            setScreen(null);
-            if (oldScreen != null) {
-                oldScreen.dispose();
-            }
+    // Process pending view switch at the end of the render cycle => avoid potential buffer errors
+    if (isAuthenticated && pendingScreenType != null) {
+      Screen oldScreen = getScreen();
+      setScreen(null);
+      if (oldScreen != null) {
+        oldScreen.dispose();
+      }
 
-            if (pendingViewType == ViewType.VILLAGE) {
-                setScreen(new VillageView(this, _firebaseRepository));
-            } else if (pendingViewType == ViewType.FARM) {
-                setScreen(new FarmView(this, _firebaseRepository));
-            }
+      if (pendingScreenType == ScreenType.VILLAGE) {
+        setScreen(new VillageView(this, _firebaseRepository));
+      } else if (pendingScreenType == ScreenType.FARM) {
+        setScreen(new FarmView(this, _firebaseRepository));
+      }
 
-            pendingViewType = null;
+      pendingScreenType = null;
         }
     }
 
@@ -77,7 +76,8 @@ public class StarvingValley extends Game {
         setScreen(newScreen);
     } // Now able to switch between screens by calling switchView(newScreen) from any
 
-    public void requestViewSwitch(ViewType viewType) {
-        pendingViewType = viewType;
-    }
+  public void requestViewSwitch(ScreenType screenType) {
+    pendingScreenType = screenType;
+  }
+
 }

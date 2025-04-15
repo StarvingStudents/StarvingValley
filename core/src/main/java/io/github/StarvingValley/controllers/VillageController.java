@@ -19,7 +19,7 @@ import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.models.events.FarmToVillageTransitionEvent;
+import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.systems.AnimationSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.ClickSystem;
@@ -37,7 +37,7 @@ import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.types.ViewType;
+import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.MapUtils;
 
@@ -112,11 +112,11 @@ public class VillageController {
 
 
     public void update(float deltaTime) {
-        List<FarmToVillageTransitionEvent> events = eventBus.getEvents(FarmToVillageTransitionEvent.class);
+        List<ScreenTransitionEvent> events = eventBus.getEvents(ScreenTransitionEvent.class);
         if (events.isEmpty())
             return;
 
-        if  (events.get(0).getTargetView() == ViewType.FARM) {
+        if  (events.get(0).getTargetScreen() == ScreenType.FARM) {
 
             ImmutableArray<Entity> players = engine.getEntitiesFor(
                 Family.all(PlayerComponent.class, PositionComponent.class).get() // currentMapComponent
@@ -125,7 +125,7 @@ public class VillageController {
                 return;
             }
 
-            game.requestViewSwitch(ViewType.FARM);
+            game.requestViewSwitch(ScreenType.FARM);
         }
     }
 

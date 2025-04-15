@@ -7,9 +7,9 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
-import io.github.StarvingValley.models.events.FarmToVillageTransitionEvent;
+import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.types.ViewType;
+import io.github.StarvingValley.models.types.ScreenType;
 
 public class FarmToVillageTransitionSystem extends IteratingSystem {
     private final float FARM_TO_VILLAGE_BOUNDARY = 39.5f;
@@ -24,14 +24,14 @@ public class FarmToVillageTransitionSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         PositionComponent position = Mappers.position.get(entity);
-        
+
         if (position.position.x > FARM_TO_VILLAGE_BOUNDARY) {
-            context.eventBus.publish(new FarmToVillageTransitionEvent(
-                ViewType.VILLAGE
+            context.eventBus.publish(new ScreenTransitionEvent(
+                ScreenType.VILLAGE
             ));
         } else if (position.position.x < VILLAGE_TO_FARM_BOUNDARY) {
-            context.eventBus.publish(new FarmToVillageTransitionEvent(
-                ViewType.FARM
+            context.eventBus.publish(new ScreenTransitionEvent(
+                ScreenType.FARM
             ));
         }
     }
