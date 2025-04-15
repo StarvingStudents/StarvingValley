@@ -5,7 +5,9 @@ import com.badlogic.gdx.Screen;
 
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.types.ScreenType;
+import io.github.StarvingValley.utils.MapUtils;
 import io.github.StarvingValley.views.FarmView;
 import io.github.StarvingValley.views.VillageView;
 
@@ -13,8 +15,8 @@ public class StarvingValley extends Game {
     IFirebaseRepository _firebaseRepository;
     StarvingValley game;
 
-    private boolean isAuthenticated = false;
-    private ScreenType pendingScreenType = ScreenType.FARM;
+  private boolean isAuthenticated = false;
+  private ScreenType pendingScreenType;
 
     public StarvingValley(IFirebaseRepository firebaseRepository) {
         _firebaseRepository = firebaseRepository;
@@ -34,8 +36,10 @@ public class StarvingValley extends Game {
                     // TODO: Fail gracefully - error screen
                     throw new RuntimeException("Authentication failed: " + errorMessage);
                 }
-            });
-    }
+            }); 
+    ScreenType currentScreen = _firebaseRepository.getCurrentScreen();
+    pendingScreenType = (currentScreen == null) ? ScreenType.FARM : currentScreen;
+  }
 
   @Override
   public void render() {

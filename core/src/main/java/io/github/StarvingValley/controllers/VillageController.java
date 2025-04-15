@@ -107,7 +107,7 @@ public class VillageController {
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
         MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
-        MapUtils.loadSyncedPlayerEntity(gameContext, getCamera());
+        MapUtils.loadSyncedVillageEntities(gameContext, getCamera());
     }
 
 

@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.CurrentScreenComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -27,15 +28,18 @@ public class FarmToVillageTransitionSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         PositionComponent position = Mappers.position.get(entity);
+        CurrentScreenComponent screen = Mappers.currScreen.get(entity);
         FirebaseSyncSystem fbSync = getEngine().getSystem(FirebaseSyncSystem.class);
 
         if (position.position.x > FARM_TO_VILLAGE_BOUNDARY) {
             context.eventBus.publish(new ScreenTransitionEvent(ScreenType.VILLAGE));
             position.position.x = VILLAGE_TO_FARM_BOUNDARY + SPAWN_OFFSET;
+            screen.currentScreen = ScreenType.VILLAGE;
             fbSync.updateInterval(); // force FB sync
         } else if (position.position.x < VILLAGE_TO_FARM_BOUNDARY) {
             context.eventBus.publish(new ScreenTransitionEvent(ScreenType.FARM));
             position.position.x = FARM_TO_VILLAGE_BOUNDARY - SPAWN_OFFSET;
+            screen.currentScreen = ScreenType.FARM;
             fbSync.updateInterval(); // force FB sync
         }
     }

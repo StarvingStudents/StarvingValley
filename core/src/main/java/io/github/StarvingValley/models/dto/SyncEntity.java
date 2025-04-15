@@ -8,6 +8,7 @@ import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
 import io.github.StarvingValley.models.types.Inventory;
 import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.models.types.PrefabType;
+import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class SyncEntity {
@@ -75,6 +76,8 @@ public class SyncEntity {
     public Float damageAmount;
     public Float attackRange;
     public Float attackSpeed;
+
+    public ScreenType screen;
 
     // Required: no-arg constructor for Firebase
     public SyncEntity() {

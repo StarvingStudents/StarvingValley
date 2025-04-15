@@ -16,7 +16,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 
 import io.github.StarvingValley.models.components.AnimationComponent;
-import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
@@ -31,6 +30,7 @@ import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.entities.WorldMapUserFactory;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
+import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class MapUtils {
@@ -112,6 +112,7 @@ public class MapUtils {
                         if (syncEntity.isPlayer) {
                             anyIsPlayer = true;
                             context.player = entity;
+                            Mappers.currScreen.get(entity).currentScreen = ScreenType.FARM;
                             AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
                             entity.add(anim);
                         }
@@ -123,6 +124,7 @@ public class MapUtils {
                     if (!anyIsPlayer) {
                         Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
                         player.add(new UnsyncedComponent());
+                        Mappers.currScreen.get(player).currentScreen = ScreenType.FARM;
                         skipSpriteSyncOnLoad(player);
                         context.engine.addEntity(player);
                     }
@@ -135,7 +137,7 @@ public class MapUtils {
             });
     }
 
-    public static void loadSyncedPlayerEntity(GameContext context, Entity camera) {
+    public static void loadSyncedVillageEntities(GameContext context, Entity camera) {
         context.firebaseRepository.getAllEntities(
             new EntityDataCallback() {
                 @Override
@@ -148,6 +150,7 @@ public class MapUtils {
                             context.player = entity;
                             AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
                             entity.add(anim);
+                            Mappers.currScreen.get(entity).currentScreen = ScreenType.VILLAGE;
                             skipSpriteSyncOnLoad(entity);
                             context.engine.addEntity(entity);
 
@@ -157,6 +160,7 @@ public class MapUtils {
 
                     Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
                     player.add(new UnsyncedComponent());
+                    Mappers.currScreen.get(player).currentScreen = ScreenType.VILLAGE;
                     skipSpriteSyncOnLoad(player);
                     context.engine.addEntity(player);
                 }
