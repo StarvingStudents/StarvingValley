@@ -31,8 +31,7 @@ import io.github.StarvingValley.models.types.WorldLayer;
 
 public class MapUtils {
   public static void loadEnvCollidables(TiledMap map, float unitScale, Engine engine) {
-    List<Rectangle> scaledHitboxes =
-        getScaledHitboxes(map, Config.MAP_COLLISION_LAYER_NAME, unitScale, engine);
+    List<Rectangle> scaledHitboxes = getScaledHitboxes(map, Config.MAP_COLLISION_LAYER_NAME, unitScale, engine);
     for (Rectangle scaledHitbox : scaledHitboxes) {
       engine.addEntity(MapFactory.createEnvCollidable(scaledHitbox));
     }
@@ -40,8 +39,7 @@ public class MapUtils {
 
   public static void loadPlacementBlockers(
       TiledMap map, float unitScale, WorldLayer layerTypeToApply, Engine engine) {
-    List<Rectangle> scaledHitboxes =
-        getScaledHitboxes(map, Config.MAP_NON_PLACEMENT_LAYER_NAME, unitScale, engine);
+    List<Rectangle> scaledHitboxes = getScaledHitboxes(map, Config.MAP_NON_PLACEMENT_LAYER_NAME, unitScale, engine);
     for (Rectangle scaledHitbox : scaledHitboxes) {
       Entity entity = MapFactory.createEnvPlacementBlocker(scaledHitbox);
       engine.addEntity(entity);
@@ -61,16 +59,14 @@ public class MapUtils {
             for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
               SyncEntity syncEntity = entry.getValue();
 
-              Entity entity =
-                  EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
 
               if (syncEntity.isPlayer) {
                 anyIsPlayer = true;
                 context.player = entity;
 
-                AnimationComponent anim =
-                    AnimationFactory.createAnimationsForType(
-                        PrefabType.PLAYER, context.assetManager);
+                AnimationComponent anim = AnimationFactory.createAnimationsForType(
+                    PrefabType.PLAYER, context.assetManager);
                 entity.add(anim);
               }
 
@@ -79,8 +75,7 @@ public class MapUtils {
             }
 
             if (!anyIsPlayer) {
-              Entity player =
-                  PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+              Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
               player.add(new UnsyncedComponent());
               skipSpriteSyncOnLoad(player);
               context.engine.addEntity(player);
@@ -110,8 +105,7 @@ public class MapUtils {
                 continue;
               }
 
-              Entity entity =
-                  EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
 
               entity.remove(SyncComponent.class);
 
@@ -133,7 +127,8 @@ public class MapUtils {
     List<Rectangle> result = new ArrayList<>();
 
     MapLayer layer = map.getLayers().get(mapLayerName);
-    if (layer == null) return result;
+    if (layer == null)
+      return result;
 
     for (MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
       Rectangle scaledHitbox = getScaledHitbox(object, unitScale);
@@ -176,13 +171,12 @@ public class MapUtils {
     int gridHeight = 2;
     for (int y = 0; y < gridHeight; y++) {
       for (int x = 0; x < gridWidth; x++) {
-        gridPositions.add(new int[] {x, y});
+        gridPositions.add(new int[] { x, y });
       }
     }
     Collections.shuffle(gridPositions);
 
-    int farmsToCreate =
-        Math.min(Config.ATTACKABLE_FARMS, Math.min(data.size(), gridPositions.size()));
+    int farmsToCreate = Math.min(Config.ATTACKABLE_FARMS, Math.min(data.size(), gridPositions.size()));
     for (int i = 0; i < farmsToCreate; i++) {
       int[] pos = gridPositions.get(i);
 

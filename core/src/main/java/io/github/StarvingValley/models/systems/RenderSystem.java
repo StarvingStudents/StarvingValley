@@ -11,6 +11,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.HudComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
@@ -32,6 +33,7 @@ public class RenderSystem extends EntitySystem {
         getEngine()
             .getEntitiesFor(
                 Family.all(PositionComponent.class, SpriteComponent.class, SizeComponent.class)
+                    .exclude(HudComponent.class)
                     .get());
 
     List<Entity> sorted = new ArrayList<>(renderEntities.size());

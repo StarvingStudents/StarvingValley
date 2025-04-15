@@ -3,7 +3,8 @@ package io.github.StarvingValley.models.dto;
 import java.util.List;
 
 import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
-import io.github.StarvingValley.models.types.ItemDrop;
+import io.github.StarvingValley.models.types.Inventory;
+import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
@@ -62,9 +63,12 @@ public class SyncEntity {
 
     public PrefabType builds;
 
-    public List<ItemDrop> drops;
+    public List<ItemStack> drops;
 
     public Float balance;
+
+    public Inventory inventory;
+    public Inventory hotbar;
 
     public Float damageAmount;
     public Float attackRange;

@@ -1,5 +1,7 @@
 package io.github.StarvingValley.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.badlogic.ashley.core.Entity;
@@ -14,6 +16,7 @@ import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
+import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
@@ -22,8 +25,10 @@ import io.github.StarvingValley.models.components.EnvironmentCollidableComponent
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
+import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
+import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.PulseAlphaComponent;
@@ -36,9 +41,8 @@ import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
-import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.components.DamageComponent;
-import io.github.StarvingValley.config.Config;
+import io.github.StarvingValley.models.types.Inventory;
+import io.github.StarvingValley.models.types.InventorySlot;
 
 public class EntitySerializer {
 
@@ -159,6 +163,18 @@ public class EntitySerializer {
       dto.balance = economy.balance;
     }
 
+    // Inventory
+    InventoryComponent inventory = Mappers.inventory.get(entity);
+    if (inventory != null) {
+      dto.inventory = inventory.inventory;
+    }
+
+    // Hotbar
+    HotbarComponent hotbar = Mappers.hotbar.get(entity);
+    if (hotbar != null) {
+      dto.hotbar = hotbar.hotbar;
+    }
+
     // Damage
     DamageComponent damage = Mappers.damage.get(entity);
     if (damage != null) {
@@ -234,17 +250,17 @@ public class EntitySerializer {
       entity.add(eating);
     }
 
-      // Animation OR Sprite
-      if (dto.builds != null) {
-          AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds,assetManager );
-          if (anim != null) {
-              entity.add(anim);
-          } else if (dto.texture != null) {
-              entity.add(new SpriteComponent(dto.texture));
-          }
+    // Animation OR Sprite
+    if (dto.builds != null) {
+      AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds, assetManager);
+      if (anim != null) {
+        entity.add(anim);
       } else if (dto.texture != null) {
-          entity.add(new SpriteComponent(dto.texture));
+        entity.add(new SpriteComponent(dto.texture));
       }
+    } else if (dto.texture != null) {
+      entity.add(new SpriteComponent(dto.texture));
+    }
 
     // Layer
     if (dto.worldLayer != null) {
@@ -297,6 +313,21 @@ public class EntitySerializer {
     // Economy
     if (dto.balance != null) {
       entity.add(new EconomyComponent(dto.balance));
+    }
+
+    // Inventory
+    if (dto.inventory != null) {
+      Inventory inventory = dto.inventory;
+      List<InventorySlot> inventorySlots = inventory.slots;
+      if (inventorySlots == null) {
+        inventorySlots = new ArrayList<>();
+      }
+      entity.add(new InventoryComponent(inventorySlots, inventory.width, inventory.height));
+    }
+
+    // Hotbar
+    if (dto.hotbar != null) {
+      entity.add(new HotbarComponent(dto.hotbar));
     }
 
     // Damage

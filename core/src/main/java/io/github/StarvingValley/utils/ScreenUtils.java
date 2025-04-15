@@ -16,6 +16,12 @@ public class ScreenUtils {
         return new Vector2(touchX, touchY);
     }
 
+    public static Vector2 getMouseScreenPosition() {
+        return new Vector2(
+                Gdx.input.getX(),
+                Gdx.graphics.getHeight() - Gdx.input.getY());
+    }
+
     public static Vector2 getWorldPosition(OrthographicCamera camera, int screenX, int screenY) {
         Vector3 unprojected = camera.unproject(new Vector3(screenX, screenY, 0));
         return new Vector2(unprojected.x, unprojected.y);

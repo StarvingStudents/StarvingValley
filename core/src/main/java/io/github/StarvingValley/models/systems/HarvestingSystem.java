@@ -15,10 +15,10 @@ import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.models.events.AddItemToInventoryEvent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
-import io.github.StarvingValley.models.events.ItemDroppedEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.types.ItemDrop;
+import io.github.StarvingValley.models.types.ItemStack;
 
 public class HarvestingSystem extends EntitySystem {
   private GameContext context;
@@ -39,9 +39,16 @@ public class HarvestingSystem extends EntitySystem {
     Entity player = players.first();
     PositionComponent playerPos = Mappers.position.get(player);
 
-    ImmutableArray<Entity> clickedCrops = engine
-        .getEntitiesFor(Family.all(ClickedComponent.class, GrowthStageComponent.class, TimeToGrowComponent.class,
-            PositionComponent.class, HarvestingComponent.class, ActiveWorldEntityComponent.class).get());
+    ImmutableArray<Entity> clickedCrops =
+        engine.getEntitiesFor(
+            Family.all(
+                    ClickedComponent.class,
+                    GrowthStageComponent.class,
+                    TimeToGrowComponent.class,
+                    PositionComponent.class,
+                    HarvestingComponent.class,
+                    ActiveWorldEntityComponent.class)
+                .get());
 
     for (Entity crop : clickedCrops) {
       GrowthStageComponent growthStageComponent = Mappers.growthStage.get(crop);
@@ -49,7 +56,7 @@ public class HarvestingSystem extends EntitySystem {
       PositionComponent cropPos = Mappers.position.get(crop);
       HarvestingComponent harvestingComponent = Mappers.harvesting.get(crop);
 
-      if (growthStageComponent.growthStage == 2
+      if (growthStageComponent.growthStage == 3
           && timeToGrowComponent.isMature()
           && harvestingComponent.canHarvest
           && isPlayerNearCrop(playerPos, cropPos)) {
@@ -74,9 +81,9 @@ public class HarvestingSystem extends EntitySystem {
     // player the drops
     DropComponent drops = Mappers.drop.get(crop);
     if (drops != null) {
-      for (ItemDrop drop : drops.drops) {
-        context.eventBus.publish(new ItemDroppedEvent(drop));
-        System.out.println("Dropped " + drop.count + " " + drop.type);
+      for (ItemStack drop : drops.drops) {
+        context.eventBus.publish(new AddItemToInventoryEvent(drop));
+        System.out.println("Dropped " + drop.quantity + " " + drop.type);
       }
     }
 

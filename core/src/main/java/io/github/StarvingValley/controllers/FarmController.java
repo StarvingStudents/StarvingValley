@@ -21,26 +21,29 @@ import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
 import io.github.StarvingValley.models.systems.BuildPlacementSystem;
 import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
-import io.github.StarvingValley.models.systems.ClickSystem;
-import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
 import io.github.StarvingValley.models.systems.CropGrowthSystem;
-import io.github.StarvingValley.models.systems.DamageSystem;
-import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HarvestingSystem;
+import io.github.StarvingValley.models.systems.HotbarItemClickSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
+import io.github.StarvingValley.models.systems.InputCleanupSystem;
+import io.github.StarvingValley.models.systems.InputSystem;
+import io.github.StarvingValley.models.systems.InventoryDragSystem;
+import io.github.StarvingValley.models.systems.InventorySystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
+import io.github.StarvingValley.models.systems.RespawnSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.TradingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
+import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 
 public class FarmController {
@@ -54,7 +57,6 @@ public class FarmController {
 
     private Entity camera;
     private Entity map;
-    private Entity player;
 
     public FarmController(IFirebaseRepository firebaseRepository, EventBus eventBus, AssetManager assetManager) {
         this.firebaseRepository = firebaseRepository;
@@ -68,6 +70,7 @@ public class FarmController {
         gameContext.assetManager = this.assetManager;
         gameContext.firebaseRepository = this.firebaseRepository;
         gameContext.engine = this.engine;
+        gameContext.assets = new Assets(assetManager);
         initGame();
     }
 
@@ -85,8 +88,12 @@ public class FarmController {
         engine.addEntity(camera);
         engine.addEntity(map);
 
-        engine.addSystem(new ClickSystem(gameContext));
+        engine.addSystem(new InputSystem(gameContext));
+        engine.addSystem(new InventoryDragSystem(gameContext));
+        engine.addSystem(new HotbarItemClickSystem());
         engine.addSystem(new MapRenderSystem());
+        engine.addSystem(new InventorySystem(gameContext));
+        engine.addSystem(new RespawnSystem(eventBus));
         engine.addSystem(new BuildPreviewSystem(gameContext));
         engine.addSystem(new BuildPlacementSystem(gameContext));
         engine.addSystem(new AlphaPulseSystem());
@@ -105,7 +112,7 @@ public class FarmController {
         engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
-        engine.addSystem(new ClickedCleanupSystem());
+        engine.addSystem(new InputCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new ActionAnimationSystem(gameContext));
 
@@ -141,7 +148,7 @@ public class FarmController {
     }
 
     public Entity getPlayer() {
-        return player;
+        return gameContext.player;
     }
 
     public GameContext getGameContext() {

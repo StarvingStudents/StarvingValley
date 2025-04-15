@@ -15,7 +15,7 @@ import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
-import io.github.StarvingValley.models.types.ItemDrop;
+import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
@@ -30,7 +30,7 @@ public class WallFactory {
         soil.add(new ClickableComponent());
         soil.add(new SizeComponent(1, 1));
         soil.add(new SpriteComponent("wall.png"));
-        soil.add(new DropComponent(new ArrayList<>(List.of(new ItemDrop(PrefabType.WALL, 1)))));
+        soil.add(new DropComponent(new ArrayList<>(List.of(new ItemStack(PrefabType.WALL, 1)))));
         soil.add(new BuildableComponent(PrefabType.WALL));
 
         return soil;
