@@ -22,7 +22,6 @@ import io.github.StarvingValley.models.systems.BuildPlacementSystem;
 import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.CropGrowthSystem;
-import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
@@ -47,8 +46,6 @@ import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
-//import io.github.StarvingValley.models.systems.DestroySystem;
-import io.github.StarvingValley.models.components.PositionComponent;
 
 public class FarmController {
 
@@ -114,7 +111,6 @@ public class FarmController {
         engine.addSystem(new HungerSystem(gameContext));
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new HungerRenderSystem(gameContext));
-        engine.addSystem(new DurabilityRenderSystem(gameContext));
         engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));

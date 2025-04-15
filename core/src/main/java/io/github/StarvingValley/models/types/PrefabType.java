@@ -8,7 +8,8 @@ public enum PrefabType {
     WHEAT_CROP("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\wheat_3.png"),//TODO: Use 0 or 3?
     WHEAT_SEEDS("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\wheat_seeds.png"),
     WHEAT("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\wheat_item.png"),
-    SOIL("dirt.png");
+    SOIL("dirt.png"),
+    WALL("wall.png");
 
     private final String iconName;
 

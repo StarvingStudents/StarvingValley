@@ -20,9 +20,9 @@ public class StarvingValley extends Game {
     // TODO: Comment out FarmView and uncomment WorldMapView to test the world map
     setScreen(new FarmView(_firebaseRepository));
 
-
-        // setScreen(new WorldMapView(this, _firebaseRepository));
-    //    setScreen(new VisitFarmView(_firebaseRepository, "kA22VW0RofdBTDkHN09gCH355rI3"));
+    // setScreen(new WorldMapView(this, _firebaseRepository));
+    // setScreen(new VisitFarmView(_firebaseRepository,
+    // "kA22VW0RofdBTDkHN09gCH355rI3"));
   }
 
   public void switchView(Screen newScreen) {
@@ -34,9 +34,9 @@ public class StarvingValley extends Game {
 
     // is this needed? switching view only works when this is not included
     // Dispose of the current screen before switching
-    //    if (getScreen() != null) {
-    //      getScreen().dispose();
-    //    }
+    // if (getScreen() != null) {
+    // getScreen().dispose();
+    // }
 
     setScreen(newScreen);
   } // Now able to switch between screens by calling switchView(newScreen) from any

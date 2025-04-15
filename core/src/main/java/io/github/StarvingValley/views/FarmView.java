@@ -92,6 +92,9 @@ public class FarmView extends ScreenAdapter {
           case Input.Keys.C:
             prefabType = PrefabType.WHEAT_CROP;
             break;
+          case Input.Keys.W:
+            prefabType = PrefabType.WALL;
+            break;
           case Input.Keys.E:
             prefabType = PrefabType.BEETROOT_CROP;
             break;

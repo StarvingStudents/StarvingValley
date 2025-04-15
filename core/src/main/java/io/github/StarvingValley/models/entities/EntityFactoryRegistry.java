@@ -17,6 +17,7 @@ public class EntityFactoryRegistry {
         factories.put(PrefabType.BEETROOT_CROP, () -> CropFactory.createCrop(PrefabType.BEETROOT_CROP));
         factories.put(PrefabType.BEETROOT_SEEDS, () -> SeedFactory.create(PrefabType.BEETROOT_SEEDS, PrefabType.BEETROOT_CROP));
         factories.put(PrefabType.WHEAT_SEEDS, () -> SeedFactory.create(PrefabType.WHEAT_SEEDS, PrefabType.WHEAT_CROP));
+        factories.put(PrefabType.WALL, () -> WallFactory.createWall());
     }
 
     public static Entity create(PrefabType type) {
