@@ -250,15 +250,16 @@ public class EntitySerializer {
       entity.add(eating);
     }
 
-    // Animation OR Sprite
+    // Animation
     if (dto.builds != null) {
       AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds, assetManager);
       if (anim != null) {
         entity.add(anim);
-      } else if (dto.texture != null) {
-        entity.add(new SpriteComponent(dto.texture));
       }
-    } else if (dto.texture != null) {
+    }
+
+    // Sprite
+    if (dto.texture != null) {
       entity.add(new SpriteComponent(dto.texture));
     }
 

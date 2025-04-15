@@ -33,7 +33,7 @@ public class RenderSystem extends EntitySystem {
         getEngine()
             .getEntitiesFor(
                 Family.all(PositionComponent.class, SpriteComponent.class, SizeComponent.class)
-                    .exclude(HudComponent.class)
+                    .exclude(HudComponent.class, HiddenComponent.class)
                     .get());
 
     List<Entity> sorted = new ArrayList<>(renderEntities.size());
@@ -46,9 +46,7 @@ public class RenderSystem extends EntitySystem {
     context.spriteBatch.begin();
 
     for (Entity entity : sorted) {
-      if (Mappers.hidden.has(entity) || Mappers.animation.has(entity)) continue;
-
-      PositionComponent pos = Mappers.position.get(entity);
+            PositionComponent pos = Mappers.position.get(entity);
       SpriteComponent sprite = Mappers.sprite.get(entity);
       SizeComponent size = Mappers.size.get(entity);
 
