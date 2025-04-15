@@ -63,6 +63,13 @@ public class VillageView extends ScreenAdapter {
         assetManager.load("action_soil_up.png", Texture.class);
         assetManager.load("action_soil_left.png", Texture.class);
         assetManager.load("action_soil_right.png", Texture.class);
+        assetManager.load("action_axe_down.png", Texture.class);
+        assetManager.load("action_axe_up.png", Texture.class);
+        assetManager.load("action_axe_left.png", Texture.class);
+        assetManager.load("action_axe_right.png", Texture.class);
+
+        assetManager.load("GameMenu.png", Texture.class);
+
         assetManager.finishLoading();
 
         controller = new VillageController(game, _firebaseRepository, eventBus, assetManager);

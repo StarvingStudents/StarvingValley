@@ -22,13 +22,13 @@ import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.systems.AnimationSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
-import io.github.StarvingValley.models.systems.ClickSystem;
-import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
+import io.github.StarvingValley.models.systems.InputCleanupSystem;
+import io.github.StarvingValley.models.systems.InputSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
@@ -86,7 +86,7 @@ public class VillageController {
         engine.addEntity(camera);
         engine.addEntity(map);
 
-        engine.addSystem(new ClickSystem(gameContext));
+        engine.addSystem(new InputSystem(gameContext));
         engine.addSystem(new MapRenderSystem());
         engine.addSystem(new VelocitySystem());
         engine.addSystem(new AnimationSystem(gameContext));
@@ -99,7 +99,7 @@ public class VillageController {
         engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
-        engine.addSystem(new ClickedCleanupSystem());
+        engine.addSystem(new InputCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new FarmToVillageTransitionSystem(gameContext));
 
