@@ -112,7 +112,7 @@ public class FarmController {
         engine.addSystem(new HUDButtonPressSystem(gameContext));
         engine.addSystem(new HUDRenderSystem());
         engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
-        engine.addSystem(new EatingSystem(eventBus));
+        engine.addSystem(new EatingSystem(eventBus, gameContext));
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new ClickedCleanupSystem());

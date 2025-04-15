@@ -15,14 +15,17 @@ import io.github.StarvingValley.models.components.InventorySelectedItemComponent
 import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.models.events.EatingButtonPressedEvent;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.entities.BuildPreviewFactory;
 
 public class EatingSystem extends IteratingSystem {
     private EventBus eventBus;
+    private GameContext context;
 
-    public EatingSystem(EventBus eventBus) {
+    public EatingSystem(EventBus eventBus, GameContext context) {
         super(Family.all(HungerComponent.class).get());
         this.eventBus = eventBus;
+        this.context = context;
     }
 
     @Override
@@ -30,8 +33,7 @@ public class EatingSystem extends IteratingSystem {
         List<EatingButtonPressedEvent> events = eventBus.getEvents(EatingButtonPressedEvent.class);
         if (events.size() > 0) {
 
-            // Get entity with HungerComponent:
-            Entity playerEntity = getEngine().getEntitiesFor(Family.all(HungerComponent.class).get()).first();
+            Entity playerEntity = context.player;
             HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
 
             // TODO: Combine with inventory system
