@@ -29,7 +29,6 @@ public class VillageView extends ScreenAdapter {
     public AssetManager assetManager;
     IFirebaseRepository _firebaseRepository;
     private JoystickOverlay joystickOverlay;
-    private InputAdapter inputAdapter; // temp
     private InputEventAdapter inputEventAdapter;
 
     private EventBus eventBus;
@@ -86,7 +85,6 @@ public class VillageView extends ScreenAdapter {
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(inputEventAdapter);
-        multiplexer.addProcessor(inputAdapter); // temp
         multiplexer.addProcessor(joystickInputAdapter);
 
         Gdx.input.setInputProcessor(multiplexer);
