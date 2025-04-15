@@ -70,6 +70,10 @@ public class SyncEntity {
     public Inventory inventory;
     public Inventory hotbar;
 
+    public Float damageAmount;
+    public Float attackRange;
+    public Float attackSpeed;
+
     // Required: no-arg constructor for Firebase
     public SyncEntity() {
     }

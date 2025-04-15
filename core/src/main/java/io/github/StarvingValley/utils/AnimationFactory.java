@@ -38,6 +38,12 @@ public class AnimationFactory {
         anim.animations.put("action_soil_left", AnimationUtils.loadFromSheet(manager, "action_soil_left.png", cols, rows, speed, PlayMode.NORMAL));
         anim.animations.put("action_soil_right", AnimationUtils.loadFromSheet(manager, "action_soil_right.png", cols, rows, speed, PlayMode.NORMAL));
 
+        // Add axe action animations
+        anim.animations.put("action_axe_down", AnimationUtils.loadFromSheet(manager, "action_axe_down.png", cols, rows, speed, PlayMode.NORMAL));
+        anim.animations.put("action_axe_up", AnimationUtils.loadFromSheet(manager, "action_axe_up.png", cols, rows, speed, PlayMode.NORMAL));
+        anim.animations.put("action_axe_left", AnimationUtils.loadFromSheet(manager, "action_axe_left.png", cols, rows, speed, PlayMode.NORMAL));
+        anim.animations.put("action_axe_right", AnimationUtils.loadFromSheet(manager, "action_axe_right.png", cols, rows, speed, PlayMode.NORMAL));
+
         anim.currentAnimation = "idle_down";
         return anim;
     }

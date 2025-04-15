@@ -12,6 +12,7 @@ import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
+import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.DragEndComponent;
 import io.github.StarvingValley.models.components.DraggingComponent;
 import io.github.StarvingValley.models.components.DropComponent;
@@ -139,4 +140,5 @@ public class Mappers {
                         .getFor(PrefabTypeComponent.class);
         public static final ComponentMapper<SelectedHotbarSlotComponent> selectedHotbarSlot = ComponentMapper
                         .getFor(SelectedHotbarSlotComponent.class);
+        public static final ComponentMapper<DamageComponent> damage = ComponentMapper.getFor(DamageComponent.class);
 }

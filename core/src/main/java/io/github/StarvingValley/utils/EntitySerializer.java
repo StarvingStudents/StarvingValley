@@ -16,6 +16,7 @@ import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
+import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EatingComponent;
@@ -174,6 +175,14 @@ public class EntitySerializer {
       dto.hotbar = hotbar.hotbar;
     }
 
+    // Damage
+    DamageComponent damage = Mappers.damage.get(entity);
+    if (damage != null) {
+      dto.damageAmount = damage.damageAmount;
+      dto.attackRange = damage.attackRange;
+      dto.attackSpeed = damage.attackSpeed;
+    }
+
     dto.isCollidable = Mappers.collidable.has(entity);
     dto.isEnvironmentCollidable = Mappers.environmentCollider.has(entity);
     dto.isHidden = Mappers.hidden.has(entity);
@@ -319,6 +328,11 @@ public class EntitySerializer {
     // Hotbar
     if (dto.hotbar != null) {
       entity.add(new HotbarComponent(dto.hotbar));
+    }
+
+    // Damage
+    if (dto.damageAmount != null && dto.attackRange != null && dto.attackSpeed != null) {
+      entity.add(new DamageComponent(dto.damageAmount, dto.attackRange, dto.attackSpeed));
     }
 
     // Boolean tags
