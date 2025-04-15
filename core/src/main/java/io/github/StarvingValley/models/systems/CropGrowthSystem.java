@@ -58,6 +58,9 @@ public class CropGrowthSystem extends IteratingSystem {
       growthStage.growthStage = 0; // sprout
     }
 
+      growthStage.growthStage = growthTime.getGrowthStage();
+
+
     switch (growthStage.growthStage) {
       case 1:
         if (cropType.cropType == CropTypeComponent.CropType.WHEAT) {
@@ -66,6 +69,7 @@ public class CropGrowthSystem extends IteratingSystem {
           spriteComponent.setTexturePath("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\beetroot_1.png");
           // sizeComponent.height = 2f;
         }
+          context.eventBus.publish(new EntityUpdatedEvent(cropEntity));
         break;
       case 2:
         if (cropType.cropType == CropTypeComponent.CropType.WHEAT) {
@@ -82,6 +86,7 @@ public class CropGrowthSystem extends IteratingSystem {
         } else if (cropType.cropType == CropTypeComponent.CropType.BEETROOT) {
           spriteComponent.setTexturePath("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\beetroot_3.png");
         }
+          context.eventBus.publish(new EntityUpdatedEvent(cropEntity));
         break;
       default:
         break;
