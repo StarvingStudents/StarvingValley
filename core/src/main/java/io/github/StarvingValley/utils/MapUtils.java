@@ -120,7 +120,7 @@ public class MapUtils {
                             // Adjust x coordinates if we are in transition zone
                             PositionComponent p = Mappers.position.get(entity);
                             if (p.position.x < VILLAGE_TO_FARM_BOUNDARY) {
-                                p.position.x = FARM_TO_VILLAGE_BOUNDARY;
+                                p.position.x = FARM_TO_VILLAGE_BOUNDARY + 1.5f;
                             }
                         }
 
@@ -162,8 +162,8 @@ public class MapUtils {
 
                             // Adjust x coordinates if we are in transition zone
                             PositionComponent p = Mappers.position.get(entity);
-                            if (p.position.x < FARM_TO_VILLAGE_BOUNDARY) {
-                                p.position.x = VILLAGE_TO_FARM_BOUNDARY;
+                            if (p.position.x > FARM_TO_VILLAGE_BOUNDARY) {
+                                p.position.x = VILLAGE_TO_FARM_BOUNDARY - 1.5f;
                             }
                         }
 
