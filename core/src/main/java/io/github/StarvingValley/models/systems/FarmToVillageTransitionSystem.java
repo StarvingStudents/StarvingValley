@@ -27,15 +27,16 @@ public class FarmToVillageTransitionSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         PositionComponent position = Mappers.position.get(entity);
+        FirebaseSyncSystem fbSync = getEngine().getSystem(FirebaseSyncSystem.class);
 
         if (position.position.x > FARM_TO_VILLAGE_BOUNDARY) {
             context.eventBus.publish(new ScreenTransitionEvent(ScreenType.VILLAGE));
             position.position.x = VILLAGE_TO_FARM_BOUNDARY + SPAWN_OFFSET;
-            FirebaseSyncSystem.forcePlayerSync();
+            fbSync.updateInterval(); // force FB sync
         } else if (position.position.x < VILLAGE_TO_FARM_BOUNDARY) {
             context.eventBus.publish(new ScreenTransitionEvent(ScreenType.FARM));
             position.position.x = FARM_TO_VILLAGE_BOUNDARY - SPAWN_OFFSET;
-            FirebaseSyncSystem.forcePlayerSync();
+            fbSync.updateInterval(); // force FB sync
         }
     }
 }

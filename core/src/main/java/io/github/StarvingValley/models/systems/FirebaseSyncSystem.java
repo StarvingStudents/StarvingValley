@@ -23,12 +23,10 @@ import io.github.StarvingValley.utils.EntitySerializer;
 
 public class FirebaseSyncSystem extends IntervalSystem {
     private GameContext context;
-    private static FirebaseSyncSystem instance;
 
     public FirebaseSyncSystem(GameContext context) {
         super(Config.FIREBASE_SYNC_INTERVAL);
         this.context = context;
-        instance = this;
     }
 
   @Override
@@ -98,11 +96,4 @@ public class FirebaseSyncSystem extends IntervalSystem {
     }
   }
 
-    public static void forcePlayerSync() {
-        if (instance == null || instance.context == null || instance.context.player == null) {
-            System.err.println("Cannot force player sync: system not initialized or player not available");
-            return;
-        }
-        instance.updateInterval();
-    }
 }
