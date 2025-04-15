@@ -11,6 +11,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.HudComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
@@ -18,9 +19,10 @@ import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.types.GameContext;
 
 public class RenderSystem extends EntitySystem {
-  private final Comparator<Entity> renderOrderComparator =
-      // TODO: take both y and z into consideration
-      Comparator.comparing(e -> Mappers.position.get(e).position.z);
+  private final Comparator<Entity> renderOrderComparator = Comparator
+      .comparing((Entity e) -> Mappers.worldLayer.get(e).layer.getRenderPriority())
+      .thenComparing(e -> -Mappers.position.get(e).position.y);
+
   private GameContext context;
 
   public RenderSystem(GameContext context) {
@@ -46,7 +48,7 @@ public class RenderSystem extends EntitySystem {
     context.spriteBatch.begin();
 
     for (Entity entity : sorted) {
-            PositionComponent pos = Mappers.position.get(entity);
+      PositionComponent pos = Mappers.position.get(entity);
       SpriteComponent sprite = Mappers.sprite.get(entity);
       SizeComponent size = Mappers.size.get(entity);
 
