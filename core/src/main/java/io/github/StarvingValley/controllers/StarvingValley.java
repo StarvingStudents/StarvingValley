@@ -14,6 +14,8 @@ public class StarvingValley extends Game {
 
     private boolean isAuthenticated = false;
 
+    private boolean isAuthenticated = false;
+
     public StarvingValley(IFirebaseRepository firebaseRepository) {
         _firebaseRepository = firebaseRepository;
     }
