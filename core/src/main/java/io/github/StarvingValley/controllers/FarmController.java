@@ -14,7 +14,6 @@ import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
-import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
@@ -47,6 +46,8 @@ import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.MapUtils;
+//import io.github.StarvingValley.models.systems.DestroySystem;
+import io.github.StarvingValley.models.components.PositionComponent;
 
 public class FarmController {
 
@@ -55,7 +56,7 @@ public class FarmController {
     private final EventBus eventBus;
     private final AssetManager assetManager;
     private final IFirebaseRepository firebaseRepository;
-    public GameContext gameContext;
+    private GameContext gameContext;
 
     private Entity camera;
     private Entity map;
@@ -152,6 +153,10 @@ public class FarmController {
 
     public Entity getPlayer() {
         return player;
+    }
+
+    public GameContext getGameContext() {
+        return gameContext;
     }
 
     public void dispose() {

@@ -18,4 +18,8 @@ public class DurabilityComponent implements Component {
         float healthPercentage = (float) health / maxHealth;
         return Math.max(0, Math.min(1, healthPercentage));
     }
+
+    public void reduceHealth(float amount) {
+        health = Math.max(0, health - amount);
+    }
 }

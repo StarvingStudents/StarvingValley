@@ -9,6 +9,7 @@ import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
+import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
@@ -16,7 +17,6 @@ import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
-import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
@@ -44,6 +44,7 @@ public class PlayerFactory {
     entity.add(new PlayerComponent());
     entity.add(new ActiveWorldEntityComponent());
     entity.add(new EconomyComponent(Config.STARTING_BALANCE));
+      entity.add(new DamageComponent(Config.DEFAULT_DAMAGE_AMOUNT, Config.DEFAULT_ATTACK_RANGE, Config.DEFAULT_ATTACK_SPEED));
 
     CameraFollowComponent cameraFollowComponent = new CameraFollowComponent(camera);
     cameraFollowComponent.targetCamera = camera;
