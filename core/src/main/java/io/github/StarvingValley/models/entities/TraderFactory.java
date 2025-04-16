@@ -13,12 +13,12 @@ import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class TraderFactory {
-    public static Entity create(float x, float y) {
+    public static Entity create(float x, float y, PrefabType trade, int price) {
         Entity trader = new Entity();
         trader
                 .add(new SizeComponent(1f, 1f))
                 .add(new SpriteComponent("DogBasic.png"))
-                .add(new TradingComponent(new ItemTrade(PrefabType.SOIL, 10)))
+                .add(new TradingComponent(new ItemTrade(trade, price)))
                 .add(new PositionComponent(x, y))
                 .add(new WorldLayerComponent(WorldLayer.CHARACTER))
                 .add(new ClickableComponent());

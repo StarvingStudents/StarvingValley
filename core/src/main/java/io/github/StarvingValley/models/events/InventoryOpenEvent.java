@@ -1,0 +1,7 @@
+package io.github.StarvingValley.models.events;
+
+import io.github.StarvingValley.models.Interfaces.Event;
+
+public class InventoryOpenEvent implements Event {
+
+}

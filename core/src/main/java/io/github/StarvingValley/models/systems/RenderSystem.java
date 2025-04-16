@@ -29,10 +29,12 @@ public class RenderSystem extends EntitySystem {
 
   @Override
   public void update(float deltaTime) {
-    ImmutableArray<Entity> renderEntities = getEngine()
-        .getEntitiesFor(
-            Family.all(PositionComponent.class, SpriteComponent.class, SizeComponent.class).exclude(HudComponent.class)
-                .get());
+    ImmutableArray<Entity> renderEntities =
+        getEngine()
+            .getEntitiesFor(
+                Family.all(PositionComponent.class, SpriteComponent.class, SizeComponent.class)
+                    .exclude(HudComponent.class)
+                    .get());
 
     List<Entity> sorted = new ArrayList<>(renderEntities.size());
     for (int i = 0; i < renderEntities.size(); i++) {

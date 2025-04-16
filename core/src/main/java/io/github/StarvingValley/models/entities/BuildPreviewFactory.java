@@ -15,7 +15,7 @@ import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.WorldLayer;
 
 public class BuildPreviewFactory {
-    public static Entity create(PrefabType prefabType) {
+    public static Entity create(PrefabType prefabType, PrefabType madeFromPrefabType) {
         Entity prototype = EntityFactoryRegistry.create(prefabType);
         validatePreview(prototype);
 
@@ -25,7 +25,7 @@ public class BuildPreviewFactory {
         SizeComponent size = Mappers.size.get(prototype);
 
         Entity preview = new Entity();
-        preview.add(new BuildPreviewComponent());
+        preview.add(new BuildPreviewComponent(madeFromPrefabType));
         preview.add(new ClickableComponent());
         preview.add(new PulseAlphaComponent());
         preview.add(new SpriteComponent(texturePath));

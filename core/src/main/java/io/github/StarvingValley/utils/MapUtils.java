@@ -1,5 +1,11 @@
 package io.github.StarvingValley.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
@@ -8,9 +14,12 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+
+import io.github.StarvingValley.models.components.AnimationComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.config.Config;
-import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
@@ -21,16 +30,12 @@ import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.entities.WorldMapUserFactory;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
+import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class MapUtils {
   public static void loadEnvCollidables(TiledMap map, float unitScale, Engine engine) {
-    List<Rectangle> scaledHitboxes =
-        getScaledHitboxes(map, Config.MAP_COLLISION_LAYER_NAME, unitScale, engine);
+    List<Rectangle> scaledHitboxes = getScaledHitboxes(map, Config.MAP_COLLISION_LAYER_NAME, unitScale, engine);
     for (Rectangle scaledHitbox : scaledHitboxes) {
       engine.addEntity(MapFactory.createEnvCollidable(scaledHitbox));
     }
@@ -38,8 +43,7 @@ public class MapUtils {
 
   public static void loadPlacementBlockers(
       TiledMap map, float unitScale, WorldLayer layerTypeToApply, Engine engine) {
-    List<Rectangle> scaledHitboxes =
-        getScaledHitboxes(map, Config.MAP_NON_PLACEMENT_LAYER_NAME, unitScale, engine);
+    List<Rectangle> scaledHitboxes = getScaledHitboxes(map, Config.MAP_NON_PLACEMENT_LAYER_NAME, unitScale, engine);
     for (Rectangle scaledHitbox : scaledHitboxes) {
       Entity entity = MapFactory.createEnvPlacementBlocker(scaledHitbox);
       engine.addEntity(entity);
@@ -59,16 +63,14 @@ public class MapUtils {
             for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
               SyncEntity syncEntity = entry.getValue();
 
-              Entity entity =
-                  EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
 
               if (syncEntity.isPlayer) {
                 anyIsPlayer = true;
                 context.player = entity;
 
-                AnimationComponent anim =
-                    AnimationFactory.createAnimationsForType(
-                        PrefabType.PLAYER, context.assetManager);
+                AnimationComponent anim = AnimationFactory.createAnimationsForType(
+                    PrefabType.PLAYER, context.assetManager);
                 entity.add(anim);
               }
 
@@ -77,11 +79,12 @@ public class MapUtils {
             }
 
             if (!anyIsPlayer) {
-              Entity player =
-                  PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+              Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
               player.add(new UnsyncedComponent());
               skipSpriteSyncOnLoad(player);
               context.engine.addEntity(player);
+
+              context.player = player;
             }
           }
 
@@ -91,6 +94,83 @@ public class MapUtils {
           }
         });
   }
+
+    private static final float FARM_TO_VILLAGE_BOUNDARY = 39.5f;
+    private static final float VILLAGE_TO_FARM_BOUNDARY = 0f;
+
+    public static void loadSyncedFarmEntities(GameContext context, Entity camera) {
+        context.firebaseRepository.getAllEntities(
+            new EntityDataCallback() {
+                @Override
+                public void onSuccess(Map<String, SyncEntity> data) {
+                    boolean anyIsPlayer = false;
+                    for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
+                        SyncEntity syncEntity = entry.getValue();
+                        Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+
+                        // Replace static sprite with animation for players
+                        if (syncEntity.isPlayer) {
+                            anyIsPlayer = true;
+                            context.player = entity;
+                            Mappers.currScreen.get(entity).currentScreen = ScreenType.FARM;
+                            AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
+                            entity.add(anim);
+                        }
+
+                        skipSpriteSyncOnLoad(entity);
+                        context.engine.addEntity(entity);
+                    }
+
+                    if (!anyIsPlayer) {
+                        Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+                        player.add(new UnsyncedComponent());
+                        Mappers.currScreen.get(player).currentScreen = ScreenType.FARM;
+                        skipSpriteSyncOnLoad(player);
+                        context.engine.addEntity(player);
+                    }
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    System.err.println("Failed to load entities: " + errorMessage);
+                }
+            });
+    }
+
+    public static void loadSyncedVillageEntities(GameContext context, Entity camera) {
+        context.firebaseRepository.getAllEntities(
+            new EntityDataCallback() {
+                @Override
+                public void onSuccess(Map<String, SyncEntity> data) {
+                    for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
+                        SyncEntity syncEntity = entry.getValue();
+                        Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+
+                        if (syncEntity.isPlayer) {
+                            context.player = entity;
+                            AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
+                            entity.add(anim);
+                            Mappers.currScreen.get(entity).currentScreen = ScreenType.VILLAGE;
+                            skipSpriteSyncOnLoad(entity);
+                            context.engine.addEntity(entity);
+
+                            return;
+                        }
+                    }
+
+                    Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+                    player.add(new UnsyncedComponent());
+                    Mappers.currScreen.get(player).currentScreen = ScreenType.VILLAGE;
+                    skipSpriteSyncOnLoad(player);
+                    context.engine.addEntity(player);
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    System.err.println("Failed to load entities: " + errorMessage);
+                }
+            });
+    }
 
   public static void loadSyncedEntitiesForUser(GameContext context, Entity camera, String userId) {
     context.firebaseRepository.getEntitiesForUser(
@@ -106,8 +186,7 @@ public class MapUtils {
                 continue;
               }
 
-              Entity entity =
-                  EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
 
               entity.remove(SyncComponent.class);
 
@@ -129,7 +208,8 @@ public class MapUtils {
     List<Rectangle> result = new ArrayList<>();
 
     MapLayer layer = map.getLayers().get(mapLayerName);
-    if (layer == null) return result;
+    if (layer == null)
+      return result;
 
     for (MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
       Rectangle scaledHitbox = getScaledHitbox(object, unitScale);
@@ -172,13 +252,12 @@ public class MapUtils {
     int gridHeight = 2;
     for (int y = 0; y < gridHeight; y++) {
       for (int x = 0; x < gridWidth; x++) {
-        gridPositions.add(new int[] {x, y});
+        gridPositions.add(new int[] { x, y });
       }
     }
     Collections.shuffle(gridPositions);
 
-    int farmsToCreate =
-        Math.min(Config.ATTACKABLE_FARMS, Math.min(data.size(), gridPositions.size()));
+    int farmsToCreate = Math.min(Config.ATTACKABLE_FARMS, Math.min(data.size(), gridPositions.size()));
     for (int i = 0; i < farmsToCreate; i++) {
       int[] pos = gridPositions.get(i);
 

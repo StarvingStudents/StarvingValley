@@ -5,13 +5,13 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ClickedComponent;
+import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.PlayerAttackedEntityEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.components.ClickedComponent;
-import io.github.StarvingValley.models.events.EntityUpdatedEvent;
-import io.github.StarvingValley.models.components.DamageComponent;
 
 public class DamageSystem extends IteratingSystem {
     private final GameContext context;
@@ -24,29 +24,34 @@ public class DamageSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         // Get player's damage component
-        DamageComponent playerDamage = Mappers.damage.get(context.player);
-        if (playerDamage == null) return;
+        DamageComponent playerAttack = Mappers.damage.get(context.player);
+        if (playerAttack == null)
+            return;
 
         // Check distance
         PositionComponent playerPos = Mappers.position.get(context.player);
         PositionComponent entityPos = Mappers.position.get(entity);
-        
-        if (!isPlayerNearEntity(playerPos, entityPos, playerDamage.attackRange)) return;
 
-        // Update and check cooldown
-        playerDamage.cooldownTimer += deltaTime;
-        if (!playerDamage.isReady()) return;
+        if (!isPlayerNearEntity(playerPos, entityPos, playerAttack.attackRange))
+            return;
+
+        if (!playerAttack.isReady())
+            return;
 
         // Apply damage
         DurabilityComponent durability = Mappers.durability.get(entity);
-        durability.reduceHealth(playerDamage.damageAmount);
+        durability.reduceHealth(playerAttack.damageAmount);
 
         // Publish events
         context.eventBus.publish(new PlayerAttackedEntityEvent(entity));
         context.eventBus.publish(new EntityUpdatedEvent(entity));
 
         // Reset cooldown
-        playerDamage.reset();
+        playerAttack.resetCooldown();
+
+        if (durability.health <= 0) {
+            getEngine().removeEntity(entity);
+        }
     }
 
     private boolean isPlayerNearEntity(PositionComponent playerPos, PositionComponent entityPos, float attackRange) {

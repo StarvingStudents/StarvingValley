@@ -2,7 +2,6 @@ package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,9 +11,8 @@ import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.controllers.WorldMapController;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
-
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.utils.EventDebugger;
@@ -23,8 +21,6 @@ public class WorldMapView extends ScreenAdapter {
   private final EventDebugger eventDebugger;
   public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
-  private JoystickOverlay joystickOverlay;
-  private InputAdapter inputAdapter; // temp
   private InputEventAdapter inputEventAdapter;
   private EventBus eventBus;
   private WorldMapController controller;
@@ -65,9 +61,8 @@ public class WorldMapView extends ScreenAdapter {
 
     assetManager.finishLoading();
 
-    controller =
-        new WorldMapController(
-            game, _firebaseRepository, eventBus, assetManager); // initializing this here to avoid
+    controller = new WorldMapController(
+        game, _firebaseRepository, eventBus, assetManager); // initializing this here to avoid
     // problems with the temporal
     // input handling
     engine = controller.getEngine();
@@ -75,8 +70,7 @@ public class WorldMapView extends ScreenAdapter {
     gameMenuController = new GameMenuController(controller.gameContext);
 
     CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
-    inputEventAdapter =
-        new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
+    inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
   }
 
   @Override

@@ -3,7 +3,6 @@ package io.github.StarvingValley.models.entities;
 import java.util.Random;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.Texture;
 
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;

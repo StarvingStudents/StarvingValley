@@ -1,7 +1,6 @@
 package io.github.StarvingValley.views;
 
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -9,20 +8,29 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+
 import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
+import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+import io.github.StarvingValley.models.components.CameraComponent;<<<<<<<HEAD
 import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.types.GameContext;=======
+import io.github.StarvingValley.models.components.HotbarComponent;
+import io.github.StarvingValley.models.entities.TraderFactory;
+import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.InventoryCloseEvent;
+import io.github.StarvingValley.models.events.InventoryOpenEvent;>>>>>>>main
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
+import io.github.StarvingValley.utils.InventoryUtils;
 
 public class FarmView extends ScreenAdapter {
   public AssetManager assetManager;
@@ -41,7 +49,8 @@ public class FarmView extends ScreenAdapter {
   private EventDebugOverlay eventDebugOverlay;
 
   private GameMenuController gameMenuController;
-  public FarmView(IFirebaseRepository firebaseRepository) {
+
+  public FarmView(StarvingValley game, IFirebaseRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
@@ -54,6 +63,9 @@ public class FarmView extends ScreenAdapter {
     assetManager.load("tomato1.png", Texture.class);
     assetManager.load("potato1.png", Texture.class);
     assetManager.load("dirt.png", Texture.class);
+    assetManager.load("inventory_slot.png", Texture.class);
+    assetManager.load("inventory_slot_highlight.png", Texture.class);
+    assetManager.load("inventory_open_button.png", Texture.class);
 
     assetManager.load("idle_down.png", Texture.class);
     assetManager.load("idle_up.png", Texture.class);
@@ -76,9 +88,11 @@ public class FarmView extends ScreenAdapter {
 
     assetManager.finishLoading();
 
-    // TODO: Temp logic. When inventory is implemented it should handle this, and it
-    // should only be possible on entities
-    // with BuildableComponent. Use BuildUtils.isBuildable
+    controller = new FarmController(game, _firebaseRepository, eventBus, assetManager);
+
+    engine = controller.getEngine();
+
+    // TODO: Keeping this to make dev easier
     inputAdapter = new InputAdapter() {
       @Override
       public boolean keyDown(int keycode) {
@@ -86,38 +100,57 @@ public class FarmView extends ScreenAdapter {
 
         switch (keycode) {
           case Input.Keys.C:
-            prefabType = PrefabType.TOMATO_CROP;
+            prefabType = PrefabType.WHEAT_CROP;
+            break;
+          case Input.Keys.W:
+            prefabType = PrefabType.WALL;
             break;
           case Input.Keys.E:
-            prefabType = PrefabType.POTATO_CROP;
+            prefabType = PrefabType.BEETROOT_CROP;
             break;
           case Input.Keys.F:
             prefabType = PrefabType.SOIL;
             break;
+          case Input.Keys.I:
+            if (InventoryUtils.isInventoryOpen(engine)) {
+              eventBus.publish(new InventoryCloseEvent());
+            } else {
+              eventBus.publish(new InventoryOpenEvent());
+            }
+            break;
+          case Input.Keys.H:
+            HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
+            InventoryUtils.toggleHotbar(engine, hotbar.hotbar);
+            break;
         }
 
         if (prefabType != null) {
-          BuildUtils.toggleBuildPreview(prefabType, engine);
+          BuildUtils.enableBuildPreview(prefabType, prefabType, engine);
         }
 
         return true;
       }
     };
 
-    controller = new FarmController(_firebaseRepository, eventBus, assetManager); // initializing this here to avoid
-                                                                                  // problems with the temporal input
-                                                                                  // handling
-    engine = controller.getEngine();
+    gameMenuController = new GameMenuController(controller.getGameContext());
 
-      gameMenuController = new GameMenuController(controller.getGameContext());
+    CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
+    inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
+  }
 
-      CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
-      inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
+  // TODO: Maybe this shouldn't be in the view, but then we need a way to either
+  // know player is initalized inside farmcontroller, or add a playerloaded
+  // callback
+  private void showHotbar() {
+    if (controller.getPlayer() != null && !InventoryUtils.isHotbarOpen(engine)) {
+      HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
+      InventoryUtils.addHotbarToEngine(engine, hotbar.hotbar);
+      InventoryUtils.addInventoryToggleButtonToEngine(engine, hotbar.hotbar);
+    }
   }
 
   @Override
   public void show() {
-
     JoystickController joystickController = new JoystickController(engine);
     joystickOverlay = new JoystickOverlay(joystickController);
 
@@ -131,17 +164,21 @@ public class FarmView extends ScreenAdapter {
     Gdx.input.setInputProcessor(multiplexer);
 
     // Temp until we have villageview
-    Entity trader = TraderFactory.create(30, 13);
-    engine.addEntity(trader);
+    // Entity trader = TraderFactory.create(30, 13);
+    // engine.addEntity(trader);
 
-    Entity eatingButton = HUDButtonFactory.createEatingButton();
-
-    engine.addEntity(eatingButton);
+    engine.addEntity(HUDButtonFactory.createEatingButton());
+    engine.addEntity(TraderFactory.create(30, 13, PrefabType.SOIL, 0));
+    engine.addEntity(TraderFactory.create(32, 13, PrefabType.WHEAT_SEEDS, 0));
+    engine.addEntity(TraderFactory.create(34, 13, PrefabType.BEETROOT_SEEDS, 0));
   }
 
   @Override
   public void render(float delta) {
     assetManager.update();
+    controller.update(delta);
+
+    showHotbar();
     gameMenuController.update();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);

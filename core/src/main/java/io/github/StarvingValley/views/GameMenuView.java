@@ -43,9 +43,8 @@ public class GameMenuView {
         );
     }
 
-
     public void update() {
-        if (Gdx.input.justTouched()) {
+        if (controller.isVisible() && Gdx.input.justTouched()) {
             Vector2 touch = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
 
             if (playButtonBounds.contains(touch)) {

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.utils.Assets;
 
 public class GameContext {
     public Entity player;
@@ -17,4 +18,5 @@ public class GameContext {
     public AssetManager assetManager;
     public IFirebaseRepository firebaseRepository;
     public Engine engine;
+    public Assets assets;
 }

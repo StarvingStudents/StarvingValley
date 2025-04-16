@@ -1,9 +1,12 @@
 package io.github.StarvingValley.controllers;
 
+import java.util.List;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
@@ -12,10 +15,10 @@ import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
 import io.github.StarvingValley.models.systems.CameraSystem;
-import io.github.StarvingValley.models.systems.ClickSystem;
-import io.github.StarvingValley.models.systems.ClickedCleanupSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
+import io.github.StarvingValley.models.systems.InputCleanupSystem;
+import io.github.StarvingValley.models.systems.InputSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
@@ -23,7 +26,6 @@ import io.github.StarvingValley.models.systems.WorldMapTransitionSystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.MapUtils;
 import io.github.StarvingValley.views.VisitFarmView;
-import java.util.List;
 
 public class WorldMapController {
 
@@ -67,14 +69,14 @@ public class WorldMapController {
     // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
     // batch etc), maybe we should have a GameContext class that holds them so we
     // just pass around that?
-    engine.addSystem(new ClickSystem(gameContext));
+    engine.addSystem(new InputSystem(gameContext));
     engine.addSystem(new WorldMapTransitionSystem(gameContext));
     engine.addSystem(new CameraSystem());
     engine.addSystem(new RenderSystem(gameContext));
     engine.addSystem(new SpriteSystem(gameContext));
     engine.addSystem(new SyncMarkingSystem(gameContext));
     engine.addSystem(new FirebaseSyncSystem(gameContext));
-    engine.addSystem(new ClickedCleanupSystem());
+    engine.addSystem(new InputCleanupSystem());
     engine.addSystem(new EventCleanupSystem(gameContext));
 
     loadUserEntities();
