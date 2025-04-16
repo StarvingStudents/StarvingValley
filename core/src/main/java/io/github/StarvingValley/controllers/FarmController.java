@@ -130,7 +130,7 @@ public class FarmController {
         engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new DurabilityRenderSystem(gameContext));
         engine.addSystem(new HUDButtonPressSystem(gameContext));
-        engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
+        engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
         engine.addSystem(new EatingSystem(eventBus, gameContext));
         engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
