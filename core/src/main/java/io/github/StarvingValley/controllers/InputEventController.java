@@ -8,7 +8,7 @@ import io.github.StarvingValley.models.events.DragEndEvent;
 import io.github.StarvingValley.models.events.DragStartEvent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.TapEvent;
-import io.github.StarvingValley.models.events.TouchDownEvent;
+// import io.github.StarvingValley.models.events.TouchDownEvent;
 import io.github.StarvingValley.utils.ScreenUtils;
 import io.github.StarvingValley.utils.TileUtils;
 
@@ -21,11 +21,13 @@ public class InputEventController {
         this.eventBus = eventBus;
     }
 
-    public void handleTouchDown(int screenX, int screenY, int pointer, int button) {
-        GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
-        Vector2 screenPos = ScreenUtils.getScreenPositionFromTouchPosition(screenX, screenY);
-        eventBus.publish(new TouchDownEvent(tile, screenPos, button));
-    }
+    // public void handleTouchDown(int screenX, int screenY, int pointer, int
+    // button) {
+    // GridPoint2 tile = TileUtils.coordinatesToTile(screenX, screenY, camera);
+    // Vector2 screenPos = ScreenUtils.getScreenPositionFromTouchPosition(screenX,
+    // screenY);
+    // eventBus.publish(new TouchDownEvent(tile, screenPos, button));
+    // }
 
     public void handleTap(int screenX, int screenY, int pointer, int button) {
         GridPoint2 worldTile = TileUtils.coordinatesToTile(screenX, screenY, camera);
