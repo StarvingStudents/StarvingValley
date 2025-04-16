@@ -35,9 +35,8 @@ public class StarvingValley extends Game {
             throw new RuntimeException("Authentication failed: " + errorMessage);
           }
         });
-    //    ScreenType currentScreen = _firebaseRepository.getCurrentScreen();
-    ScreenType currentScreen = null;
-    pendingScreenType = (currentScreen == null) ? ScreenType.WORLDMAP : currentScreen;
+    ScreenType currentScreen = _firebaseRepository.getCurrentScreen();
+    pendingScreenType = (currentScreen == null) ? ScreenType.FARM : currentScreen;
   }
 
   @Override
