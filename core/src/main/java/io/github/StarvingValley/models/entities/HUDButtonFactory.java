@@ -45,7 +45,7 @@ public class HUDButtonFactory {
                 ButtonType.FARM_TO_WORLD_MAP_BUTTON);
     }
 
-    public static Entity createWorldMapButtonToFarmButton() {
+    public static Entity createWorldMapToFarmButton() {
         return HUDButtonFactory.createHUDButton((int) (Gdx.graphics.getWidth() * 0.85),
                 (int) (Gdx.graphics.getHeight() * 0.75), (int) (Gdx.graphics.getHeight()
                         * 0.15),
