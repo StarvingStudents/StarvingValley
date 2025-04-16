@@ -28,9 +28,29 @@ public class HUDButtonFactory {
     }
 
     public static Entity createEatingButton() {
-        return HUDButtonFactory.createHUDButton((int) (Gdx.graphics.getWidth() * 0.80),
-                (int) (Gdx.graphics.getHeight() * 0.2), 250, 250,
+        return HUDButtonFactory.createHUDButton((int) (Gdx.graphics.getWidth() * 0.85),
+                (int) (Gdx.graphics.getHeight() * 0.2), (int) (Gdx.graphics.getHeight()
+                        * 0.15),
+                (int) (Gdx.graphics.getHeight() * 0.15),
                 "EAT_egg.png",
                 ButtonType.EATING_BUTTON);
+    }
+
+    public static Entity createFarmToWorldMapButton() {
+        return HUDButtonFactory.createHUDButton((int) (Gdx.graphics.getWidth() * 0.85),
+                (int) (Gdx.graphics.getHeight() * 0.75), (int) (Gdx.graphics.getHeight()
+                        * 0.15),
+                (int) (Gdx.graphics.getHeight() * 0.15),
+                "farm_to_world_map_button.png",
+                ButtonType.FARM_TO_WORLD_MAP_BUTTON);
+    }
+
+    public static Entity createWorldMapButtonToFarmButton() {
+        return HUDButtonFactory.createHUDButton((int) (Gdx.graphics.getWidth() * 0.85),
+                (int) (Gdx.graphics.getHeight() * 0.75), (int) (Gdx.graphics.getHeight()
+                        * 0.15),
+                (int) (Gdx.graphics.getHeight() * 0.15),
+                "world_map_to_farm_button.png",
+                ButtonType.FARM_TO_WORLD_MAP_BUTTON);
     }
 }
