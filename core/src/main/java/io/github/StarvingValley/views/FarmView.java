@@ -18,6 +18,10 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.entities.HUDButtonFactory;
+import io.github.StarvingValley.models.entities.TraderFactory;
+import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
@@ -39,6 +43,8 @@ public class FarmView extends ScreenAdapter {
   private FarmController controller;
   private Engine engine;
 
+  private GameContext context;
+
   private final EventDebugger eventDebugger;
   private EventDebugOverlay eventDebugOverlay;
 
@@ -54,6 +60,8 @@ public class FarmView extends ScreenAdapter {
     // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
     // assetManager.load("DogBasic.png", Texture.class);
+    assetManager.load("tomato1.png", Texture.class);
+    assetManager.load("potato1.png", Texture.class);
     assetManager.load("dirt.png", Texture.class);
     assetManager.load("inventory_slot.png", Texture.class);
     assetManager.load("inventory_slot_highlight.png", Texture.class);
@@ -156,6 +164,10 @@ public class FarmView extends ScreenAdapter {
     Gdx.input.setInputProcessor(multiplexer);
 
     // Temp until we have villageview
+    // Entity trader = TraderFactory.create(30, 13);
+    // engine.addEntity(trader);
+
+    engine.addEntity(HUDButtonFactory.createEatingButton());
     engine.addEntity(TraderFactory.create(30, 13, PrefabType.SOIL, 0));
     engine.addEntity(TraderFactory.create(32, 13, PrefabType.WHEAT_SEEDS, 0));
     engine.addEntity(TraderFactory.create(34, 13, PrefabType.BEETROOT_SEEDS, 0));

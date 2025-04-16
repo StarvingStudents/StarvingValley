@@ -17,6 +17,7 @@ import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
@@ -28,9 +29,13 @@ import io.github.StarvingValley.models.systems.BuildPlacementSystem;
 import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.CropGrowthSystem;
+import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
+import io.github.StarvingValley.models.systems.EatingSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
+import io.github.StarvingValley.models.systems.HUDButtonPressHandlingSystem;
+import io.github.StarvingValley.models.systems.HUDButtonPressSystem;
 import io.github.StarvingValley.models.systems.HarvestingSystem;
 import io.github.StarvingValley.models.systems.HotbarItemClickSystem;
 import io.github.StarvingValley.models.systems.HudRenderSystem;
@@ -69,7 +74,8 @@ public class FarmController {
 
     private StarvingValley game;
 
-    public FarmController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus, AssetManager assetManager) {
+    public FarmController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus,
+            AssetManager assetManager) {
         this.game = game;
         this.firebaseRepository = firebaseRepository;
         this.eventBus = eventBus;
@@ -122,6 +128,10 @@ public class FarmController {
         engine.addSystem(new HungerSystem(gameContext));
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new HungerRenderSystem(gameContext));
+        engine.addSystem(new DurabilityRenderSystem(gameContext));
+        engine.addSystem(new HUDButtonPressSystem(gameContext));
+        engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
+        engine.addSystem(new EatingSystem(eventBus, gameContext));
         engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
@@ -142,10 +152,10 @@ public class FarmController {
         if (events.isEmpty())
             return;
 
-        if  (events.get(0).getTargetScreen() == ScreenType.VILLAGE) {
+        if (events.get(0).getTargetScreen() == ScreenType.VILLAGE) {
 
             ImmutableArray<Entity> players = engine.getEntitiesFor(
-                Family.all(PlayerComponent.class, PositionComponent.class).get() // currentMapComponent
+                    Family.all(PlayerComponent.class, PositionComponent.class).get() // currentMapComponent
             );
             if (players.size() == 0) {
                 return;
