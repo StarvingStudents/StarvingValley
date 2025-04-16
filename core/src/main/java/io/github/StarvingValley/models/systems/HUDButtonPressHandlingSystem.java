@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import io.github.StarvingValley.models.events.EatingButtonPressedEvent;
+import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.types.ButtonType;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ScreenType;
@@ -38,11 +39,11 @@ public class HUDButtonPressHandlingSystem extends IteratingSystem {
         }
 
         if (button.buttonType == ButtonType.FARM_TO_WORLD_MAP_BUTTON) {
-            // TODO: use requestViewSwitch to move to world map
+            context.eventBus.publish(new ScreenTransitionEvent(ScreenType.WORLD_MAP));
         }
 
         if (button.buttonType == ButtonType.WORLD_MAP_TO_FARM_BUTTON) {
-            // TODO: use requestViewSwitch to move to farm
+            context.eventBus.publish(new ScreenTransitionEvent(ScreenType.FARM));
         }
     }
 }

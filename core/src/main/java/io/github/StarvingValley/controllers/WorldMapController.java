@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -13,10 +14,14 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
+import io.github.StarvingValley.models.systems.HUDButtonPressHandlingSystem;
+import io.github.StarvingValley.models.systems.HUDButtonPressSystem;
+import io.github.StarvingValley.models.systems.HudRenderSystem;
 import io.github.StarvingValley.models.systems.InputCleanupSystem;
 import io.github.StarvingValley.models.systems.InputSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
@@ -24,6 +29,7 @@ import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.WorldMapTransitionSystem;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.utils.MapUtils;
 import io.github.StarvingValley.views.VisitFarmView;
 
@@ -74,6 +80,9 @@ public class WorldMapController {
     engine.addSystem(new CameraSystem());
     engine.addSystem(new RenderSystem(gameContext));
     engine.addSystem(new SpriteSystem(gameContext));
+    engine.addSystem(new HudRenderSystem());
+    engine.addSystem(new HUDButtonPressSystem(gameContext));
+    engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
     engine.addSystem(new SyncMarkingSystem(gameContext));
     engine.addSystem(new FirebaseSyncSystem(gameContext));
     engine.addSystem(new InputCleanupSystem());
@@ -89,6 +98,14 @@ public class WorldMapController {
       String targetUserId = events.get(0).userId;
       System.out.println(targetUserId);
       game.switchView(new VisitFarmView(firebaseRepository, targetUserId));
+    }
+
+    List<ScreenTransitionEvent> screenTransitionEvents = eventBus.getEvents(ScreenTransitionEvent.class);
+    if (screenTransitionEvents.isEmpty())
+      return;
+
+    if (screenTransitionEvents.get(0).getTargetScreen() == ScreenType.FARM) {
+      game.requestViewSwitch(ScreenType.FARM);
     }
   }
 

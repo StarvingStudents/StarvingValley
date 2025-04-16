@@ -51,6 +51,6 @@ public class HUDButtonFactory {
                         * 0.15),
                 (int) (Gdx.graphics.getHeight() * 0.15),
                 "world_map_to_farm_button.png",
-                ButtonType.FARM_TO_WORLD_MAP_BUTTON);
+                ButtonType.WORLD_MAP_TO_FARM_BUTTON);
     }
 }

@@ -162,6 +162,8 @@ public class FarmController {
             }
 
             game.requestViewSwitch(ScreenType.VILLAGE);
+        } else if (events.get(0).getTargetScreen() == ScreenType.WORLD_MAP) {
+            game.requestViewSwitch(ScreenType.WORLD_MAP);
         }
     }
 
