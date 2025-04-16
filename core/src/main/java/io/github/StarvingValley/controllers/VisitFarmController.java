@@ -9,7 +9,6 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.AttackComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
@@ -23,11 +22,17 @@ import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.DamageSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
+import io.github.StarvingValley.models.systems.EventCleanupSystem;
+import io.github.StarvingValley.models.systems.HUDButtonPressHandlingSystem;
+import io.github.StarvingValley.models.systems.HUDButtonPressSystem;
+import io.github.StarvingValley.models.systems.HudRenderSystem;
+import io.github.StarvingValley.models.systems.InputCleanupSystem;
 import io.github.StarvingValley.models.systems.InputSystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
+import io.github.StarvingValley.models.systems.StealingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.MapUtils;
@@ -79,7 +84,6 @@ public class VisitFarmController {
     map = MapFactory.createMap("FarmMap.tmx", Config.UNIT_SCALE, cameraComponent);
     engine.addEntity(camera);
     engine.addEntity(map);
-
     engine.addSystem(new InputSystem(gameContext));
     engine.addSystem(new MapRenderSystem());
     engine.addSystem(new AlphaPulseSystem());
@@ -87,12 +91,19 @@ public class VisitFarmController {
     engine.addSystem(new AnimationSystem(gameContext));
     engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem(gameContext));
-    engine.addSystem(new CameraSystem());
-    engine.addSystem(new AttackTimerSystem(eventBus, game));
     engine.addSystem(new DurabilityRenderSystem(gameContext));
     engine.addSystem(new DamageSystem(gameContext));
+    engine.addSystem(new AttackTimerSystem(eventBus, game));
+    engine.addSystem(new CameraSystem());
+    engine.addSystem(new StealingSystem(gameContext));
     engine.addSystem(new RenderSystem(gameContext));
     engine.addSystem(new SpriteSystem(gameContext));
+    engine.addSystem(new DurabilityRenderSystem(gameContext));
+    engine.addSystem(new HUDButtonPressSystem(gameContext));
+    engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
+    engine.addSystem(new HudRenderSystem());
+    engine.addSystem(new InputCleanupSystem());
+    engine.addSystem(new EventCleanupSystem(gameContext));
     engine.addSystem(new ActionAnimationSystem(gameContext));
 
     System.out.println("AssetManager loaded assets:");
@@ -104,11 +115,6 @@ public class VisitFarmController {
 
     player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, assetManager, camera);
     player.add(new AttackComponent(Config.ATTACK_DURATION));
-    player.add(
-        new DamageComponent(
-            Config.DEFAULT_DAMAGE_AMOUNT,
-            Config.DEFAULT_ATTACK_RANGE,
-            Config.DEFAULT_ATTACK_SPEED));
     gameContext.player = player;
     engine.addEntity(player);
     MapUtils.loadSyncedEntitiesForUser(gameContext, camera, visitedUserId);
