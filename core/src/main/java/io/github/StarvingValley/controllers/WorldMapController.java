@@ -1,13 +1,10 @@
 package io.github.StarvingValley.controllers;
 
-import java.util.List;
-
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Interfaces.AuthCallback;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
@@ -32,6 +29,7 @@ import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.utils.MapUtils;
 import io.github.StarvingValley.views.VisitFarmView;
+import java.util.List;
 
 public class WorldMapController {
 
@@ -97,7 +95,7 @@ public class WorldMapController {
     if (events.size() > 0) {
       String targetUserId = events.get(0).userId;
       System.out.println(targetUserId);
-      game.switchView(new VisitFarmView(firebaseRepository, targetUserId));
+      game.switchView(new VisitFarmView(game, firebaseRepository, targetUserId));
     }
 
     List<ScreenTransitionEvent> screenTransitionEvents = eventBus.getEvents(ScreenTransitionEvent.class);
