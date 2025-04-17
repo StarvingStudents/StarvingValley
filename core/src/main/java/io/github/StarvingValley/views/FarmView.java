@@ -16,7 +16,6 @@ import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
@@ -24,8 +23,6 @@ import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.NotificationEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.components.HotbarComponent;
-import io.github.StarvingValley.models.entities.TraderFactory;
-import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
 import io.github.StarvingValley.models.types.PrefabType;
@@ -168,17 +165,15 @@ public class FarmView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    // Temp until we have villageview
-    // Entity trader = TraderFactory.create(30, 13);
-    // engine.addEntity(trader);
-
     engine.addEntity(HUDButtonFactory.createEatingButton());
     engine.addEntity(HUDButtonFactory.createFarmToWorldMapButton());
     engine.addEntity(TraderFactory.create(30, 13, PrefabType.SOIL, 0));
     engine.addEntity(TraderFactory.create(32, 13, PrefabType.WHEAT_SEEDS, 0));
     engine.addEntity(TraderFactory.create(34, 13, PrefabType.BEETROOT_SEEDS, 0));
 
-    eventBus.publish(new NotificationEvent("Press f to start farming mode.\nPress c to plant beetroots.\nPress e to plant wheat."));
+    eventBus.publish(new NotificationEvent("Press f to start farming mode."));
+    eventBus.publish(new NotificationEvent("Press c to plant beetroots."));
+    eventBus.publish(new NotificationEvent("Press e to plant wheat."));
   }
 
   @Override
