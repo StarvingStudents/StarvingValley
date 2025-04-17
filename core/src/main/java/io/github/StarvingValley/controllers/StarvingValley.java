@@ -43,7 +43,8 @@ public class StarvingValley extends Game {
   public void render() {
     super.render();
 
-    // Process pending view switch at the end of the render cycle => avoid potential buffer errors
+    // Process pending view switch at the end of the render cycle => avoid potential
+    // buffer errors
     if (isAuthenticated && pendingScreenType != null) {
       Screen oldScreen = getScreen();
       setScreen(null);
@@ -55,7 +56,7 @@ public class StarvingValley extends Game {
         setScreen(new VillageView(this, _firebaseRepository));
       } else if (pendingScreenType == ScreenType.FARM) {
         setScreen(new FarmView(this, _firebaseRepository));
-      } else if (pendingScreenType == ScreenType.WORLDMAP) {
+      } else if (pendingScreenType == ScreenType.WORLD_MAP) {
         setScreen(new WorldMapView(this, _firebaseRepository));
       }
 
@@ -63,7 +64,8 @@ public class StarvingValley extends Game {
     }
   }
 
-  // TODO phase out - use requestViewSwitch insted => switches view at end of render loop
+  // TODO phase out - use requestViewSwitch insted => switches view at end of
+  // render loop
   @Deprecated
   public void switchView(Screen newScreen) {
     // Prevent disposing of the same screen
@@ -76,7 +78,6 @@ public class StarvingValley extends Game {
     // if (getScreen() != null) {
     // getScreen().dispose();
     // }
-
     setScreen(newScreen);
   } // Now able to switch between screens by calling switchView(newScreen) from any
 
