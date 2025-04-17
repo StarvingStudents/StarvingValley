@@ -100,7 +100,7 @@ public class VisitFarmController {
     engine.addSystem(new SpriteSystem(gameContext));
     engine.addSystem(new DurabilityRenderSystem(gameContext));
     engine.addSystem(new HUDButtonPressSystem(gameContext));
-    engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
+    engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
     engine.addSystem(new HudRenderSystem());
     engine.addSystem(new InputCleanupSystem());
     engine.addSystem(new EventCleanupSystem(gameContext));
