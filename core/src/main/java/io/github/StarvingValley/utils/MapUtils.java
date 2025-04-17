@@ -127,6 +127,8 @@ public class MapUtils {
                         Mappers.currScreen.get(player).currentScreen = ScreenType.FARM;
                         skipSpriteSyncOnLoad(player);
                         context.engine.addEntity(player);
+
+                        context.player = player;
                     }
                 }
 

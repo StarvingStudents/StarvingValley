@@ -14,38 +14,33 @@ import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.entities.HUDButtonFactory;
-import io.github.StarvingValley.models.entities.TraderFactory;
-import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.components.HotbarComponent;
+import io.github.StarvingValley.models.components.InventoryComponent;
+import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
 import io.github.StarvingValley.utils.InventoryUtils;
 
 public class FarmView extends ScreenAdapter {
+  private final EventDebugger eventDebugger;
   public AssetManager assetManager;
   IFirebaseRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
   private InputAdapter inputAdapter; // temp
   private InputEventAdapter inputEventAdapter;
-
   private EventBus eventBus;
   private FarmController controller;
   private Engine engine;
-
   private GameContext context;
-
-  private final EventDebugger eventDebugger;
   private EventDebugOverlay eventDebugOverlay;
 
   private GameMenuController gameMenuController;
@@ -98,6 +93,8 @@ public class FarmView extends ScreenAdapter {
       public boolean keyDown(int keycode) {
         PrefabType prefabType = null;
 
+        InventoryComponent inventory = Mappers.inventory.get(controller.getPlayer());
+
         switch (keycode) {
           case Input.Keys.C:
             prefabType = PrefabType.WHEAT_CROP;
@@ -112,15 +109,11 @@ public class FarmView extends ScreenAdapter {
             prefabType = PrefabType.SOIL;
             break;
           case Input.Keys.I:
-            if (InventoryUtils.isInventoryOpen(engine)) {
-              eventBus.publish(new InventoryCloseEvent());
+            if (InventoryUtils.isInventoryOpen(engine, inventory.info.inventoryId)) {
+              eventBus.publish(new InventoryCloseEvent(inventory.info));
             } else {
-              eventBus.publish(new InventoryOpenEvent());
+              eventBus.publish(new InventoryOpenEvent(inventory.info, false));
             }
-            break;
-          case Input.Keys.H:
-            HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
-            InventoryUtils.toggleHotbar(engine, hotbar.hotbar);
             break;
         }
 
@@ -142,10 +135,14 @@ public class FarmView extends ScreenAdapter {
   // know player is initalized inside farmcontroller, or add a playerloaded
   // callback
   private void showHotbar() {
-    if (controller.getPlayer() != null && !InventoryUtils.isHotbarOpen(engine)) {
-      HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
-      InventoryUtils.addHotbarToEngine(engine, hotbar.hotbar);
-      InventoryUtils.addInventoryToggleButtonToEngine(engine, hotbar.hotbar);
+    if (controller.getPlayer() == null)
+      return;
+
+    HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
+    InventoryComponent inventory = Mappers.inventory.get(controller.getPlayer());
+    if (hotbar != null && !InventoryUtils.isInventoryOpen(engine, hotbar.info.inventoryId)) {
+      eventBus.publish(new InventoryOpenEvent(hotbar.info, true));
+      InventoryUtils.addInventoryToggleButtonToEngine(engine, hotbar.info, inventory.info);
     }
   }
 

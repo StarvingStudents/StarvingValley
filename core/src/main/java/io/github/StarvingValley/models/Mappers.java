@@ -13,10 +13,11 @@ import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
+import io.github.StarvingValley.models.components.CurrentScreenComponent;
 import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.DragEndComponent;
+import io.github.StarvingValley.models.components.DraggableComponent;
 import io.github.StarvingValley.models.components.DraggingComponent;
-import io.github.StarvingValley.models.components.CurrentScreenComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
@@ -25,23 +26,22 @@ import io.github.StarvingValley.models.components.FoodItemComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
+import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.HudComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
+import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySelectedItemComponent;
-import io.github.StarvingValley.models.components.HotbarComponent;
-import io.github.StarvingValley.models.components.HotbarUiComponent;
-import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.components.InventorySlotComponent;
-import io.github.StarvingValley.models.components.InventoryUiComponent;
+import io.github.StarvingValley.models.components.InventoryToggleButtonComponent;
 import io.github.StarvingValley.models.components.MapRenderComponent;
+import io.github.StarvingValley.models.components.PartOfHotbarComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.PrefabTypeComponent;
 import io.github.StarvingValley.models.components.PulseAlphaComponent;
-import io.github.StarvingValley.models.components.SelectedHotbarItemComponent;
-import io.github.StarvingValley.models.components.SelectedHotbarSlotComponent;
+import io.github.StarvingValley.models.components.SelectedHotbarEntryComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
@@ -82,6 +82,8 @@ public class Mappers {
         public static final ComponentMapper<InputComponent> input = ComponentMapper.getFor(InputComponent.class);
         public static final ComponentMapper<ClickableComponent> clickable = ComponentMapper
                         .getFor(ClickableComponent.class);
+        public static final ComponentMapper<DraggableComponent> draggable = ComponentMapper
+                        .getFor(DraggableComponent.class);
         public static final ComponentMapper<ClickedComponent> clicked = ComponentMapper
                         .getFor(ClickedComponent.class);
         public static final ComponentMapper<DraggingComponent> dragging = ComponentMapper
@@ -116,10 +118,8 @@ public class Mappers {
                         .getFor(CropTypeComponent.class);
         public static final ComponentMapper<SyncDeletionRequestComponent> syncDeletionRequest = ComponentMapper
                         .getFor(SyncDeletionRequestComponent.class);
-
         public static final ComponentMapper<AnimationComponent> animation = ComponentMapper
                         .getFor(AnimationComponent.class);
-
         public static final ComponentMapper<DropComponent> drop = ComponentMapper.getFor(DropComponent.class);
         public static final ComponentMapper<WorldMapFarmComponent> worldMapFarm = ComponentMapper
                         .getFor(WorldMapFarmComponent.class);
@@ -142,17 +142,16 @@ public class Mappers {
                         .getFor(InventorySlotComponent.class);
         public static final ComponentMapper<HotbarComponent> hotbar = ComponentMapper
                         .getFor(HotbarComponent.class);
-        public static final ComponentMapper<HotbarUiComponent> hotbarUi = ComponentMapper
-                        .getFor(HotbarUiComponent.class);
-        public static final ComponentMapper<InventoryUiComponent> inventoryUi = ComponentMapper
-                        .getFor(InventoryUiComponent.class);
-        public static final ComponentMapper<SelectedHotbarItemComponent> selectedHotbarItem = ComponentMapper
-                        .getFor(SelectedHotbarItemComponent.class);
+        public static final ComponentMapper<SelectedHotbarEntryComponent> selectedHotbarItem = ComponentMapper
+                        .getFor(SelectedHotbarEntryComponent.class);
         public static final ComponentMapper<PrefabTypeComponent> prefabType = ComponentMapper
                         .getFor(PrefabTypeComponent.class);
-        public static final ComponentMapper<SelectedHotbarSlotComponent> selectedHotbarSlot = ComponentMapper
-                        .getFor(SelectedHotbarSlotComponent.class);
         public static final ComponentMapper<DamageComponent> damage = ComponentMapper.getFor(DamageComponent.class);
         public static final ComponentMapper<CurrentScreenComponent> currScreen = ComponentMapper
                         .getFor(CurrentScreenComponent.class);
+        public static final ComponentMapper<PartOfHotbarComponent> partOfHotbar = ComponentMapper
+                        .getFor(PartOfHotbarComponent.class);
+        public static final ComponentMapper<InventoryToggleButtonComponent> inventoryToggleButton = ComponentMapper
+                        .getFor(InventoryToggleButtonComponent.class);
+
 }

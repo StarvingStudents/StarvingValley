@@ -13,14 +13,14 @@ import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
-import io.github.StarvingValley.models.components.SelectedHotbarItemComponent;
+import io.github.StarvingValley.models.components.SelectedHotbarEntryComponent;
 import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.models.events.EntityAddedEvent;
 import io.github.StarvingValley.models.events.EntityPlacedEvent;
 import io.github.StarvingValley.models.events.RemoveItemFromInventoryEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.utils.BuildUtils;
+import io.github.StarvingValley.utils.InventoryUtils;
 
 public class BuildPlacementSystem extends IteratingSystem {
   private GameContext context;
@@ -56,10 +56,10 @@ public class BuildPlacementSystem extends IteratingSystem {
 
     context.eventBus.publish(new EntityPlacedEvent(entityToPlace));
     context.eventBus.publish(new EntityAddedEvent(entityToPlace));
-    context.eventBus.publish(new RemoveItemFromInventoryEvent(new ItemStack(buildPreview.madeFromPrefabType, 1)));
+    context.eventBus.publish(new RemoveItemFromInventoryEvent(context.player, buildPreview.madeFromPrefabType, 1));
 
     ImmutableArray<Entity> selectedHotbarItems = engine
-        .getEntitiesFor(Family.all(SelectedHotbarItemComponent.class, InventoryItemComponent.class).get());
+        .getEntitiesFor(Family.all(SelectedHotbarEntryComponent.class, InventoryItemComponent.class).get());
     if (selectedHotbarItems.size() > 0) {
       Entity selectedHotbarItem = selectedHotbarItems.get(0);
 
@@ -67,9 +67,11 @@ public class BuildPlacementSystem extends IteratingSystem {
       if (item.quantity <= 1) {
         engine.removeEntity(entity);
         BuildUtils.disableBuildPreview(engine);
+        InventoryUtils.unselectSelectedHotbarItems(engine);
       }
     } else if (selectedHotbarItems.size() == 0) {
       BuildUtils.disableBuildPreview(engine);
+      InventoryUtils.unselectSelectedHotbarItems(engine);
     }
   }
 }

@@ -1,13 +1,13 @@
 package io.github.StarvingValley.controllers;
 
+import java.util.List;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.util.List;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
@@ -17,7 +17,6 @@ import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
-import io.github.StarvingValley.models.entities.HUDButtonFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
@@ -33,6 +32,7 @@ import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EatingSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
+import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HUDButtonPressHandlingSystem;
 import io.github.StarvingValley.models.systems.HUDButtonPressSystem;
@@ -44,12 +44,12 @@ import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.InputCleanupSystem;
 import io.github.StarvingValley.models.systems.InputSystem;
 import io.github.StarvingValley.models.systems.InventoryDragSystem;
+import io.github.StarvingValley.models.systems.InventoryOpenSystem;
 import io.github.StarvingValley.models.systems.InventorySystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.RespawnSystem;
-import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.TradingSystem;
@@ -107,6 +107,7 @@ public class FarmController {
         engine.addEntity(map);
 
         engine.addSystem(new InputSystem(gameContext));
+        engine.addSystem(new InventoryOpenSystem(gameContext));
         engine.addSystem(new InventoryDragSystem(gameContext));
         engine.addSystem(new HotbarItemClickSystem());
         engine.addSystem(new MapRenderSystem());

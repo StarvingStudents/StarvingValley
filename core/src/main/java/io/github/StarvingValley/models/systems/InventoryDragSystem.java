@@ -8,21 +8,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.DragEndComponent;
 import io.github.StarvingValley.models.components.DraggingComponent;
-import io.github.StarvingValley.models.components.HotbarUiComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySlotComponent;
-import io.github.StarvingValley.models.components.InventoryUiComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
-import io.github.StarvingValley.models.entities.InventoryFactory;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.types.Inventory;
-import io.github.StarvingValley.models.types.InventorySlot;
-import io.github.StarvingValley.models.types.UiInventoryLayout;
 import io.github.StarvingValley.utils.InventoryUtils;
 import io.github.StarvingValley.utils.ScreenUtils;
 
@@ -35,23 +28,13 @@ public class InventoryDragSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        Entity player = context.player;
-        if (player == null || !Mappers.inventory.has(player) || !Mappers.hotbar.has(player)) {
-            return;
-        }
-
         ImmutableArray<Entity> draggedItems = getEngine().getEntitiesFor(
                 Family.all(InventoryItemComponent.class, DraggingComponent.class, PositionComponent.class)
                         .exclude(DragEndComponent.class).get());
 
-        if (!InventoryUtils.isInventoryOpen(getEngine())) {
+        if (!InventoryUtils.isAnyInventoryOpen(getEngine())) {
             for (Entity entity : draggedItems) {
-                boolean originIsHotbar = Mappers.hotbarUi.has(entity);
-                Inventory originInventory = originIsHotbar
-                        ? Mappers.hotbar.get(context.player).hotbar
-                        : Mappers.inventory.get(context.player).inventory;
-
-                resetItemPosition(entity, originInventory, originIsHotbar);
+                resetItemPosition(entity);
             }
 
             return;
@@ -68,144 +51,76 @@ public class InventoryDragSystem extends EntitySystem {
         ImmutableArray<Entity> droppedItems = getEngine().getEntitiesFor(
                 Family.all(InventoryItemComponent.class, DraggingComponent.class, DragEndComponent.class).get());
 
-        boolean inventoryHasChanged = false;
-
         for (Entity entity : droppedItems) {
             DragEndComponent dragEnd = Mappers.dragEnd.get(entity);
-            DraggingComponent dragging = Mappers.dragging.get(entity);
-
-            inventoryHasChanged |= placeItemInSlot(entity, dragEnd.dropScreenX, dragEnd.dropScreenY,
-                    dragging.originScreenX, dragging.originScreenY);
+            boolean changedPos = placeItemInSlot(entity, dragEnd.dropScreenX, dragEnd.dropScreenY);
 
             entity.remove(DraggingComponent.class);
             entity.remove(DragEndComponent.class);
-        }
 
-        if (inventoryHasChanged) {
-            context.eventBus.publish(new EntityUpdatedEvent(player));
+            if (changedPos) {
+                context.eventBus.publish(new EntityUpdatedEvent(entity));
+            }
         }
     }
 
-    private boolean placeItemInSlot(Entity draggedItem, int screenX, int screenY, int originScreenX,
-            int originScreenY) {
+    private boolean placeItemInSlot(Entity draggedItem, int screenX, int screenY) {
         Entity matchingSlot = InventoryUtils.getSlotAtScreenPosition(getEngine(), screenX, screenY);
-        InventoryItemComponent draggedItemData = Mappers.inventoryItem.get(draggedItem);
-        Vector3 draggedPos = Mappers.position.get(draggedItem).position;
-
-        boolean originIsHotbar = Mappers.hotbarUi.has(draggedItem);
-        Inventory originInventory = originIsHotbar
-                ? Mappers.hotbar.get(context.player).hotbar
-                : Mappers.inventory.get(context.player).inventory;
-
         if (matchingSlot == null) {
-            resetItemPosition(draggedItem, originInventory, originIsHotbar);
+            resetItemPosition(draggedItem);
             return false;
         }
 
-        boolean targetIsHotbar = Mappers.hotbarUi.has(matchingSlot);
-        Inventory targetInventory = targetIsHotbar
-                ? Mappers.hotbar.get(context.player).hotbar
-                : Mappers.inventory.get(context.player).inventory;
+        InventorySlotComponent slotData = Mappers.inventorySlot.get(matchingSlot);
+        InventoryItemComponent draggedData = Mappers.inventoryItem.get(draggedItem);
+        PositionComponent draggedPos = Mappers.position.get(draggedItem);
 
-        InventorySlotComponent targetSlotInfo = Mappers.inventorySlot.get(matchingSlot);
+        Entity otherItem = InventoryUtils.getItemAt(getEngine(), slotData.inventoryId, slotData.slotX, slotData.slotY);
 
-        int originSlotX = draggedItemData.slotX;
-        int originSlotY = draggedItemData.slotY;
+        int originX = draggedData.slotX;
+        int originY = draggedData.slotY;
+        String originId = draggedData.inventoryId;
 
-        Entity itemAlreadyInSlot = getItemAlreadyInSlot(targetSlotInfo.slotX, targetSlotInfo.slotY, targetIsHotbar);
+        if (otherItem != null && !otherItem.equals(draggedItem)) {
+            InventoryItemComponent otherData = Mappers.inventoryItem.get(otherItem);
+            PositionComponent otherPos = Mappers.position.get(otherItem);
 
-        originInventory.removeSlotAt(originSlotX, originSlotY);
+            otherData.slotX = originX;
+            otherData.slotY = originY;
+            otherData.inventoryId = originId;
 
-        if (itemAlreadyInSlot != null) {
-            InventoryItemComponent otherItemData = Mappers.inventoryItem.get(itemAlreadyInSlot);
-            Vector3 otherPos = Mappers.position.get(itemAlreadyInSlot).position;
-
-            otherItemData.slotX = originSlotX;
-            otherItemData.slotY = originSlotY;
-
-            UiInventoryLayout originLayout = originIsHotbar
-                    ? InventoryUtils.getHotbarLayout(originInventory)
-                    : InventoryUtils.getInventoryLayout(originInventory);
-
-            Vector2 originPixel = InventoryUtils.getPixelPositionForSlot(originSlotX, originSlotY, originLayout);
-            otherPos.set(originPixel.x, originPixel.y, otherPos.z);
-
-            targetInventory.removeSlotAt(targetSlotInfo.slotX, targetSlotInfo.slotY);
-            originInventory.addOrReplaceSlot(
-                    new InventorySlot(otherItemData.type, otherItemData.quantity, originSlotX, originSlotY));
-
-            if (originIsHotbar && !Mappers.hotbarUi.has(itemAlreadyInSlot)) {
-                itemAlreadyInSlot.remove(InventoryUiComponent.class);
-                itemAlreadyInSlot.add(new HotbarUiComponent());
-                draggedItem.add(new ClickableComponent());
-            } else if (!originIsHotbar && !Mappers.inventoryUi.has(itemAlreadyInSlot)) {
-                itemAlreadyInSlot.remove(HotbarUiComponent.class);
-                draggedItem.remove(ClickableComponent.class);
-                itemAlreadyInSlot.add(new InventoryUiComponent());
-            }
-        }
-
-        draggedItemData.slotX = targetSlotInfo.slotX;
-        draggedItemData.slotY = targetSlotInfo.slotY;
-
-        UiInventoryLayout targetLayout = targetIsHotbar
-                ? InventoryUtils.getHotbarLayout(targetInventory)
-                : InventoryUtils.getInventoryLayout(targetInventory);
-
-        Vector2 targetPixelPos = InventoryUtils.getPixelPositionForSlot(targetSlotInfo.slotX, targetSlotInfo.slotY,
-                targetLayout);
-        draggedPos.set(targetPixelPos.x, targetPixelPos.y, draggedPos.z);
-
-        InventorySlot newSlot = new InventorySlot(draggedItemData.type, draggedItemData.quantity,
-                draggedItemData.slotX, draggedItemData.slotY);
-        targetInventory.addOrReplaceSlot(newSlot);
-
-        if (originIsHotbar != targetIsHotbar) {
-            Entity newEntity;
-
-            float size = Mappers.size.get(draggedItem).width;
-            if (targetIsHotbar) {
-                newEntity = InventoryFactory.createHotbarItem(
-                        newSlot,
-                        draggedPos.x, draggedPos.y, size);
-            } else {
-                newEntity = InventoryFactory.createInventoryItem(
-                        newSlot,
-                        draggedPos.x, draggedPos.y, size);
+            Entity originSlot = InventoryUtils.getSlot(getEngine(), originId, originX, originY);
+            if (originSlot != null && Mappers.position.has(originSlot)) {
+                Vector3 originPos = Mappers.position.get(originSlot).position;
+                otherPos.position.set(originPos.x, originPos.y, otherPos.position.z);
             }
 
-            getEngine().removeEntity(draggedItem);
-            getEngine().addEntity(newEntity);
+            context.eventBus.publish(new EntityUpdatedEvent(otherItem));
         }
+
+        draggedData.slotX = slotData.slotX;
+        draggedData.slotY = slotData.slotY;
+        draggedData.inventoryId = slotData.inventoryId;
+
+        if (Mappers.position.has(matchingSlot)) {
+            Vector3 slotPos = Mappers.position.get(matchingSlot).position;
+            draggedPos.position.set(slotPos.x, slotPos.y, draggedPos.position.z);
+        }
+
+        context.eventBus.publish(new EntityUpdatedEvent(draggedItem));
 
         return true;
     }
 
-    private Entity getItemAlreadyInSlot(int x, int y, boolean isHotbar) {
-        ImmutableArray<Entity> items = getEngine().getEntitiesFor(
-                Family.all(InventoryItemComponent.class, PositionComponent.class).get());
+    private void resetItemPosition(Entity item) {
+        InventoryItemComponent itemData = Mappers.inventoryItem.get(item);
+        PositionComponent pos = Mappers.position.get(item);
 
-        for (Entity item : items) {
-            if (Mappers.hotbarUi.has(item) != isHotbar)
-                continue;
+        Entity matchingSlot = InventoryUtils.getSlot(getEngine(), itemData.inventoryId, itemData.slotX, itemData.slotY);
 
-            InventoryItemComponent data = Mappers.inventoryItem.get(item);
-            if (data.slotX == x && data.slotY == y)
-                return item;
+        if (matchingSlot != null && Mappers.position.has(matchingSlot)) {
+            Vector3 slotPos = Mappers.position.get(matchingSlot).position;
+            pos.position.set(slotPos.x, slotPos.y, pos.position.z);
         }
-
-        return null;
-    }
-
-    private void resetItemPosition(Entity item, Inventory inventory, boolean isHotbar) {
-        InventoryItemComponent data = Mappers.inventoryItem.get(item);
-        Vector3 pos = Mappers.position.get(item).position;
-
-        UiInventoryLayout layout = isHotbar
-                ? InventoryUtils.getHotbarLayout(inventory)
-                : InventoryUtils.getInventoryLayout(inventory);
-
-        Vector2 originalPos = InventoryUtils.getPixelPositionForSlot(data.slotX, data.slotY, layout);
-        pos.set(originalPos.x, originalPos.y, pos.z);
     }
 }

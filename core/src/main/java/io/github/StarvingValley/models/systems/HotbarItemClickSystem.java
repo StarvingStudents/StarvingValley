@@ -8,8 +8,8 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
-import io.github.StarvingValley.models.components.SelectedHotbarItemComponent;
-import io.github.StarvingValley.models.components.SelectedHotbarSlotComponent;
+import io.github.StarvingValley.models.components.PartOfHotbarComponent;
+import io.github.StarvingValley.models.components.SelectedHotbarEntryComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.utils.BuildUtils;
@@ -18,59 +18,62 @@ import io.github.StarvingValley.utils.InventoryUtils;
 public class HotbarItemClickSystem extends EntitySystem {
     @Override
     public void update(float deltaTime) {
-        if (InventoryUtils.isInventoryOpen(getEngine())) {
+        if (InventoryUtils.isAnyInventoryOpen(getEngine())) {
             return;
         }
 
-        ImmutableArray<Entity> entities = getEngine()
-                .getEntitiesFor(Family.all(ClickedComponent.class, InventoryItemComponent.class).get());
+        ImmutableArray<Entity> clickedItems = getEngine().getEntitiesFor(
+                Family.all(ClickedComponent.class, InventoryItemComponent.class, PartOfHotbarComponent.class).get());
 
-        for (Entity entity : entities) {
-            InventoryItemComponent itemData = Mappers.inventoryItem.get(entity);
+        for (Entity item : clickedItems) {
+            InventoryItemComponent itemData = Mappers.inventoryItem.get(item);
 
-            Entity slot = InventoryUtils.getSlotEntity(getEngine(), itemData.slotX, itemData.slotY, true);
+            Entity slot = InventoryUtils.getSlot(
+                    getEngine(),
+                    itemData.inventoryId,
+                    itemData.slotX,
+                    itemData.slotY);
 
-            boolean disabled = Mappers.selectedHotbarItem.has(entity);
+            boolean wasSelected = Mappers.selectedHotbarItem.has(item);
 
-            if (disabled) {
-                entity.remove(SelectedHotbarItemComponent.class);
-                if (slot != null)
-                    slot.remove(SelectedHotbarSlotComponent.class);
-
+            if (wasSelected) {
+                item.remove(SelectedHotbarEntryComponent.class);
+                slot.remove(SelectedHotbarEntryComponent.class);
                 BuildUtils.disableBuildPreview(getEngine());
             } else {
                 InventoryUtils.unselectSelectedHotbarItems(getEngine());
 
-                entity.add(new SelectedHotbarItemComponent());
-                if (slot != null)
-                    slot.add(new SelectedHotbarSlotComponent());
+                item.add(new SelectedHotbarEntryComponent());
+                slot.add(new SelectedHotbarEntryComponent());
 
-                triggerBuildMode(entity);
+                triggerBuildMode(item);
             }
 
-            updateSlotTexture(slot, disabled);
+            if (slot != null) {
+                updateSlotTexture(slot, !wasSelected);
+            }
         }
     }
 
-    private void triggerBuildMode(Entity entity) {
-        InventoryItemComponent inventoryItem = Mappers.inventoryItem.get(entity);
-        if (inventoryItem == null)
+    private void triggerBuildMode(Entity itemEntity) {
+        InventoryItemComponent itemData = Mappers.inventoryItem.get(itemEntity);
+        if (itemData == null)
             return;
 
-        Entity item = EntityFactoryRegistry.create(inventoryItem.type);
+        Entity item = EntityFactoryRegistry.create(itemData.type);
         if (!Mappers.buildable.has(item))
             return;
 
         BuildUtils.enableBuildPreview(
-                BuildUtils.getBuildsTypeFromType(inventoryItem.type), inventoryItem.type, getEngine());
+                BuildUtils.getBuildsTypeFromType(itemData.type),
+                itemData.type,
+                getEngine());
     }
 
-    private void updateSlotTexture(Entity slot, boolean disabled) {
-        SpriteComponent slotSprite = Mappers.sprite.get(slot);
-        if (disabled) {
-            slotSprite.setTexturePath("inventory_slot.png");
-        } else {
-            slotSprite.setTexturePath("inventory_slot_highlight.png");
+    private void updateSlotTexture(Entity slot, boolean selected) {
+        SpriteComponent sprite = Mappers.sprite.get(slot);
+        if (sprite != null) {
+            sprite.setTexturePath(selected ? "inventory_slot_highlight.png" : "inventory_slot.png");
         }
     }
 }

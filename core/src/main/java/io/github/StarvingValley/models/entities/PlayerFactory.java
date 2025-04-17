@@ -24,6 +24,7 @@ import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
+import io.github.StarvingValley.models.types.InventoryInfo;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -48,8 +49,8 @@ public class PlayerFactory {
       entity.add(new PlayerComponent());
       entity.add(new ActiveWorldEntityComponent());
       entity.add(new EconomyComponent(Config.STARTING_BALANCE));
-      entity.add(new InventoryComponent());
-      entity.add(new HotbarComponent());
+      entity.add(new InventoryComponent(new InventoryInfo(6, 3)));
+      entity.add(new HotbarComponent(new InventoryInfo(6, 1)));
       entity.add(new DamageComponent(Config.DEFAULT_DAMAGE_AMOUNT, Config.DEFAULT_ATTACK_RANGE, Config.DEFAULT_ATTACK_SPEED));
       entity.add(new CurrentScreenComponent(ScreenType.FARM));
 
