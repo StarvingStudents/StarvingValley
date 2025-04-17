@@ -23,6 +23,7 @@ import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
 import io.github.StarvingValley.models.components.MapRenderComponent;
+import io.github.StarvingValley.models.components.PickupComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.PulseAlphaComponent;
@@ -106,4 +107,5 @@ public class Mappers {
         public static final ComponentMapper<EconomyComponent> economy = ComponentMapper
                         .getFor(EconomyComponent.class);
         public static final ComponentMapper<DamageComponent> damage = ComponentMapper.getFor(DamageComponent.class);
+        public static final ComponentMapper<PickupComponent> pickup = ComponentMapper.getFor(PickupComponent.class);
 }

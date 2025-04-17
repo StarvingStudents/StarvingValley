@@ -19,69 +19,55 @@ import io.github.StarvingValley.models.events.EntityRemovedEvent;
 import io.github.StarvingValley.models.events.ItemDroppedEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemDrop;
+import io.github.StarvingValley.models.components.PickupComponent;
+import io.github.StarvingValley.models.events.ItemPickupAttemptEvent;
+import io.github.StarvingValley.models.utils.PickupUtils;
 
 public class HarvestingSystem extends EntitySystem {
-  private GameContext context;
+    private GameContext context;
+    private PickupSystem pickupSystem;
 
-  public HarvestingSystem(GameContext context) {
-    this.context = context;
-  }
-
-  @Override
-  public void update(float deltaTime) {
-    Engine engine = getEngine();
-
-    ImmutableArray<Entity> players = engine.getEntitiesFor(Family.all(PlayerComponent.class).get());
-    if (players.size() == 0) {
-      return;
+    public HarvestingSystem(GameContext context) {
+        this.context = context;
     }
 
-    Entity player = players.first();
-    PositionComponent playerPos = Mappers.position.get(player);
-
-    ImmutableArray<Entity> clickedCrops = engine
-        .getEntitiesFor(Family.all(ClickedComponent.class, GrowthStageComponent.class, TimeToGrowComponent.class,
-            PositionComponent.class, HarvestingComponent.class, ActiveWorldEntityComponent.class).get());
-
-    for (Entity crop : clickedCrops) {
-      GrowthStageComponent growthStageComponent = Mappers.growthStage.get(crop);
-      TimeToGrowComponent timeToGrowComponent = Mappers.timeToGrow.get(crop);
-      PositionComponent cropPos = Mappers.position.get(crop);
-      HarvestingComponent harvestingComponent = Mappers.harvesting.get(crop);
-
-      if (growthStageComponent.growthStage == 2
-          && timeToGrowComponent.isMature()
-          && harvestingComponent.canHarvest
-          && isPlayerNearCrop(playerPos, cropPos)) {
-
-        harvestCrop(crop, harvestingComponent);
-      }
-    }
-  }
-
-  private boolean isPlayerNearCrop(PositionComponent playerPos, PositionComponent cropPos) {
-    float distance = playerPos.position.dst(cropPos.position);
-    return distance < 100.03f; // need to test what works best, kinda wonky
-  }
-
-  private void harvestCrop(Entity crop, HarvestingComponent harvestingComponent) {
-    Engine engine = getEngine();
-
-    context.eventBus.publish(new EntityRemovedEvent(crop));
-
-    // TODO: Should this be handled by pickupsystem? This could just check if crop
-    // can be harvested and publish an event and pickup removes the entity and gives
-    // player the drops
-    DropComponent drops = Mappers.drop.get(crop);
-    if (drops != null) {
-      for (ItemDrop drop : drops.drops) {
-        context.eventBus.publish(new ItemDroppedEvent(drop));
-        System.out.println("Dropped " + drop.count + " " + drop.type);
-      }
+    @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        pickupSystem = engine.getSystem(PickupSystem.class);
     }
 
-    engine.removeEntity(crop);
+    @Override
+    public void update(float deltaTime) {
+        Engine engine = getEngine();
 
-    System.out.println("Crop harvested");
-  }
+        ImmutableArray<Entity> players = engine.getEntitiesFor(Family.all(PlayerComponent.class).get());
+        if (players.size() == 0) {
+            return;
+        }
+
+        Entity player = players.first();
+
+        ImmutableArray<Entity> clickedCrops = engine
+                .getEntitiesFor(Family.all(ClickedComponent.class, GrowthStageComponent.class, TimeToGrowComponent.class,
+                        PositionComponent.class, HarvestingComponent.class, ActiveWorldEntityComponent.class).get());
+
+        for (Entity crop : clickedCrops) {
+            GrowthStageComponent growthStageComponent = Mappers.growthStage.get(crop);
+            TimeToGrowComponent timeToGrowComponent = Mappers.timeToGrow.get(crop);
+            HarvestingComponent harvestingComponent = Mappers.harvesting.get(crop);
+
+            if (growthStageComponent.growthStage == 2
+                    && timeToGrowComponent.isMature()
+                    && harvestingComponent.canHarvest
+                    && PickupUtils.isWithinPickupRange(player, crop)) {
+                
+                // Add PickupComponent to make crop pickup-able
+                crop.add(new PickupComponent());
+                
+                // Let PickupSystem handle the pickup
+                context.eventBus.publish(new ItemPickupAttemptEvent(player, crop));
+            }
+        }
+    }
 }

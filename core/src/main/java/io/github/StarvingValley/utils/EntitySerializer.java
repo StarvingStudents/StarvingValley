@@ -39,6 +39,7 @@ import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.config.Config;
+import io.github.StarvingValley.models.components.PickupComponent;
 
 public class EntitySerializer {
 
@@ -165,6 +166,13 @@ public class EntitySerializer {
       dto.damageAmount = damage.damageAmount;
       dto.attackRange = damage.attackRange;
       dto.attackSpeed = damage.attackSpeed;
+    }
+
+    // PickupComponent
+    PickupComponent pickupComponent = Mappers.pickup.get(entity);
+    if (pickupComponent != null) {
+      dto.isPickupable = true;
+      dto.pickupRange = pickupComponent.pickupRange;
     }
 
     dto.isCollidable = Mappers.collidable.has(entity);
@@ -302,6 +310,13 @@ public class EntitySerializer {
     // Damage
     if (dto.damageAmount != null && dto.attackRange != null && dto.attackSpeed != null) {
       entity.add(new DamageComponent(dto.damageAmount, dto.attackRange, dto.attackSpeed));
+    }
+
+    // PickupComponent
+    if (dto.isPickupable != null && dto.isPickupable) {
+      PickupComponent pickupComponent = new PickupComponent();
+      pickupComponent.pickupRange = dto.pickupRange != null ? dto.pickupRange : 1.5f;
+      entity.add(pickupComponent);
     }
 
     // Boolean tags

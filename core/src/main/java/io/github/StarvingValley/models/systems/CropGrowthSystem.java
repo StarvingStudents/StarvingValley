@@ -8,10 +8,12 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
+import io.github.StarvingValley.models.components.PickupComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
+import io.github.StarvingValley.models.events.ItemBecamePickupableEvent;
 import io.github.StarvingValley.models.types.GameContext;
 
 public class CropGrowthSystem extends IteratingSystem {
@@ -50,7 +52,11 @@ public class CropGrowthSystem extends IteratingSystem {
     }
 
     if (growthTime.growthProgress >= growthTime.timeToGrow) {
-      growthStage.growthStage = 2; // mature
+      if (growthStage.growthStage != 2) { // Only add pickup component when first reaching maturity
+        growthStage.growthStage = 2; // mature
+        cropEntity.add(new PickupComponent());
+        context.eventBus.publish(new ItemBecamePickupableEvent(cropEntity));
+      }
     } else if (growthTime.growthProgress >= growthTime.timeToGrow * 0.50) {
       growthStage.growthStage = 1; // growing
     } else {

@@ -43,6 +43,7 @@ import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.MapUtils;
 //import io.github.StarvingValley.models.systems.DestroySystem;
 import io.github.StarvingValley.models.components.PositionComponent;
+import io.github.StarvingValley.models.systems.PickupSystem;
 
 public class FarmController {
 
@@ -110,6 +111,7 @@ public class FarmController {
         engine.addSystem(new ClickedCleanupSystem());
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new ActionAnimationSystem(gameContext));
+        engine.addSystem(new PickupSystem(gameContext));
 
         //player = PlayerFactory.createPlayer(10, 10, 1f, 1f, 3.5f, assetManager, camera);
         //engine.addEntity(player);

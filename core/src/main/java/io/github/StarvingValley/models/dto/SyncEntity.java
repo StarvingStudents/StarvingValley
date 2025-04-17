@@ -70,6 +70,10 @@ public class SyncEntity {
     public Float attackRange;
     public Float attackSpeed;
 
+    // Pickup related fields
+    public Boolean isPickupable;
+    public Float pickupRange;
+
     // Required: no-arg constructor for Firebase
     public SyncEntity() {
     }
