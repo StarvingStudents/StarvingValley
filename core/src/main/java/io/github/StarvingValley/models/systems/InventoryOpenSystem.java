@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.components.InventoryToggleButtonComponent
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.types.InventoryInfo;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.InventoryUtils;
 
@@ -29,16 +30,14 @@ public class InventoryOpenSystem extends EntitySystem {
         List<InventoryCloseEvent> closeEvents = context.eventBus.getEvents(InventoryCloseEvent.class);
 
         for (InventoryOpenEvent openEvent : openEvents) {
-            if (InventoryUtils.isInventoryOpen(getEngine(), openEvent.inventory.inventoryId))
+            if (openEvent.inventory.isOpen)
                 continue;
 
-            InventoryUtils.openInventory(getEngine(), openEvent.inventory, openEvent.isHotbar);
-            InventoryUtils.unselectSelectedHotbarItems(getEngine());
-            BuildUtils.disableBuildPreview(getEngine());
+            open(openEvent.inventory);
         }
 
         for (InventoryCloseEvent closeEvent : closeEvents) {
-            InventoryUtils.closeInventory(getEngine(), closeEvent.inventory);
+            close(closeEvent.inventory);
         }
 
         ImmutableArray<Entity> clickedToggleButtons = getEngine()
@@ -46,11 +45,21 @@ public class InventoryOpenSystem extends EntitySystem {
 
         for (Entity clickedToggleButton : clickedToggleButtons) {
             InventoryToggleButtonComponent toggle = Mappers.inventoryToggleButton.get(clickedToggleButton);
-            if (InventoryUtils.isInventoryOpen(getEngine(), toggle.inventoryToToggle.inventoryId)) {
-                context.eventBus.publish(new InventoryCloseEvent(toggle.inventoryToToggle));
+            if (toggle.inventoryToToggle.isOpen) {
+                close(toggle.inventoryToToggle);
             } else {
-                context.eventBus.publish(new InventoryOpenEvent(toggle.inventoryToToggle, toggle.inventoryToToggle.isHotbar));
+                open(toggle.inventoryToToggle);
             }
         }
+    }
+
+    private void close(InventoryInfo inventory) {
+        InventoryUtils.closeInventory(getEngine(), inventory);
+    }
+
+    private void open(InventoryInfo inventory) {
+        InventoryUtils.openInventory(getEngine(), inventory, inventory.inventoryType);
+        InventoryUtils.unselectSelectedHotbarItems(getEngine());
+        BuildUtils.disableBuildPreview(getEngine());
     }
 }

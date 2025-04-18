@@ -12,6 +12,7 @@ import io.github.StarvingValley.models.components.DragEndComponent;
 import io.github.StarvingValley.models.components.DraggingComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySlotComponent;
+import io.github.StarvingValley.models.components.PartOfHotbarComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
@@ -81,6 +82,9 @@ public class InventoryDragSystem extends EntitySystem {
         int originY = draggedData.slotY;
         String originId = draggedData.inventoryId;
 
+        boolean originIsAHotbar = InventoryUtils.isHotbar(getEngine(), originId);
+        boolean targetIsAHotbar = InventoryUtils.isHotbar(getEngine(), slotData.inventoryId);
+
         if (otherItem != null && !otherItem.equals(draggedItem)) {
             InventoryItemComponent otherData = Mappers.inventoryItem.get(otherItem);
             PositionComponent otherPos = Mappers.position.get(otherItem);
@@ -92,7 +96,8 @@ public class InventoryDragSystem extends EntitySystem {
             Entity originSlot = InventoryUtils.getSlot(getEngine(), originId, originX, originY);
             if (originSlot != null && Mappers.position.has(originSlot)) {
                 Vector3 originPos = Mappers.position.get(originSlot).position;
-                otherPos.position.set(originPos.x, originPos.y, otherPos.position.z);
+                Vector2 originPosForItem = InventoryUtils.applyItemSizeToSlotPosition(originPos.x, originPos.y);
+                otherPos.position.set(originPosForItem.x, originPosForItem.y, otherPos.position.z);
             }
 
             context.eventBus.publish(new EntityUpdatedEvent(otherItem));
@@ -104,10 +109,18 @@ public class InventoryDragSystem extends EntitySystem {
 
         if (Mappers.position.has(matchingSlot)) {
             Vector3 slotPos = Mappers.position.get(matchingSlot).position;
-            draggedPos.position.set(slotPos.x, slotPos.y, draggedPos.position.z);
+            Vector2 itemPos = InventoryUtils.applyItemSizeToSlotPosition(slotPos.x, slotPos.y);
+            draggedPos.position.set(itemPos.x, itemPos.y, draggedPos.position.z);
         }
 
         context.eventBus.publish(new EntityUpdatedEvent(draggedItem));
+
+        if (originIsAHotbar != targetIsAHotbar) {
+            updatePartOfHotbarComponent(draggedItem, slotData.inventoryId, targetIsAHotbar);
+            if (otherItem != null) {
+                updatePartOfHotbarComponent(otherItem, draggedData.inventoryId, originIsAHotbar);
+            }
+        }
 
         return true;
     }
@@ -120,7 +133,18 @@ public class InventoryDragSystem extends EntitySystem {
 
         if (matchingSlot != null && Mappers.position.has(matchingSlot)) {
             Vector3 slotPos = Mappers.position.get(matchingSlot).position;
-            pos.position.set(slotPos.x, slotPos.y, pos.position.z);
+            Vector2 itemPos = InventoryUtils.applyItemSizeToSlotPosition(slotPos.x, slotPos.y);
+            pos.position.set(itemPos.x, itemPos.y, pos.position.z);
+        }
+    }
+
+    private void updatePartOfHotbarComponent(Entity item, String newInventoryId, boolean newInventoryIsHotbar) {
+        boolean hasComponent = Mappers.partOfHotbar.has(item);
+
+        if (newInventoryIsHotbar && !hasComponent) {
+            item.add(new PartOfHotbarComponent());
+        } else if (!newInventoryIsHotbar && hasComponent) {
+            item.remove(PartOfHotbarComponent.class);
         }
     }
 }

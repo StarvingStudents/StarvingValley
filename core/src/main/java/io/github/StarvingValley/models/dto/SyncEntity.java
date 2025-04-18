@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
 import io.github.StarvingValley.models.types.InventoryInfo;
+import io.github.StarvingValley.models.types.InventoryType;
 import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
@@ -78,7 +79,8 @@ public class SyncEntity {
     public String inventoryItemInventoryId;
 
     public Boolean isHudEntity;
-    public Boolean isHotbarEntity;
+    public InventoryType inventoryTypeEntity;
+    public int tradeablePrice;
 
     public String text;
     public Float textOffsetX = 0f;

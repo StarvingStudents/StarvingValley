@@ -51,6 +51,7 @@ import io.github.StarvingValley.models.components.TextComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.models.components.TradeableComponent;
 import io.github.StarvingValley.models.components.TradingComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
@@ -134,6 +135,8 @@ public class Mappers {
                         .getFor(FoodItemComponent.class);
         public static final ComponentMapper<TradingComponent> trading = ComponentMapper
                         .getFor(TradingComponent.class);
+        public static final ComponentMapper<TradeableComponent> tradeable = ComponentMapper
+                        .getFor(TradeableComponent.class);
         public static final ComponentMapper<EconomyComponent> economy = ComponentMapper
                         .getFor(EconomyComponent.class);
         public static final ComponentMapper<InventoryComponent> inventory = ComponentMapper
@@ -153,5 +156,4 @@ public class Mappers {
                         .getFor(PartOfHotbarComponent.class);
         public static final ComponentMapper<InventoryToggleButtonComponent> inventoryToggleButton = ComponentMapper
                         .getFor(InventoryToggleButtonComponent.class);
-
 }

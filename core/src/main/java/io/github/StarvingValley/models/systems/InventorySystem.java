@@ -37,23 +37,23 @@ public class InventorySystem extends EntitySystem {
 
         if (hotbar != null && InventoryUtils.hasStackOfType(getEngine(), hotbar.inventoryId, event.itemType)) {
             added = InventoryUtils.addItemToInventory(getEngine(), hotbar, event.itemType, event.quantity,
-                    context.eventBus);
+                    context.eventBus) != null;
         }
 
         if (!added && inventory != null
                 && InventoryUtils.hasStackOfType(getEngine(), inventory.inventoryId, event.itemType)) {
             added = InventoryUtils.addItemToInventory(getEngine(), inventory, event.itemType, event.quantity,
-                    context.eventBus);
+                    context.eventBus) != null;
         }
 
         if (!added && hotbar != null) {
             added = InventoryUtils.addItemToInventory(getEngine(), hotbar, event.itemType, event.quantity,
-                    context.eventBus);
+                    context.eventBus) != null;
         }
 
         if (!added && inventory != null) {
             added = InventoryUtils.addItemToInventory(getEngine(), inventory, event.itemType, event.quantity,
-                    context.eventBus);
+                    context.eventBus) != null;
         }
     }
 

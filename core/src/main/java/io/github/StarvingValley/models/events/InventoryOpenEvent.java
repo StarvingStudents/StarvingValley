@@ -5,10 +5,8 @@ import io.github.StarvingValley.models.types.InventoryInfo;
 
 public class InventoryOpenEvent implements Event {
     public InventoryInfo inventory;
-    public boolean isHotbar;
 
-    public InventoryOpenEvent(InventoryInfo inventory, boolean isHotbar) {
+    public InventoryOpenEvent(InventoryInfo inventory) {
         this.inventory = inventory;
-        this.isHotbar = isHotbar;
     }
 }

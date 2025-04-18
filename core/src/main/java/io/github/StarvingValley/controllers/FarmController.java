@@ -52,6 +52,7 @@ import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.RespawnSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
+import io.github.StarvingValley.models.systems.TraderClickSystem;
 import io.github.StarvingValley.models.systems.TradingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
@@ -107,6 +108,7 @@ public class FarmController {
         engine.addEntity(map);
 
         engine.addSystem(new InputSystem(gameContext));
+        engine.addSystem(new TradingSystem(gameContext));
         engine.addSystem(new InventoryOpenSystem(gameContext));
         engine.addSystem(new InventoryDragSystem(gameContext));
         engine.addSystem(new HotbarItemClickSystem());
@@ -123,7 +125,7 @@ public class FarmController {
         engine.addSystem(new CameraSystem());
         engine.addSystem(new CropGrowthSystem(gameContext));
         engine.addSystem(new HarvestingSystem(gameContext));
-        engine.addSystem(new TradingSystem(gameContext));
+        engine.addSystem(new TraderClickSystem(gameContext));
         engine.addSystem(new RenderSystem(gameContext));
         engine.addSystem(new BuildGridRenderSystem(gameContext));
         engine.addSystem(new HungerSystem(gameContext));
@@ -186,6 +188,10 @@ public class FarmController {
 
     public GameContext getGameContext() {
         return gameContext;
+    }
+
+    public EventBus getEventBus() {
+        return gameContext.eventBus;
     }
 
     public void dispose() {

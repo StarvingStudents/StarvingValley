@@ -42,10 +42,12 @@ import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TextComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.models.components.TradeableComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.types.InventoryInfo;
+import io.github.StarvingValley.models.types.InventoryType;
 
 public class EntitySerializer {
 
@@ -204,6 +206,13 @@ public class EntitySerializer {
       dto.textOffsetX = text.offsetX;
       dto.textOffsetY = text.offsetY;
     }
+
+    // Inventory type entity
+    if (Mappers.partOfHotbar.has(entity)) {
+      dto.inventoryTypeEntity = InventoryType.HOTBAR;
+    } else if (Mappers.tradeable.has(entity)) {
+      dto.inventoryTypeEntity = InventoryType.TRADING;
+    }
     
     dto.isCollidable = Mappers.collidable.has(entity);
     dto.isEnvironmentCollidable = Mappers.environmentCollider.has(entity);
@@ -216,7 +225,6 @@ public class EntitySerializer {
     dto.isClickable = Mappers.clickable.has(entity);
     dto.isActiveWorldEntity = Mappers.activeWorldEntity.has(entity);
     dto.isHudEntity = Mappers.hud.has(entity);
-    dto.isHotbarEntity = Mappers.partOfHotbar.has(entity);
 
     return dto;
   }
@@ -349,14 +357,15 @@ public class EntitySerializer {
       entity.add(
           new InventoryComponent(
               new InventoryInfo(
-                  dto.inventory.inventoryId, dto.inventory.width, dto.inventory.height)));
+                  dto.inventory.inventoryId, dto.inventory.width, dto.inventory.height, dto.inventory.inventoryType)));
     }
 
     // Hotbar
     if (dto.hotbar != null) {
       entity.add(
           new HotbarComponent(
-              new InventoryInfo(dto.hotbar.inventoryId, dto.hotbar.width, dto.hotbar.height)));
+              new InventoryInfo(dto.hotbar.inventoryId, dto.hotbar.width, dto.hotbar.height,
+                  dto.hotbar.inventoryType)));
     }
 
     // Inventory item
@@ -377,6 +386,15 @@ public class EntitySerializer {
       entity.add(new TextComponent(dto.text, dto.textOffsetX, dto.textOffsetY));
     }
 
+    // Inventory type entity
+    if (dto.inventoryTypeEntity != null) {
+      if (dto.inventoryTypeEntity == InventoryType.HOTBAR) {
+        entity.add(new PartOfHotbarComponent());
+      } else if (dto.inventoryTypeEntity == InventoryType.TRADING) {
+        entity.add(new TradeableComponent(dto.tradeablePrice));
+      }
+    }
+
     // Boolean tags
     if (Boolean.TRUE.equals(dto.isCollidable)) entity.add(new CollidableComponent());
     if (Boolean.TRUE.equals(dto.isEnvironmentCollidable))
@@ -389,8 +407,8 @@ public class EntitySerializer {
     if (Boolean.TRUE.equals(dto.hasVelocity)) entity.add(new VelocityComponent());
     if (Boolean.TRUE.equals(dto.isClickable)) entity.add(new ClickableComponent());
     if (Boolean.TRUE.equals(dto.isActiveWorldEntity)) entity.add(new ActiveWorldEntityComponent());
-    if (Boolean.TRUE.equals(dto.isHudEntity)) entity.add(new HudComponent());
-    if (Boolean.TRUE.equals(dto.isHotbarEntity)) entity.add(new PartOfHotbarComponent());
+    if (Boolean.TRUE.equals(dto.isHudEntity))
+      entity.add(new HudComponent());
 
     return entity;
   }

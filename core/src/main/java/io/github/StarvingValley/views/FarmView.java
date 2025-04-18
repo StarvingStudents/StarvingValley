@@ -1,5 +1,7 @@
 package io.github.StarvingValley.views;
 
+import java.util.List;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -24,7 +26,8 @@ import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
-import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.types.InventoryType;
+import io.github.StarvingValley.models.types.ItemTrade;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
@@ -40,7 +43,6 @@ public class FarmView extends ScreenAdapter {
   private EventBus eventBus;
   private FarmController controller;
   private Engine engine;
-  private GameContext context;
   private EventDebugOverlay eventDebugOverlay;
 
   private GameMenuController gameMenuController;
@@ -109,10 +111,10 @@ public class FarmView extends ScreenAdapter {
             prefabType = PrefabType.SOIL;
             break;
           case Input.Keys.I:
-            if (InventoryUtils.isInventoryOpen(engine, inventory.info.inventoryId)) {
+            if (inventory.info.isOpen) {
               eventBus.publish(new InventoryCloseEvent(inventory.info));
             } else {
-              eventBus.publish(new InventoryOpenEvent(inventory.info, false));
+              eventBus.publish(new InventoryOpenEvent(inventory.info));
             }
             break;
         }
@@ -134,15 +136,18 @@ public class FarmView extends ScreenAdapter {
   // TODO: Maybe this shouldn't be in the view, but then we need a way to either
   // know player is initalized inside farmcontroller, or add a playerloaded
   // callback
+  boolean addedHotbar = false;
   private void showHotbar() {
     if (controller.getPlayer() == null)
       return;
 
     HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
     InventoryComponent inventory = Mappers.inventory.get(controller.getPlayer());
-    if (hotbar != null && !InventoryUtils.isInventoryOpen(engine, hotbar.info.inventoryId)) {
-      eventBus.publish(new InventoryOpenEvent(hotbar.info, true));
+    if (hotbar != null && !hotbar.info.isOpen && !addedHotbar) {
+      hotbar.info.inventoryType = InventoryType.HOTBAR;
+      eventBus.publish(new InventoryOpenEvent(hotbar.info));
       InventoryUtils.addInventoryToggleButtonToEngine(engine, hotbar.info, inventory.info);
+      addedHotbar = true;
     }
   }
 
@@ -161,14 +166,10 @@ public class FarmView extends ScreenAdapter {
     Gdx.input.setInputProcessor(multiplexer);
 
     // Temp until we have villageview
-    // Entity trader = TraderFactory.create(30, 13);
-    // engine.addEntity(trader);
-
     engine.addEntity(HUDButtonFactory.createEatingButton());
     engine.addEntity(HUDButtonFactory.createFarmToWorldMapButton());
-    engine.addEntity(TraderFactory.create(30, 13, PrefabType.SOIL, 0));
-    engine.addEntity(TraderFactory.create(32, 13, PrefabType.WHEAT_SEEDS, 0));
-    engine.addEntity(TraderFactory.create(34, 13, PrefabType.BEETROOT_SEEDS, 0));
+    TraderFactory.addTraderToEngine(engine, controller.getEventBus(), 30, 13, List.of(new ItemTrade(PrefabType.SOIL, 4),
+        new ItemTrade(PrefabType.WHEAT_SEEDS, 15), new ItemTrade(PrefabType.BEETROOT_SEEDS, 20)));
   }
 
   @Override
