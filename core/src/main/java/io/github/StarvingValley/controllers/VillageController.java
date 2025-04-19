@@ -89,7 +89,7 @@ public class VillageController {
         engine.addSystem(new InputSystem(gameContext));
         engine.addSystem(new MapRenderSystem());
         engine.addSystem(new VelocitySystem());
-        engine.addSystem(new AnimationSystem(gameContext));
+        engine.addSystem(new AnimationSystem());
         engine.addSystem(new EnvironmentCollisionSystem());
         engine.addSystem(new MovementSystem(gameContext));
         engine.addSystem(new CameraSystem());

@@ -88,7 +88,7 @@ public class VisitFarmController {
     engine.addSystem(new MapRenderSystem());
     engine.addSystem(new AlphaPulseSystem());
     engine.addSystem(new VelocitySystem());
-    engine.addSystem(new AnimationSystem(gameContext));
+    engine.addSystem(new AnimationSystem());
     engine.addSystem(new EnvironmentCollisionSystem());
     engine.addSystem(new MovementSystem(gameContext));
     engine.addSystem(new DurabilityRenderSystem(gameContext));
