@@ -1,12 +1,13 @@
- <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="353">
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="356">
  <tileset firstgid="1" source="Water.tsx"/>
  <tileset firstgid="5" source="Hills.tsx"/>
  <tileset firstgid="82" source="Wood_Bridge.tsx"/>
  <tileset firstgid="97" source="Basic_Grass_Biom_things.tsx"/>
  <tileset firstgid="142" source="hierba.tsx"/>
  <tileset firstgid="219" source="Paths.tsx"/>
- <tileset firstgid="388" source="House.tsx"/>
+ <tileset firstgid="235" source="House.tsx"/>
+ <tileset firstgid="251" source="town_sign.tsx"/>
  <layer id="2" name="base" width="40" height="30">
   <data encoding="base64" compression="zlib">
    eJzt0LENACAMBLFEYv+ZGeHLEOHC/em6qnqBE+jTp+/dvtQ63ZQ+TncBAAD87gIhoQVi
@@ -24,10 +25,10 @@
  </layer>
  <layer id="4" name="decoración" width="40" height="30">
   <data encoding="base64" compression="zlib">
-   eJztWNlOwzAQ3HwqVyBc4om2qH2AAOVoufpbrdQnygfwAl/BLNlVXBdoFNtpkTzSyLK1sccT21mH6H/hbNUCfsEJuA3uSP080DiXCdEVeA32k7J92Xg5eAQeU6HVF8w5M26g6Ra8A+8NfV2wB46N2A2rrxCe6ZxTcAIOoGkIPoCPyXwsa8uN+n4APTbUv4nwCZqewRdwlPz9bBOw/WsK9tpYN4RYG1Mq1iDvz4yK/bIqvIMfS/jpOMYmuOXYhwn2T71jH139OwAPXUVFRERERHxDz/yZhz5CQM/8FtXXGPq7wd+2kB74gKsHofM/1ztQ3fyvynvbk9LWyPn3m1H6BPvdpurvje9zuVV/pXJ+qSeNug7Yb87nLmjRw84P8S2az/8yadP5ja34umBdeofLpD8doy16uW1XdHJ8Ks9W+Zfhes/gNaR3uJn0pzmy6tYxelZ7E5hSmbdr2bV0s4enEt8x2nmffAEAjVpW
+   eJztmMlOwzAQhudV2QJhEyfaovYAeb1W6onyAFzY950D/5AZxQygRLGdguRf+hR55Nq/J04yLtH/0t68DfyiHbAMVqS9H2meM3AOLsClE6+brwBbYJtKr6Hkrpl1Ba7BDbh14kMwAmMntmDGipEzXXMGJuAO3IMH8Gj6srfCaa9H8GOl+ZsIT+AZvIDXDuavk81fV7J7468p9N54A+9U7kF+PnMqn5d56Ric1HDqOcciWPIcw9WUqtxxHn3ztwE2fU0lJSUlJX1K3/mzAGPEkL7ze9TeY+zvBn/bYuYghHxzELv+8z0Dta3/mty3Nblaj1x/HznXkOJ896n5fePzXGHah1StLwvkUfcB55vruQP6nsPBD/179LX+yyWm6xub/m3FvvQMl8t4Okdf/HJsVXxy/0x+2+S/DN9zBu8hPcPNZDytkdW3zjEy8S40papu1+vQ+OYc7kr/gRPn5+QD6BBh3Q==
   </data>
  </layer>
- <objectgroup id="6" name="colisiones" visible="0">
+ <objectgroup id="6" name="colisiones">
   <object id="5" x="389.75" y="113.5" width="76" height="14.5"/>
   <object id="6" x="495" y="115.25" width="31" height="12.25"/>
   <object id="7" x="523.75" y="33.5" width="2.75" height="82.5"/>
@@ -195,6 +196,8 @@
   <object id="175" x="637.5" y="314.5" width="2" height="127"/>
   <object id="176" x="637.5" y="441.5" width="2.25" height="38.5"/>
   <object id="177" x="338.667" y="478" width="300.667" height="3.33333"/>
+  <object id="353" x="551.625" y="141.875" width="2.625" height="2"/>
+  <object id="354" x="564" y="141.875" width="2.125" height="2.125"/>
  </objectgroup>
  <objectgroup id="7" name="nonplacement">
   <object id="178" x="394.333" y="101.333" width="14" height="7.33333"/>
@@ -368,5 +371,6 @@
   <object id="350" x="56" y="229.333" width="62.3333" height="5.66667"/>
   <object id="351" x="26.6667" y="243" width="18.3333" height="4.66667"/>
   <object id="352" x="23" y="251.333" width="4.33333" height="96.3333"/>
+  <object id="355" x="545.875" y="129.5" width="28.25" height="15.125"/>
  </objectgroup>
 </map>
