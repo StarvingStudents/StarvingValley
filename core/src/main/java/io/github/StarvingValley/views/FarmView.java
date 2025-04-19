@@ -172,10 +172,9 @@ public class FarmView extends ScreenAdapter {
     Gdx.input.setInputProcessor(multiplexer);
 
     // Temp until we have villageview
-    engine.addEntity(HudFactory.createEatingButton());
-    engine.addEntity(HudFactory.createFarmToWorldMapButton());
-    TraderFactory.addTraderToEngine(engine, controller.getEventBus(), 30, 13, List.of(new ItemTrade(PrefabType.SOIL, 4),
-        new ItemTrade(PrefabType.WHEAT_SEEDS, 15), new ItemTrade(PrefabType.BEETROOT_SEEDS, 20)));
+    engine.addEntity(HUDButtonFactory.createEatingButton());
+    engine.addEntity(HUDButtonFactory.createFarmToWorldMapButton());
+
 
     eventBus.publish(new NotificationEvent("Press f to start farming mode."));
     eventBus.publish(new NotificationEvent("Press c to plant beetroots."));

@@ -18,11 +18,16 @@ import io.github.StarvingValley.controllers.VillageController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.components.HotbarComponent;
+import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.InventoryOpenEvent;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.types.InventoryType;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
+import io.github.StarvingValley.utils.InventoryUtils;
 import io.github.StarvingValley.utils.MapUtils;
 
 public class VillageView extends ScreenAdapter {
@@ -101,6 +106,7 @@ public class VillageView extends ScreenAdapter {
     public void render(float delta) {
         assetManager.update();
         controller.update(delta);
+        showHotbar();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -116,6 +122,23 @@ public class VillageView extends ScreenAdapter {
         engine.update(delta);
         joystickOverlay.render();
         eventDebugOverlay.render();
+    }
+
+    private boolean addedHotbar = false;
+
+    private void showHotbar() {
+        Entity player = controller.getPlayer();
+        if (player == null) return;
+
+        HotbarComponent hotbar = Mappers.hotbar.get(player);
+        InventoryComponent inventory = Mappers.inventory.get(player);
+
+        if (hotbar != null && !hotbar.info.isOpen && !addedHotbar) {
+            hotbar.info.inventoryType = InventoryType.HOTBAR;
+            eventBus.publish(new InventoryOpenEvent(hotbar.info));
+            InventoryUtils.addInventoryToggleButtonToEngine(engine, hotbar.info, inventory.info);
+            addedHotbar = true;
+        }
     }
 
     @Override
