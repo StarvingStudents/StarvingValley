@@ -8,6 +8,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
@@ -67,7 +68,9 @@ public class RenderSystem extends EntitySystem {
       float renderY = pos.position.y - sprite.sprite.getHeight() / 2f + size.height / 2f;
       sprite.sprite.setPosition(renderX, renderY);
 
-      sprite.sprite.draw(context.spriteBatch);
+        Gdx.app.log("RenderSystem", "Drawing " + sprite.sprite + " at " + pos.position);
+
+        sprite.sprite.draw(context.spriteBatch);
     }
 
     context.spriteBatch.end();

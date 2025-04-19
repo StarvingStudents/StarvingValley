@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
+import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.systems.AnimationSystem;
@@ -37,6 +39,8 @@ import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.models.types.ItemTrade;
+import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.MapUtils;
@@ -103,6 +107,8 @@ public class VillageController {
         engine.addSystem(new EventCleanupSystem(gameContext));
         engine.addSystem(new FarmToVillageTransitionSystem(gameContext));
 
+        addTownTraders();
+
         TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
         MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
         MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
@@ -128,6 +134,23 @@ public class VillageController {
             game.requestViewSwitch(ScreenType.FARM);
         }
     }
+
+    private void addTownTraders() {
+
+        TraderFactory.addTraderToEngine(engine, eventBus, 15, 10, List.of(new ItemTrade(PrefabType.SOIL, 4),
+            new ItemTrade(PrefabType.WHEAT_SEEDS, 15), new ItemTrade(PrefabType.BEETROOT_SEEDS, 20)), "DogBasic.png");
+
+        TraderFactory.addTraderToEngine(engine, eventBus, 32, 24, List.of(new ItemTrade(PrefabType.WALL, 20)), "Bear.png");
+
+        TraderFactory.addTraderToEngine(engine, eventBus, 9, 12, List.of(new ItemTrade(PrefabType.SOIL, 3)), "PinkCharacter.png");
+
+        TraderFactory.addTraderToEngine(engine, eventBus, 14, 19, List.of(new ItemTrade(PrefabType.WHEAT_CROP, 4),
+            new ItemTrade(PrefabType.BEETROOT_CROP, 4)), "FoxBasic.png");
+
+        TraderFactory.addTraderToEngine(engine, eventBus, 20, 14, List.of(new ItemTrade(PrefabType.WALL, 22), new ItemTrade(PrefabType.SOIL, 2)), "OrangeCharacter.png");
+
+    }
+
 
     public Engine getEngine() {
         return engine;
