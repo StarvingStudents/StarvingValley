@@ -37,25 +37,10 @@ public class CropGrowthSystem extends IteratingSystem {
     SpriteComponent spriteComponent = Mappers.sprite.get(cropEntity);
     CropTypeComponent cropType = Mappers.cropType.get(cropEntity);
 
-    growthTime.accumulateGrowth(deltaTime);
-
-    // TODO: Maybe instead of accumulation growth, we can store planting-datetime
-    // and just check time-diff? Then we don't need to sync so often. NB! We then would
-    // need to add conditional sync on if growthStage has changed
-
-    // Don't sync fully-grown crops
-    if (growthStage.growthStage < 3) {
+    int prevGrowthStage = growthStage.growthStage;
+    growthStage.growthStage = growthTime.getGrowthStage();
+    if (prevGrowthStage != growthStage.growthStage) {
       context.eventBus.publish(new EntityUpdatedEvent(cropEntity));
-    }
-
-    if (growthTime.growthProgress >= growthTime.timeToGrow) {
-      growthStage.growthStage = 3; // mature
-    } else if (growthTime.growthProgress >= growthTime.timeToGrow * 0.75) {
-      growthStage.growthStage = 2; // growing
-    } else if (growthTime.growthProgress >= growthTime.timeToGrow * 0.50) {
-      growthStage.growthStage = 1; // growing
-    } else {
-      growthStage.growthStage = 0; // sprout
     }
 
     switch (growthStage.growthStage) {

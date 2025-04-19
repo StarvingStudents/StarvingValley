@@ -3,6 +3,8 @@ package io.github.StarvingValley.models.Interfaces;
 import java.util.List;
 import java.util.Map;
 
+import io.github.StarvingValley.models.types.ScreenType;
+
 public interface IFirebaseRepository {
   // Auth
   void signInWithEmail(String email, String password, AuthCallback callback);
@@ -30,4 +32,6 @@ public interface IFirebaseRepository {
   boolean getAllUserIds(UserIdsCallback callback);
 
   boolean getEntitiesForUser(String userId, EntityDataCallback callback);
+
+  ScreenType getCurrentScreen();
 }

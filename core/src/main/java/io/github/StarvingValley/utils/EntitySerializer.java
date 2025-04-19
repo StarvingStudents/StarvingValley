@@ -2,6 +2,8 @@ package io.github.StarvingValley.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.UUID;
 
 import com.badlogic.ashley.core.Entity;
@@ -17,9 +19,9 @@ import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.DamageComponent;
+import io.github.StarvingValley.models.components.CurrentScreenComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
-import io.github.StarvingValley.models.components.EatingComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.EnvironmentCollidableComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
@@ -65,6 +67,12 @@ public class EntitySerializer {
       dto.z = pos.z;
     }
 
+    // CurrentScreen
+    CurrentScreenComponent screen = Mappers.currScreen.get(entity);
+    if (screen != null) {
+      dto.screen = screen.currentScreen;
+    }
+
     // Speed
     SpeedComponent speed = Mappers.speed.get(entity);
     if (speed != null) {
@@ -101,12 +109,6 @@ public class EntitySerializer {
       dto.hungerDecayRate = hunger.decayRate;
     }
 
-    // Eating
-    EatingComponent eating = Mappers.eating.get(entity);
-    if (eating != null) {
-      dto.foodPoints = eating.foodPoints;
-    }
-
     // Texture
     SpriteComponent sprite = Mappers.sprite.get(entity);
     if (sprite != null) {
@@ -140,9 +142,8 @@ public class EntitySerializer {
     // Time to grow
     TimeToGrowComponent timeToGrow = Mappers.timeToGrow.get(entity);
     if (timeToGrow != null) {
-      dto.timeToGrow = timeToGrow.timeToGrow;
-      dto.growthProgress = timeToGrow.growthProgress;
-      dto.growthTimeAccumulator = timeToGrow.growthTimeAccumulator;
+      dto.plantedTimestamp = timeToGrow.plantedTime != null ? timeToGrow.plantedTime.toString() : null;
+      dto.growthDurationSeconds = timeToGrow.growthDuration != null ? timeToGrow.growthDuration.getSeconds() : null;
     }
 
     // Buildable
@@ -206,6 +207,12 @@ public class EntitySerializer {
       entity.add(position);
     }
 
+    // CurrentScreen
+    if (dto.screen != null) {
+      CurrentScreenComponent screen = new CurrentScreenComponent(dto.screen);
+      entity.add(screen);
+    }
+
     // Speed
     if (dto.speed != null) {
       SpeedComponent speed = new SpeedComponent(dto.speed);
@@ -244,11 +251,11 @@ public class EntitySerializer {
       entity.add(hunger);
     }
 
-    // Eating
-    if (dto.foodPoints != null) {
-      EatingComponent eating = new EatingComponent(dto.foodPoints);
-      entity.add(eating);
-    }
+    // // Eating
+    // if (dto.foodPoints != null) {
+    // EatingComponent eating = new EatingComponent(dto.foodPoints);
+    // entity.add(eating);
+    // }
 
     // Animation
     if (dto.builds != null) {
@@ -292,12 +299,10 @@ public class EntitySerializer {
     }
 
     // Time to grow
-    if (dto.timeToGrow != null && dto.growthProgress != null && dto.growthTimeAccumulator != null) {
-      TimeToGrowComponent timeToGrowComponent = new TimeToGrowComponent(0);
-      timeToGrowComponent.timeToGrow = dto.timeToGrow;
-      timeToGrowComponent.growthProgress = dto.growthProgress;
-      timeToGrowComponent.growthTimeAccumulator = dto.growthTimeAccumulator;
-
+    if (dto.plantedTimestamp != null && dto.growthDurationSeconds != null) {
+      Instant plantedTime = Instant.parse(dto.plantedTimestamp);
+      Duration growthDuration = Duration.ofSeconds(dto.growthDurationSeconds);
+      TimeToGrowComponent timeToGrowComponent = new TimeToGrowComponent(plantedTime, growthDuration);
       entity.add(timeToGrowComponent);
     }
 
@@ -337,15 +342,22 @@ public class EntitySerializer {
     }
 
     // Boolean tags
-    if (Boolean.TRUE.equals(dto.isCollidable)) entity.add(new CollidableComponent());
+    if (Boolean.TRUE.equals(dto.isCollidable))
+      entity.add(new CollidableComponent());
     if (Boolean.TRUE.equals(dto.isEnvironmentCollidable))
       entity.add(new EnvironmentCollidableComponent());
-    if (Boolean.TRUE.equals(dto.isHidden)) entity.add(new HiddenComponent());
-    if (Boolean.TRUE.equals(dto.occupiesTiles)) entity.add(new TileOccupierComponent());
-    if (Boolean.TRUE.equals(dto.isPlayer)) entity.add(new PlayerComponent());
-    if (Boolean.TRUE.equals(dto.hasInput)) entity.add(new InputComponent());
-    if (Boolean.TRUE.equals(dto.cameraShouldFollow)) entity.add(new CameraFollowComponent(camera));
-    if (Boolean.TRUE.equals(dto.hasVelocity)) entity.add(new VelocityComponent());
+    if (Boolean.TRUE.equals(dto.isHidden))
+      entity.add(new HiddenComponent());
+    if (Boolean.TRUE.equals(dto.occupiesTiles))
+      entity.add(new TileOccupierComponent());
+    if (Boolean.TRUE.equals(dto.isPlayer))
+      entity.add(new PlayerComponent());
+    if (Boolean.TRUE.equals(dto.hasInput))
+      entity.add(new InputComponent());
+    if (Boolean.TRUE.equals(dto.cameraShouldFollow))
+      entity.add(new CameraFollowComponent(camera));
+    if (Boolean.TRUE.equals(dto.hasVelocity))
+      entity.add(new VelocityComponent());
     if (Boolean.TRUE.equals(dto.isClickable))
       entity.add(new ClickableComponent());
     if (Boolean.TRUE.equals(dto.isActiveWorldEntity))

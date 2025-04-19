@@ -14,12 +14,16 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Interfaces.PushCallback;
 import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.dto.SyncEntity;
+import io.github.StarvingValley.models.types.ScreenType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class FirebaseRepository implements IFirebaseRepository {
 
@@ -298,5 +302,40 @@ public class FirebaseRepository implements IFirebaseRepository {
       }
     });
     return true;
+  }
+
+  @Override
+  public ScreenType getCurrentScreen() {
+      String userId = getCurrentUserId();
+
+      final ScreenType[] result = new ScreenType[1];
+      final CountDownLatch latch = new CountDownLatch(1);
+
+      getEntitiesForUser(userId, new EntityDataCallback() {
+          @Override
+          public void onSuccess(Map<String, SyncEntity> data) {
+              for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
+                  SyncEntity syncEntity = entry.getValue();
+                  if (syncEntity.isPlayer) {
+                      result[0] = syncEntity.screen;
+                      latch.countDown();
+                      return;
+                  }
+              }
+              latch.countDown();
+          }
+
+          @Override
+          public void onFailure(String errorMessage) {
+              latch.countDown();
+          }
+      });
+
+      try {
+          latch.await(1, TimeUnit.SECONDS);
+      } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+      }
+      return result[0];
   }
 }
