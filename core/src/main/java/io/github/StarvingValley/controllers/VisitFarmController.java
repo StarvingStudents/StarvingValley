@@ -4,13 +4,15 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import io.github.StarvingValley.config.Config;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.AttackComponent;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.events.EventBus;
@@ -118,6 +120,9 @@ public class VisitFarmController {
     gameContext.player = player;
     engine.addEntity(player);
     MapUtils.loadSyncedEntitiesForUser(gameContext, camera, visitedUserId);
+
+    engine.addEntity(HudFactory.createEconomyBar(gameContext));
+    engine.addEntity(HudFactory.createAttackTimerDisplay(gameContext));
   }
 
   public Engine getEngine() {

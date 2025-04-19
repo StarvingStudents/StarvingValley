@@ -14,7 +14,7 @@ import io.github.StarvingValley.controllers.WorldMapController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.entities.HUDButtonFactory;
+import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.utils.EventDebugger;
 
@@ -82,7 +82,7 @@ public class WorldMapView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    engine.addEntity(HUDButtonFactory.createWorldMapToFarmButton());
+    engine.addEntity(HudFactory.createWorldMapToFarmButton());
   }
 
   @Override

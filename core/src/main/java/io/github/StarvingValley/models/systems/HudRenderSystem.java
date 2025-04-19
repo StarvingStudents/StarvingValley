@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -79,7 +80,29 @@ public class HudRenderSystem extends EntitySystem {
 
       if (Mappers.text.has(entity)) {
         TextComponent text = Mappers.text.get(entity);
-        font.draw(batch, text.text, pos.position.x + text.offsetX, pos.position.y + text.offsetY);
+
+        if (text.color != null) {
+          if (font.getColor() != text.color) {
+            font.setColor(text.color);
+          }
+        } else if (font.getColor() != Color.WHITE) {
+          font.setColor(Color.WHITE);
+        }
+
+        Float previousScale = null;
+        if (text.scale != null && text.scale != font.getData().scaleX && text.scale != font.getData().scaleY) {
+          previousScale = font.getData().scaleX;
+          font.getData().setScale(text.scale);
+        }
+
+        font.draw(batch,
+            text.getText(),
+            pos.position.x + text.offsetX,
+            pos.position.y + text.offsetY);
+
+        if (previousScale != null) {
+          font.getData().setScale(text.scale);
+        }
       }
     }
 
