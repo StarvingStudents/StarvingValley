@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.DraggableComponent;
+import io.github.StarvingValley.models.components.FoodItemComponent;
 import io.github.StarvingValley.models.components.HudComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySlotComponent;
@@ -43,6 +44,20 @@ public class InventoryFactory {
         entity.add(new ClickableComponent());
         entity.add(new InventoryItemComponent(item.type, item.quantity, item.slotX, item.slotY, inventoryId));
         entity.add(new TextComponent(String.valueOf(item.quantity), size * 3 / 4, size / 4));
+
+        System.out.println("Creating inventory item: " + item.type.getIconName());
+
+        switch (item.type) {
+            case WHEAT:
+                System.out.println("Wheat item added foodItemComponent");
+                entity.add(new FoodItemComponent(20));
+                break;
+            case BEETROOT:
+                System.out.println("Beetroot item added foodItemComponent");
+                entity.add(new FoodItemComponent(10));
+                break;
+            default:
+        }
 
         return entity;
     }
