@@ -164,6 +164,7 @@ public class MapUtils {
                     Mappers.currScreen.get(player).currentScreen = ScreenType.VILLAGE;
                     skipSpriteSyncOnLoad(player);
                     context.engine.addEntity(player);
+                    context.player = player;
                 }
 
                 @Override

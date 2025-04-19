@@ -22,21 +22,37 @@ import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
+import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.AnimationSystem;
+import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
+import io.github.StarvingValley.models.systems.BuildPlacementSystem;
+import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
+import io.github.StarvingValley.models.systems.CropGrowthSystem;
+import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
+import io.github.StarvingValley.models.systems.EatingSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
+import io.github.StarvingValley.models.systems.HarvestingSystem;
+import io.github.StarvingValley.models.systems.HotbarItemClickSystem;
+import io.github.StarvingValley.models.systems.HudRenderSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.InputCleanupSystem;
 import io.github.StarvingValley.models.systems.InputSystem;
+import io.github.StarvingValley.models.systems.InventoryDragSystem;
+import io.github.StarvingValley.models.systems.InventoryOpenSystem;
+import io.github.StarvingValley.models.systems.InventorySystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
+import io.github.StarvingValley.models.systems.RespawnSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
+import io.github.StarvingValley.models.systems.TraderClickSystem;
+import io.github.StarvingValley.models.systems.TradingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemTrade;
@@ -91,16 +107,32 @@ public class VillageController {
         engine.addEntity(map);
 
         engine.addSystem(new InputSystem(gameContext));
+        engine.addSystem(new TradingSystem(gameContext));
+        engine.addSystem(new InventoryOpenSystem(gameContext));
+        engine.addSystem(new InventoryDragSystem(gameContext));
+        engine.addSystem(new HotbarItemClickSystem());
         engine.addSystem(new MapRenderSystem());
+        engine.addSystem(new InventorySystem(gameContext));
+        engine.addSystem(new RespawnSystem(eventBus));
+        engine.addSystem(new BuildPreviewSystem(gameContext));
+        engine.addSystem(new BuildPlacementSystem(gameContext));
+        engine.addSystem(new AlphaPulseSystem());
         engine.addSystem(new VelocitySystem());
         engine.addSystem(new AnimationSystem());
         engine.addSystem(new EnvironmentCollisionSystem());
         engine.addSystem(new MovementSystem(gameContext));
         engine.addSystem(new CameraSystem());
+        engine.addSystem(new CropGrowthSystem(gameContext));
+        engine.addSystem(new HarvestingSystem(gameContext));
+        engine.addSystem(new TraderClickSystem(gameContext));
         engine.addSystem(new RenderSystem(gameContext));
+        engine.addSystem(new BuildGridRenderSystem(gameContext));
         engine.addSystem(new HungerSystem(gameContext));
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new HungerRenderSystem(gameContext));
+        engine.addSystem(new DurabilityRenderSystem(gameContext));
+        engine.addSystem(new EatingSystem(eventBus, gameContext));
+        engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
         engine.addSystem(new InputCleanupSystem());
@@ -149,6 +181,10 @@ public class VillageController {
 
         TraderFactory.addTraderToEngine(engine, eventBus, 20, 14, List.of(new ItemTrade(PrefabType.WALL, 22), new ItemTrade(PrefabType.SOIL, 2)), "OrangeCharacter.png");
 
+    }
+
+    public Entity getPlayer() {
+        return gameContext.player;
     }
 
 
