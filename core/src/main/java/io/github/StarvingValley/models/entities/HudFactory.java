@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.AttackComponent;
 import io.github.StarvingValley.models.components.ButtonComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
@@ -80,6 +81,39 @@ public class HudFactory {
                                         return economy == null ? "" : "$" + economy.balance;
 
                                 }, tileSize, tileSize * 2 / 3, Color.BLACK));
+
+                return entity;
+        }
+
+        public static Entity createAttackTimerDisplay(GameContext context) {
+                float tileSize = TileUtils.getTileWidth();
+
+                float width = tileSize * 4;
+                float height = tileSize * 2 / 3;
+
+                float x = Gdx.graphics.getWidth() / 2 - (width / 2);
+                float y = (float) (Gdx.graphics.getHeight() - height);
+
+                TextComponent textComponent = new TextComponent(() -> {
+                        if (context.player == null)
+                                return "";
+
+                        AttackComponent attack = Mappers.attack.get(context.player);
+                        if (attack == null)
+                                return "";
+
+                        int time = Math.max(0, (int) attack.timeRemaining);
+                        return "Attack ends in: " + time + "s";
+                }, 0, 0, Color.BLACK);
+                textComponent.scale = 6f;
+
+                Entity entity = new Entity();
+                entity.add(new SizeComponent(
+                                width,
+                                height))
+                                .add(new PositionComponent(x, y))
+                                .add(new HudComponent())
+                                .add(textComponent);
 
                 return entity;
         }

@@ -122,6 +122,7 @@ public class VisitFarmController {
     MapUtils.loadSyncedEntitiesForUser(gameContext, camera, visitedUserId);
 
     engine.addEntity(HudFactory.createEconomyBar(gameContext));
+    engine.addEntity(HudFactory.createAttackTimerDisplay(gameContext));
   }
 
   public Engine getEngine() {
