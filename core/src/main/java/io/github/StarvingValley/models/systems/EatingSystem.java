@@ -12,9 +12,11 @@ import io.github.StarvingValley.models.components.FoodItemComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.InventorySelectedItemComponent;
+import io.github.StarvingValley.models.components.SelectedHotbarEntryComponent;
 import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.models.events.EatingButtonPressedEvent;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.RemoveItemFromInventoryEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.entities.BuildPreviewFactory;
 
@@ -32,38 +34,56 @@ public class EatingSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         List<EatingButtonPressedEvent> events = eventBus.getEvents(EatingButtonPressedEvent.class);
         if (events.size() > 0) {
+            System.out.println("Processing eating event");
 
             Entity playerEntity = context.player;
-            HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
+            // HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
 
             // TODO: Combine with inventory system
-            // Held item should have InventorySelectedItemComponent
+            // Held item should have SelectedHotbarEntryComponent
             // Edible items should have FoodItemComponent (foodItem)
 
             ImmutableArray<Entity> selectedItemEntities = getEngine()
                     .getEntitiesFor(
-                            Family.all(InventorySelectedItemComponent.class, InventoryItemComponent.class).get());
+                            Family.all(InventoryItemComponent.class, SelectedHotbarEntryComponent.class).get());
 
             if (selectedItemEntities.size() == 0) {
+                System.out.println("No selected item entity found");
                 return;
             }
 
             Entity selectedItemEntity = selectedItemEntities.first();
 
-            // Check that that entity has foodItem component
-            Entity prototype = EntityFactoryRegistry
-                    .create(selectedItemEntity.getComponent(InventoryItemComponent.class).type);
-            if (!Mappers.foodItem.has(prototype)) {
+            if (!Mappers.foodItem.has(selectedItemEntity)) {
+                System.out.println("Selected item is not food");
                 return;
             }
 
-            // Get the food points from the selected item:
-            FoodItemComponent foodItem = selectedItemEntity.getComponent(FoodItemComponent.class);
-            float foodPoints = foodItem.foodPoints;
+            FoodItemComponent foodItem = Mappers.foodItem.get(selectedItemEntity);
 
-            // Update hunger points:
-            hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
-                    foodPoints);
+            HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
+
+            hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + foodItem.foodPoints);
+
+            InventoryItemComponent inventoryItem = Mappers.inventoryItem.get(selectedItemEntity);
+            context.eventBus.publish(new RemoveItemFromInventoryEvent(playerEntity, inventoryItem.type, 1));
+            System.out.println("Ate and removed item from inventory: " + inventoryItem.type);
+
+            // Check that that entity has foodItem component
+            // Entity prototype = EntityFactoryRegistry
+            // .create(selectedItemEntity.getComponent(InventoryItemComponent.class).type);
+            // if (!Mappers.foodItem.has(prototype)) {
+            // return;
+            // }
+
+            // // Get the food points from the selected item:
+            // FoodItemComponent foodItem =
+            // selectedItemEntity.getComponent(FoodItemComponent.class);
+            // float foodPoints = foodItem.foodPoints;
+
+            // // Update hunger points:
+            // hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
+            // foodPoints);
 
             // TODO : Remove the consumed food item from the inventory:
         }
