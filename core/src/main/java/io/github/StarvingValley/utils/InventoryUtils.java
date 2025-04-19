@@ -192,7 +192,7 @@ public class InventoryUtils {
 
                 if (item.slotX == slot.x && item.slotY == slot.y && item.type == slot.getType()) {
                     item.quantity = slot.getQuantity();
-                    text.text = String.valueOf(slot.getQuantity());
+                    text.setText(String.valueOf(slot.getQuantity()));
                     Vector2 newPos = InventoryUtils.getPixelPositionForSlot(item.slotX, item.slotY,
                             InventoryUtils.getInventoryLayout(inventory));
                     pos.position.set(newPos.x, newPos.y, pos.position.z);
@@ -237,7 +237,7 @@ public class InventoryUtils {
 
                 if (item.slotX == slot.x && item.slotY == slot.y && item.type == slot.getType()) {
                     item.quantity = slot.getQuantity();
-                    text.text = String.valueOf(slot.getQuantity());
+                    text.setText(String.valueOf(slot.getQuantity()));
                     Vector2 newPos = InventoryUtils.getPixelPositionForSlot(item.slotX, item.slotY,
                             InventoryUtils.getHotbarLayout(hotbar));
                     pos.position.set(newPos.x, newPos.y, pos.position.z);

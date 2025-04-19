@@ -14,17 +14,17 @@ import io.github.StarvingValley.controllers.GameMenuController;
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
-import io.github.StarvingValley.models.entities.HUDButtonFactory;
+import io.github.StarvingValley.models.components.HotbarComponent;
+import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
-import io.github.StarvingValley.models.events.NotificationEvent;
-import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
+import io.github.StarvingValley.models.events.NotificationEvent;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
@@ -148,6 +148,8 @@ public class FarmView extends ScreenAdapter {
       HotbarComponent hotbar = Mappers.hotbar.get(controller.getPlayer());
       InventoryUtils.addHotbarToEngine(engine, hotbar.hotbar);
       InventoryUtils.addInventoryToggleButtonToEngine(engine, hotbar.hotbar);
+
+      engine.addEntity(HudFactory.createEconomyBar(controller.getPlayer()));
     }
   }
 
@@ -165,9 +167,9 @@ public class FarmView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    engine.addEntity(HUDButtonFactory.createEatingButton());
-    engine.addEntity(HUDButtonFactory.createFarmToWorldMapButton());
-    engine.addEntity(TraderFactory.create(30, 13, PrefabType.SOIL, 0));
+    engine.addEntity(HudFactory.createEatingButton());
+    engine.addEntity(HudFactory.createFarmToWorldMapButton());
+    engine.addEntity(TraderFactory.create(30, 13, PrefabType.SOIL, 2));
     engine.addEntity(TraderFactory.create(32, 13, PrefabType.WHEAT_SEEDS, 0));
     engine.addEntity(TraderFactory.create(34, 13, PrefabType.BEETROOT_SEEDS, 0));
 
