@@ -149,7 +149,7 @@ public class FarmView extends ScreenAdapter {
       InventoryUtils.addHotbarToEngine(engine, hotbar.hotbar);
       InventoryUtils.addInventoryToggleButtonToEngine(engine, hotbar.hotbar);
 
-      engine.addEntity(HudFactory.createEconomyBar(controller.getPlayer()));
+      engine.addEntity(HudFactory.createEconomyBar(controller.getGameContext()));
     }
   }
 

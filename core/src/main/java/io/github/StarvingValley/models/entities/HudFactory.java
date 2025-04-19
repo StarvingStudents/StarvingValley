@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TextComponent;
 import io.github.StarvingValley.models.types.ButtonType;
+import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.TileUtils;
 
 public class HudFactory {
@@ -57,7 +58,7 @@ public class HudFactory {
                                 ButtonType.WORLD_MAP_TO_FARM_BUTTON);
         }
 
-        public static Entity createEconomyBar(Entity player) {
+        public static Entity createEconomyBar(GameContext context) {
                 float tileSize = TileUtils.getTileWidth();
 
                 float x = tileSize * 2/3;
@@ -71,10 +72,10 @@ public class HudFactory {
                                 .add(new SpriteComponent("economy_bar.png"))
                                 .add(new HudComponent())
                                 .add(new TextComponent(() -> {
-                                        if (player == null)
+                                        if (context.player == null)
                                                 return "";
 
-                                        EconomyComponent economy = Mappers.economy.get(player);
+                                        EconomyComponent economy = Mappers.economy.get(context.player);
                                         return economy == null ? "" : "$" + economy.balance;
 
                                 }, tileSize, tileSize * 2 / 3, Color.BLACK));
