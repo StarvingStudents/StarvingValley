@@ -110,28 +110,18 @@ public class VillageController {
         engine.addSystem(new TradingSystem(gameContext));
         engine.addSystem(new InventoryOpenSystem(gameContext));
         engine.addSystem(new InventoryDragSystem(gameContext));
-        engine.addSystem(new HotbarItemClickSystem());
         engine.addSystem(new MapRenderSystem());
         engine.addSystem(new InventorySystem(gameContext));
-        engine.addSystem(new RespawnSystem(eventBus));
-        engine.addSystem(new BuildPreviewSystem(gameContext));
-        engine.addSystem(new BuildPlacementSystem(gameContext));
-        engine.addSystem(new AlphaPulseSystem());
         engine.addSystem(new VelocitySystem());
         engine.addSystem(new AnimationSystem());
         engine.addSystem(new EnvironmentCollisionSystem());
         engine.addSystem(new MovementSystem(gameContext));
         engine.addSystem(new CameraSystem());
-        engine.addSystem(new CropGrowthSystem(gameContext));
-        engine.addSystem(new HarvestingSystem(gameContext));
         engine.addSystem(new TraderClickSystem(gameContext));
         engine.addSystem(new RenderSystem(gameContext));
-        engine.addSystem(new BuildGridRenderSystem(gameContext));
         engine.addSystem(new HungerSystem(gameContext));
         engine.addSystem(new SpriteSystem(gameContext));
         engine.addSystem(new HungerRenderSystem(gameContext));
-        engine.addSystem(new DurabilityRenderSystem(gameContext));
-        engine.addSystem(new EatingSystem(eventBus, gameContext));
         engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));
@@ -176,8 +166,8 @@ public class VillageController {
 
         TraderFactory.addTraderToEngine(engine, eventBus, 9, 12, List.of(new ItemTrade(PrefabType.SOIL, 3)), "PinkCharacter.png");
 
-        TraderFactory.addTraderToEngine(engine, eventBus, 14, 19, List.of(new ItemTrade(PrefabType.WHEAT_CROP, 4),
-            new ItemTrade(PrefabType.BEETROOT_CROP, 4)), "FoxBasic.png");
+        TraderFactory.addTraderToEngine(engine, eventBus, 14, 19, List.of(new ItemTrade(PrefabType.WHEAT_SEEDS, 10),
+            new ItemTrade(PrefabType.BEETROOT_SEEDS, 22)), "FoxBasic.png");
 
         TraderFactory.addTraderToEngine(engine, eventBus, 20, 14, List.of(new ItemTrade(PrefabType.WALL, 22), new ItemTrade(PrefabType.SOIL, 2)), "OrangeCharacter.png");
 

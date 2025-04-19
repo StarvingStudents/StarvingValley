@@ -68,9 +68,8 @@ public class RenderSystem extends EntitySystem {
       float renderY = pos.position.y - sprite.sprite.getHeight() / 2f + size.height / 2f;
       sprite.sprite.setPosition(renderX, renderY);
 
-        Gdx.app.log("RenderSystem", "Drawing " + sprite.sprite + " at " + pos.position);
 
-        sprite.sprite.draw(context.spriteBatch);
+      sprite.sprite.draw(context.spriteBatch);
     }
 
     context.spriteBatch.end();

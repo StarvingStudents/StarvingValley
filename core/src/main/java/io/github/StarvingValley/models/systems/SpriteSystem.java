@@ -47,6 +47,5 @@ public class SpriteSystem extends IteratingSystem {
             spriteComponent.textureChanged = false;
         }
 
-        Gdx.app.log("SpriteSystem", "Assigned sprite to entity with texture: " + texturePath);
     }
 }
