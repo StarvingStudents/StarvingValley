@@ -2,6 +2,6 @@ package io.github.StarvingValley.models.components;
 
 import com.badlogic.ashley.core.Component;
 
-public class InventoryUiComponent implements Component {
+public class PartOfHotbarComponent implements Component {
     
 }

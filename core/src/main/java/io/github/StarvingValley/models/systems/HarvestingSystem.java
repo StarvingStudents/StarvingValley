@@ -82,7 +82,7 @@ public class HarvestingSystem extends EntitySystem {
     DropComponent drops = Mappers.drop.get(crop);
     if (drops != null) {
       for (ItemStack drop : drops.drops) {
-        context.eventBus.publish(new AddItemToInventoryEvent(drop));
+        context.eventBus.publish(new AddItemToInventoryEvent(context.player, drop.type, drop.quantity));
         System.out.println("Dropped " + drop.quantity + " " + drop.type);
       }
     }
