@@ -17,73 +17,72 @@ import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TextComponent;
 
 public class HudRenderSystem extends EntitySystem {
-    private SpriteBatch batch;
-    private BitmapFont font;
+  private SpriteBatch batch;
+  private BitmapFont font;
 
-    public HudRenderSystem() {
-        batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.getData().setScale(4f);
+  public HudRenderSystem() {
+    batch = new SpriteBatch();
+    font = new BitmapFont();
+    font.getData().setScale(4f);
+  }
+
+  @Override
+  public void update(float deltaTime) {
+    ImmutableArray<Entity> entities = getEngine()
+        .getEntitiesFor(
+            Family.all(PositionComponent.class, SizeComponent.class, HudComponent.class).get());
+
+    ArrayList<Entity> sortedEntities = new ArrayList<>(entities.size());
+    for (int i = 0; i < entities.size(); i++) {
+      sortedEntities.add(entities.get(i));
     }
 
-    @Override
-    public void update(float deltaTime) {
-        ImmutableArray<Entity> entities = getEngine().getEntitiesFor(
-                Family.all(PositionComponent.class, SizeComponent.class, HudComponent.class).get());
+    // First render items being dragged, then items, then inventory slots.
+    sortedEntities.sort(
+        (a, b) -> {
+          boolean aDragging = Mappers.dragging.has(a);
+          boolean bDragging = Mappers.dragging.has(b);
 
-        ArrayList<Entity> sortedEntities = new ArrayList<>(entities.size());
-        for (int i = 0; i < entities.size(); i++) {
-            sortedEntities.add(entities.get(i));
-        }
+          boolean aSlot = Mappers.inventorySlot.has(a);
+          boolean bSlot = Mappers.inventorySlot.has(b);
 
-        // First render items being dragged, then items, then inventory slots.
-        sortedEntities.sort((a, b) -> {
-            boolean aDragging = Mappers.dragging.has(a);
-            boolean bDragging = Mappers.dragging.has(b);
+          if (aDragging && !bDragging)
+            return 1;
+          if (!aDragging && bDragging)
+            return -1;
 
-            boolean aSlot = Mappers.inventorySlot.has(a);
-            boolean bSlot = Mappers.inventorySlot.has(b);
+          if (aSlot && !bSlot)
+            return -1;
+          if (!aSlot && bSlot)
+            return 1;
 
-            if (aDragging && !bDragging)
-                return 1;
-            if (!aDragging && bDragging)
-                return -1;
-
-            if (aSlot && !bSlot)
-                return -1;
-            if (!aSlot && bSlot)
-                return 1;
-
-            return 0;
+          return 0;
         });
 
-        batch.begin();
+    batch.begin();
 
-        for (Entity entity : sortedEntities) {
-            PositionComponent pos = Mappers.position.get(entity);
-            SizeComponent size = Mappers.size.get(entity);
+    for (Entity entity : sortedEntities) {
+      PositionComponent pos = Mappers.position.get(entity);
+      SizeComponent size = Mappers.size.get(entity);
 
-            if (Mappers.hidden.has(entity))
-                continue;
+      if (Mappers.hidden.has(entity))
+        continue;
 
-            if (Mappers.sprite.has(entity)) {
-                SpriteComponent sprite = Mappers.sprite.get(entity);
-                if (sprite.sprite.getTexture() != null) {
-                    sprite.sprite.setPosition(pos.position.x, pos.position.y);
-                    sprite.sprite.setSize(size.width, size.height);
-                    sprite.sprite.draw(batch);
-                }
-            }
-
-            if (Mappers.text.has(entity)) {
-                TextComponent text = Mappers.text.get(entity);
-                font.draw(batch,
-                        text.text,
-                        pos.position.x + text.offsetX,
-                        pos.position.y + text.offsetY);
-            }
+      if (Mappers.sprite.has(entity)) {
+        SpriteComponent sprite = Mappers.sprite.get(entity);
+        if (sprite.sprite.getTexture() != null) {
+          sprite.sprite.setPosition(pos.position.x, pos.position.y);
+          sprite.sprite.setSize(size.width, size.height);
+          sprite.sprite.draw(batch);
         }
+      }
 
-        batch.end();
+      if (Mappers.text.has(entity)) {
+        TextComponent text = Mappers.text.get(entity);
+        font.draw(batch, text.text, pos.position.x + text.offsetX, pos.position.y + text.offsetY);
+      }
     }
+
+    batch.end();
+  }
 }

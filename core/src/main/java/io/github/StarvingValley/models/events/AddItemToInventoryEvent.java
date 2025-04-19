@@ -1,12 +1,18 @@
 package io.github.StarvingValley.models.events;
 
+import com.badlogic.ashley.core.Entity;
+
 import io.github.StarvingValley.models.Interfaces.Event;
-import io.github.StarvingValley.models.types.ItemStack;
+import io.github.StarvingValley.models.types.PrefabType;
 
 public class AddItemToInventoryEvent implements Event {
-	public ItemStack itemStack;
+	public Entity inventoryOwner;
+	public PrefabType itemType;
+	public int quantity;
 
-	public AddItemToInventoryEvent(ItemStack itemStack) {
-		this.itemStack = itemStack;
+	public AddItemToInventoryEvent(Entity inventoryOwner, PrefabType itemType, int quantity) {
+		this.inventoryOwner = inventoryOwner;
+		this.itemType = itemType;
+		this.quantity = quantity;
 	}
 }

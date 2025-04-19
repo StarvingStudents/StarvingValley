@@ -1,11 +1,10 @@
 package io.github.StarvingValley.models.dto;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 
 import io.github.StarvingValley.models.components.CropTypeComponent.CropType;
-import io.github.StarvingValley.models.types.Inventory;
+import io.github.StarvingValley.models.types.InventoryInfo;
+import io.github.StarvingValley.models.types.InventoryType;
 import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
@@ -70,8 +69,22 @@ public class SyncEntity {
 
     public Float balance;
 
-    public Inventory inventory;
-    public Inventory hotbar;
+    public InventoryInfo inventory;
+    public InventoryInfo hotbar;
+
+    public PrefabType inventoryItemType;
+    public Integer inventoryItemQuantity;
+    public Integer inventoryItemSlotX;
+    public Integer inventoryItemSlotY;
+    public String inventoryItemInventoryId;
+
+    public Boolean isHudEntity;
+    public InventoryType inventoryTypeEntity;
+    public int tradeablePrice;
+
+    public String text;
+    public Float textOffsetX = 0f;
+    public Float textOffsetY = 0f;
 
     public Float damageAmount;
     public Float attackRange;
