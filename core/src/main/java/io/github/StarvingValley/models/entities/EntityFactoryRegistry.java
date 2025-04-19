@@ -15,9 +15,12 @@ public class EntityFactoryRegistry {
         factories.put(PrefabType.SOIL, SoilFactory::createSoil);
         factories.put(PrefabType.WHEAT_CROP, () -> CropFactory.createCrop(PrefabType.WHEAT_CROP));
         factories.put(PrefabType.BEETROOT_CROP, () -> CropFactory.createCrop(PrefabType.BEETROOT_CROP));
-        factories.put(PrefabType.BEETROOT_SEEDS, () -> SeedFactory.create(PrefabType.BEETROOT_SEEDS, PrefabType.BEETROOT_CROP));
+        factories.put(PrefabType.BEETROOT_SEEDS,
+                () -> SeedFactory.create(PrefabType.BEETROOT_SEEDS, PrefabType.BEETROOT_CROP));
         factories.put(PrefabType.WHEAT_SEEDS, () -> SeedFactory.create(PrefabType.WHEAT_SEEDS, PrefabType.WHEAT_CROP));
         factories.put(PrefabType.WALL, () -> WallFactory.createWall());
+        factories.put(PrefabType.BEETROOT, () -> FoodFactory.create(PrefabType.BEETROOT));
+        factories.put(PrefabType.WHEAT, () -> FoodFactory.create(PrefabType.WHEAT));
     }
 
     public static Entity create(PrefabType type) {
