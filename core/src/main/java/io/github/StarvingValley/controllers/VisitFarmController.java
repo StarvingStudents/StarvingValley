@@ -1,19 +1,21 @@
 package io.github.StarvingValley.controllers;
 
+import java.util.List;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import io.github.StarvingValley.config.Config;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.components.AttackComponent;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
-import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.AnimationSystem;
@@ -23,6 +25,7 @@ import io.github.StarvingValley.models.systems.DamageSystem;
 import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
+import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HUDButtonPressHandlingSystem;
 import io.github.StarvingValley.models.systems.HUDButtonPressSystem;
 import io.github.StarvingValley.models.systems.HudRenderSystem;
@@ -33,6 +36,7 @@ import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.StealingSystem;
+import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.MapUtils;
@@ -93,7 +97,7 @@ public class VisitFarmController {
     engine.addSystem(new MovementSystem(gameContext));
     engine.addSystem(new DurabilityRenderSystem(gameContext));
     engine.addSystem(new DamageSystem(gameContext));
-    engine.addSystem(new AttackTimerSystem(eventBus, game));
+    engine.addSystem(new AttackTimerSystem(gameContext));
     engine.addSystem(new CameraSystem());
     engine.addSystem(new StealingSystem(gameContext));
     engine.addSystem(new RenderSystem(gameContext));
@@ -102,6 +106,8 @@ public class VisitFarmController {
     engine.addSystem(new HUDButtonPressSystem(gameContext));
     engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
     engine.addSystem(new HudRenderSystem());
+    engine.addSystem(new SyncMarkingSystem(gameContext));
+    engine.addSystem(new FirebaseSyncSystem(gameContext));
     engine.addSystem(new InputCleanupSystem());
     engine.addSystem(new EventCleanupSystem(gameContext));
     engine.addSystem(new ActionAnimationSystem(gameContext));
@@ -113,11 +119,17 @@ public class VisitFarmController {
     TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
     MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
 
-    player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, assetManager, camera);
-    player.add(new AttackComponent(Config.ATTACK_DURATION));
-    gameContext.player = player;
-    engine.addEntity(player);
     MapUtils.loadSyncedEntitiesForUser(gameContext, camera, visitedUserId);
+    MapUtils.loadPlayerForAttack(gameContext, camera);
+  }
+
+  public void update(float deltaTime) {
+    List<ScreenTransitionEvent> events = eventBus.getEvents(ScreenTransitionEvent.class);
+    if (events.isEmpty())
+      return;
+
+    ScreenTransitionEvent event = events.get(0);
+    game.requestViewSwitch(event.getTargetScreen());
   }
 
   public Engine getEngine() {

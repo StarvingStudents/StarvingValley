@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -15,12 +14,12 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 
-import io.github.StarvingValley.models.components.AnimationComponent;
-import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.components.AnimationComponent;
+import io.github.StarvingValley.models.components.AttackComponent;
+import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
@@ -95,83 +94,91 @@ public class MapUtils {
         });
   }
 
-    private static final float FARM_TO_VILLAGE_BOUNDARY = 39.5f;
-    private static final float VILLAGE_TO_FARM_BOUNDARY = 0f;
+  private static final float FARM_TO_VILLAGE_BOUNDARY = 39.5f;
+  private static final float VILLAGE_TO_FARM_BOUNDARY = 0f;
 
-    public static void loadSyncedFarmEntities(GameContext context, Entity camera) {
-        context.firebaseRepository.getAllEntities(
-            new EntityDataCallback() {
-                @Override
-                public void onSuccess(Map<String, SyncEntity> data) {
-                    boolean anyIsPlayer = false;
-                    for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
-                        SyncEntity syncEntity = entry.getValue();
-                        Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+  public static void loadSyncedFarmEntities(GameContext context, Entity camera) {
+    context.firebaseRepository.getAllEntities(
+        new EntityDataCallback() {
+          @Override
+          public void onSuccess(Map<String, SyncEntity> data) {
+            boolean anyIsPlayer = false;
+            for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
+              SyncEntity syncEntity = entry.getValue();
+              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
 
-                        // Replace static sprite with animation for players
-                        if (syncEntity.isPlayer) {
-                            anyIsPlayer = true;
-                            context.player = entity;
-                            Mappers.currScreen.get(entity).currentScreen = ScreenType.FARM;
-                            AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
-                            entity.add(anim);
-                        }
+              // Replace static sprite with animation for players
+              if (syncEntity.isPlayer) {
+                anyIsPlayer = true;
+                context.player = entity;
+                Mappers.currScreen.get(entity).currentScreen = ScreenType.FARM;
+                AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
+                entity.add(anim);
+              }
 
-                        skipSpriteSyncOnLoad(entity);
-                        context.engine.addEntity(entity);
-                    }
+              skipSpriteSyncOnLoad(entity);
+              context.engine.addEntity(entity);
+            }
 
-                    if (!anyIsPlayer) {
-                        Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
-                        player.add(new UnsyncedComponent());
-                        Mappers.currScreen.get(player).currentScreen = ScreenType.FARM;
-                        skipSpriteSyncOnLoad(player);
-                        context.engine.addEntity(player);
-                        context.player = player;
-                    }
-                }
+            if (!anyIsPlayer) {
+              Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+              player.add(new UnsyncedComponent());
+              Mappers.currScreen.get(player).currentScreen = ScreenType.FARM;
+              skipSpriteSyncOnLoad(player);
+              context.engine.addEntity(player);
+              context.player = player;
+            }
+          }
 
-                @Override
-                public void onFailure(String errorMessage) {
-                    System.err.println("Failed to load entities: " + errorMessage);
-                }
-            });
-    }
+          @Override
+          public void onFailure(String errorMessage) {
+            System.err.println("Failed to load entities: " + errorMessage);
+          }
+        });
+  }
 
-    public static void loadSyncedVillageEntities(GameContext context, Entity camera) {
-        context.firebaseRepository.getAllEntities(
-            new EntityDataCallback() {
-                @Override
-                public void onSuccess(Map<String, SyncEntity> data) {
-                    for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
-                        SyncEntity syncEntity = entry.getValue();
-                        Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+  public static void loadSyncedVillageEntities(GameContext context, Entity camera) {
+    context.firebaseRepository.getAllEntities(
+        new EntityDataCallback() {
+          @Override
+          public void onSuccess(Map<String, SyncEntity> data) {
+            Entity player = getPlayer(data, camera, context);
+            Mappers.currScreen.get(player).currentScreen = ScreenType.VILLAGE;
+            skipSpriteSyncOnLoad(player);
+            context.engine.addEntity(player);
+            context.player = player;
+          }
 
-                        if (syncEntity.isPlayer) {
-                            context.player = entity;
-                            AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
-                            entity.add(anim);
-                            Mappers.currScreen.get(entity).currentScreen = ScreenType.VILLAGE;
-                            skipSpriteSyncOnLoad(entity);
-                            context.engine.addEntity(entity);
+          @Override
+          public void onFailure(String errorMessage) {
+            System.err.println("Failed to load entities: " + errorMessage);
+          }
+        });
+  }
 
-                            return;
-                        }
-                    }
+  public static void loadPlayerForAttack(GameContext context, Entity camera) {
+    context.firebaseRepository.getAllEntities(
+        new EntityDataCallback() {
+          @Override
+          public void onSuccess(Map<String, SyncEntity> data) {
+            Entity player = getPlayer(data, camera, context);
+            player.add(new AttackComponent(Config.ATTACK_DURATION));
 
-                    Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
-                    player.add(new UnsyncedComponent());
-                    Mappers.currScreen.get(player).currentScreen = ScreenType.VILLAGE;
-                    skipSpriteSyncOnLoad(player);
-                    context.engine.addEntity(player);
-                }
+            PositionComponent position = Mappers.position.get(player);
+            position.position.x = Config.DEFAULT_SPAWN_LOCATION.x;
+            position.position.y = Config.DEFAULT_SPAWN_LOCATION.y;
 
-                @Override
-                public void onFailure(String errorMessage) {
-                    System.err.println("Failed to load entities: " + errorMessage);
-                }
-            });
-    }
+            skipSpriteSyncOnLoad(player);
+            context.engine.addEntity(player);
+            context.player = player;
+          }
+
+          @Override
+          public void onFailure(String errorMessage) {
+            System.err.println("Failed to load entities: " + errorMessage);
+          }
+        });
+  }
 
   public static void loadSyncedEntitiesForUser(GameContext context, Entity camera, String userId) {
     context.firebaseRepository.getEntitiesForUser(
@@ -201,6 +208,28 @@ public class MapUtils {
             System.err.println("Failed to load entities for user " + userId + ": " + errorMessage);
           }
         });
+  }
+
+  private static Entity getPlayer(Map<String, SyncEntity> data, Entity camera, GameContext context) {
+    Entity player = null;
+
+    for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
+      SyncEntity syncEntity = entry.getValue();
+      if (!syncEntity.isPlayer)
+        continue;
+
+      player = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+      break;
+    }
+
+    if (player == null) {
+      player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+    }
+
+    AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER, context.assetManager);
+    player.add(anim);
+
+    return player;
   }
 
   // Currently only supports rectangles as we might not need polygons

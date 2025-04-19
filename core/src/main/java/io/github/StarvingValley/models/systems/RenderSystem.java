@@ -20,8 +20,17 @@ import io.github.StarvingValley.models.types.GameContext;
 
 public class RenderSystem extends EntitySystem {
   private final Comparator<Entity> renderOrderComparator = Comparator
-      .comparing((Entity e) -> Mappers.worldLayer.get(e).layer.getRenderPriority())
-      .thenComparing(e -> -Mappers.position.get(e).position.y);
+      .comparingInt((Entity e) -> {
+        if (Mappers.worldLayer.has(e)) {
+          return Mappers.worldLayer.get(e).layer.getRenderPriority();
+        } else {
+          return Integer.MAX_VALUE;
+        }
+      })
+      .thenComparing(e -> {
+        PositionComponent pos = Mappers.position.get(e);
+        return pos != null ? -pos.position.y : 0f;
+      });
 
   private GameContext context;
 
