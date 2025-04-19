@@ -21,7 +21,7 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
-import io.github.StarvingValley.models.entities.HUDButtonFactory;
+import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
@@ -172,8 +172,8 @@ public class FarmView extends ScreenAdapter {
     Gdx.input.setInputProcessor(multiplexer);
 
     // Temp until we have villageview
-    engine.addEntity(HUDButtonFactory.createEatingButton());
-    engine.addEntity(HUDButtonFactory.createFarmToWorldMapButton());
+    engine.addEntity(HudFactory.createEatingButton());
+    engine.addEntity(HudFactory.createFarmToWorldMapButton());
     TraderFactory.addTraderToEngine(engine, controller.getEventBus(), 30, 13, List.of(new ItemTrade(PrefabType.SOIL, 4),
         new ItemTrade(PrefabType.WHEAT_SEEDS, 15), new ItemTrade(PrefabType.BEETROOT_SEEDS, 20)));
 
