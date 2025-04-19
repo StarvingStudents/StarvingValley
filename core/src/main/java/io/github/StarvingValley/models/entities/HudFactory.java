@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ButtonComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.HudComponent;
@@ -25,7 +26,7 @@ public class HudFactory {
                                 .add(new SizeComponent(width, height))
                                 .add(new PositionComponent(x, y))
                                 .add(new SpriteComponent(texturePath))
-                                // .add(new ButtonComponent(buttonType))
+                                .add(new ButtonComponent(buttonType))
                                 .add(new HudComponent());
 
                 return button;
