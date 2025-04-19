@@ -89,10 +89,20 @@ public class HudRenderSystem extends EntitySystem {
           font.setColor(Color.WHITE);
         }
 
+        Float previousScale = null;
+        if (text.scale != null && text.scale != font.getData().scaleX && text.scale != font.getData().scaleY) {
+          previousScale = font.getData().scaleX;
+          font.getData().setScale(text.scale);
+        }
+
         font.draw(batch,
             text.getText(),
             pos.position.x + text.offsetX,
             pos.position.y + text.offsetY);
+
+        if (previousScale != null) {
+          font.getData().setScale(text.scale);
+        }
       }
     }
 

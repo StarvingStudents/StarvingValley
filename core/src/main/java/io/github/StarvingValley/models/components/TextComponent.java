@@ -11,6 +11,7 @@ public class TextComponent implements Component {
     public float offsetY = 0f;
 
     public Color color;
+    public Float scale;
 
     public Supplier<String> dynamicText;
 
