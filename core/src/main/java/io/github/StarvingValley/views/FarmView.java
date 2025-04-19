@@ -26,6 +26,7 @@ import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
+import io.github.StarvingValley.models.events.NotificationEvent;
 import io.github.StarvingValley.models.types.InventoryType;
 import io.github.StarvingValley.models.types.ItemTrade;
 import io.github.StarvingValley.models.types.PrefabType;
@@ -45,6 +46,8 @@ public class FarmView extends ScreenAdapter {
   private Engine engine;
   private EventDebugOverlay eventDebugOverlay;
 
+  private NotificationOverlay notificationOverlay;
+
   private GameMenuController gameMenuController;
 
   public FarmView(StarvingValley game, IFirebaseRepository firebaseRepository) {
@@ -52,6 +55,8 @@ public class FarmView extends ScreenAdapter {
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
     eventBus = new EventBus(eventDebugger);
+
+    notificationOverlay = new NotificationOverlay(eventBus);
 
     // pre-load some assets that we know we always need.
     // Potentially add assetManager.finishLoading(); to wait
@@ -137,6 +142,7 @@ public class FarmView extends ScreenAdapter {
   // know player is initalized inside farmcontroller, or add a playerloaded
   // callback
   boolean addedHotbar = false;
+
   private void showHotbar() {
     if (controller.getPlayer() == null)
       return;
@@ -170,6 +176,10 @@ public class FarmView extends ScreenAdapter {
     engine.addEntity(HUDButtonFactory.createFarmToWorldMapButton());
     TraderFactory.addTraderToEngine(engine, controller.getEventBus(), 30, 13, List.of(new ItemTrade(PrefabType.SOIL, 4),
         new ItemTrade(PrefabType.WHEAT_SEEDS, 15), new ItemTrade(PrefabType.BEETROOT_SEEDS, 20)));
+
+    eventBus.publish(new NotificationEvent("Press f to start farming mode."));
+    eventBus.publish(new NotificationEvent("Press c to plant beetroots."));
+    eventBus.publish(new NotificationEvent("Press e to plant wheat."));
   }
 
   @Override
@@ -194,6 +204,8 @@ public class FarmView extends ScreenAdapter {
     engine.update(delta);
     joystickOverlay.render();
     gameMenuController.render();
+
+    notificationOverlay.render();
     eventDebugOverlay.render();
   }
 

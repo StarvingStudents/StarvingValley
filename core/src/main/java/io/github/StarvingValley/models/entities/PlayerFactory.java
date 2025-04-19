@@ -20,6 +20,7 @@ import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
@@ -52,6 +53,7 @@ public class PlayerFactory {
       entity.add(new EconomyComponent(Config.STARTING_BALANCE));
       entity.add(new InventoryComponent(new InventoryInfo(6, 3, InventoryType.INVENTORY)));
       entity.add(new HotbarComponent(new InventoryInfo(6, 1, InventoryType.HOTBAR)));
+      entity.add(new SpriteComponent("DogBasic.png"));
       entity.add(new DamageComponent(Config.DEFAULT_DAMAGE_AMOUNT, Config.DEFAULT_ATTACK_RANGE, Config.DEFAULT_ATTACK_SPEED));
       entity.add(new CurrentScreenComponent(ScreenType.FARM));
 
