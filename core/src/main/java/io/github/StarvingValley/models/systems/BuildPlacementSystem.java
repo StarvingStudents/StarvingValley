@@ -12,14 +12,18 @@ import io.github.StarvingValley.models.components.BuildPreviewComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
+import io.github.StarvingValley.models.components.PickupComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SelectedHotbarItemComponent;
+import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.models.events.EntityAddedEvent;
 import io.github.StarvingValley.models.events.EntityPlacedEvent;
 import io.github.StarvingValley.models.events.RemoveItemFromInventoryEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemStack;
+import io.github.StarvingValley.models.types.PrefabType;
+import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.BuildUtils;
 
 public class BuildPlacementSystem extends IteratingSystem {
@@ -48,6 +52,26 @@ public class BuildPlacementSystem extends IteratingSystem {
 
     BuildableComponent buildable = Mappers.buildable.get(entity);
     PositionComponent position = Mappers.position.get(entity);
+
+    if (buildable.builds == PrefabType.WHEAT_CROP || buildable.builds == PrefabType.BEETROOT_CROP) {
+      ImmutableArray<Entity> soils = engine.getEntitiesFor(
+          Family.all(
+              PositionComponent.class,
+              WorldLayerComponent.class)
+              .get());
+
+      for (Entity soil : soils) {
+        PositionComponent soilPos = Mappers.position.get(soil);
+        WorldLayerComponent soilLayer = Mappers.worldLayer.get(soil);
+
+        if (soilLayer.layer == WorldLayer.SOIL && 
+            soilPos.position.x == position.position.x && 
+            soilPos.position.y == position.position.y) {
+          soil.remove(PickupComponent.class);
+          break;
+        }
+      }
+    }
 
     Entity entityToPlace = EntityFactoryRegistry.create(buildable.builds);
     entityToPlace.add(new ActiveWorldEntityComponent());

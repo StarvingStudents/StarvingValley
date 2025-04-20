@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Entity;
 
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.DropComponent;
+import io.github.StarvingValley.models.components.PickupComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
@@ -26,6 +27,7 @@ public class SoilFactory {
     soil.add(new SpriteComponent(PrefabType.SOIL.getIconName()));
     soil.add(new DropComponent(new ArrayList<>(List.of(new ItemStack(PrefabType.SOIL, 1)))));
     soil.add(new BuildableComponent(PrefabType.SOIL));
+    soil.add(new PickupComponent(1.5f));
 
     return soil;
   }

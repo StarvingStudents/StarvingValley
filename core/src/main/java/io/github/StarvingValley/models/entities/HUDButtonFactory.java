@@ -53,4 +53,13 @@ public class HUDButtonFactory {
                 "world_map_to_farm_button.png",
                 ButtonType.WORLD_MAP_TO_FARM_BUTTON);
     }
+
+    public static Entity createPickupButton() {
+        return HUDButtonFactory.createHUDButton((int) (Gdx.graphics.getWidth() * 0.15),
+                (int) (Gdx.graphics.getHeight() * 0.2), (int) (Gdx.graphics.getHeight()
+                        * 0.15),
+                (int) (Gdx.graphics.getHeight() * 0.15),
+                "pickup_button.png",
+                ButtonType.PICKUP_BUTTON);
+    }
 }

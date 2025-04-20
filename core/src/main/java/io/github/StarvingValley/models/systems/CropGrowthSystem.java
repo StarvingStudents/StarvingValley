@@ -8,6 +8,7 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ActiveWorldEntityComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.GrowthStageComponent;
+import io.github.StarvingValley.models.components.PickupComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
@@ -41,6 +42,11 @@ public class CropGrowthSystem extends IteratingSystem {
     growthStage.growthStage = growthTime.getGrowthStage();
     if (prevGrowthStage != growthStage.growthStage) {
       context.eventBus.publish(new EntityUpdatedEvent(cropEntity));
+    }
+
+    // Add PickupComponent when crop reaches final growth stage
+    if (growthStage.growthStage == 3 && !Mappers.pickup.has(cropEntity)) {
+      cropEntity.add(new PickupComponent(1.5f));
     }
 
     switch (growthStage.growthStage) {

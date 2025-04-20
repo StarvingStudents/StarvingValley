@@ -167,6 +167,7 @@ public class FarmView extends ScreenAdapter {
 
     engine.addEntity(HUDButtonFactory.createEatingButton());
     engine.addEntity(HUDButtonFactory.createFarmToWorldMapButton());
+    engine.addEntity(HUDButtonFactory.createPickupButton());
     engine.addEntity(TraderFactory.create(30, 13, PrefabType.SOIL, 0));
     engine.addEntity(TraderFactory.create(32, 13, PrefabType.WHEAT_SEEDS, 0));
     engine.addEntity(TraderFactory.create(34, 13, PrefabType.BEETROOT_SEEDS, 0));

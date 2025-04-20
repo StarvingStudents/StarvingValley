@@ -56,6 +56,7 @@ import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.components.WorldMapFarmComponent;
+import io.github.StarvingValley.models.components.PickupComponent;
 
 public class Mappers {
   public static final ComponentMapper<PositionComponent> position =
@@ -170,4 +171,6 @@ public class Mappers {
       ComponentMapper.getFor(CurrentScreenComponent.class);
   public static final ComponentMapper<AttackComponent> attack =
       ComponentMapper.getFor(AttackComponent.class);
+  public static final ComponentMapper<PickupComponent> pickup =
+      ComponentMapper.getFor(PickupComponent.class);
 }
