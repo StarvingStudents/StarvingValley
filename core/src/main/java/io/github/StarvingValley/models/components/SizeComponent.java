@@ -16,6 +16,4 @@ public class SizeComponent implements Component {
     this.height = height;
     this.useRegionSize = useRegionSize;
   }
-
-
 }

@@ -20,10 +20,13 @@ import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
+import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
+import io.github.StarvingValley.models.types.InventoryInfo;
+import io.github.StarvingValley.models.types.InventoryType;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
@@ -48,8 +51,9 @@ public class PlayerFactory {
       entity.add(new PlayerComponent());
       entity.add(new ActiveWorldEntityComponent());
       entity.add(new EconomyComponent(Config.STARTING_BALANCE));
-      entity.add(new InventoryComponent());
-      entity.add(new HotbarComponent());
+      entity.add(new InventoryComponent(new InventoryInfo(6, 3, InventoryType.INVENTORY)));
+      entity.add(new HotbarComponent(new InventoryInfo(6, 1, InventoryType.HOTBAR)));
+      entity.add(new SpriteComponent("DogBasic.png"));
       entity.add(new DamageComponent(Config.DEFAULT_DAMAGE_AMOUNT, Config.DEFAULT_ATTACK_RANGE, Config.DEFAULT_ATTACK_SPEED));
       entity.add(new CurrentScreenComponent(ScreenType.FARM));
 

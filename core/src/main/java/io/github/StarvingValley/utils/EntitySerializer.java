@@ -1,7 +1,5 @@
 package io.github.StarvingValley.utils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
@@ -18,8 +16,8 @@ import io.github.StarvingValley.models.components.CameraFollowComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.CollidableComponent;
 import io.github.StarvingValley.models.components.CropTypeComponent;
-import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.CurrentScreenComponent;
+import io.github.StarvingValley.models.components.DamageComponent;
 import io.github.StarvingValley.models.components.DropComponent;
 import io.github.StarvingValley.models.components.DurabilityComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
@@ -28,9 +26,12 @@ import io.github.StarvingValley.models.components.GrowthStageComponent;
 import io.github.StarvingValley.models.components.HarvestingComponent;
 import io.github.StarvingValley.models.components.HiddenComponent;
 import io.github.StarvingValley.models.components.HotbarComponent;
+import io.github.StarvingValley.models.components.HudComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InputComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
+import io.github.StarvingValley.models.components.InventoryItemComponent;
+import io.github.StarvingValley.models.components.PartOfHotbarComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.PulseAlphaComponent;
@@ -38,14 +39,16 @@ import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpeedComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
+import io.github.StarvingValley.models.components.TextComponent;
 import io.github.StarvingValley.models.components.TileOccupierComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.models.components.TradeableComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
-import io.github.StarvingValley.models.types.Inventory;
-import io.github.StarvingValley.models.types.InventorySlot;
 import io.github.StarvingValley.models.components.PickupComponent;
+import io.github.StarvingValley.models.types.InventoryInfo;
+import io.github.StarvingValley.models.types.InventoryType;
 
 public class EntitySerializer {
 
@@ -143,8 +146,10 @@ public class EntitySerializer {
     // Time to grow
     TimeToGrowComponent timeToGrow = Mappers.timeToGrow.get(entity);
     if (timeToGrow != null) {
-      dto.plantedTimestamp = timeToGrow.plantedTime != null ? timeToGrow.plantedTime.toString() : null;
-      dto.growthDurationSeconds = timeToGrow.growthDuration != null ? timeToGrow.growthDuration.getSeconds() : null;
+      dto.plantedTimestamp =
+          timeToGrow.plantedTime != null ? timeToGrow.plantedTime.toString() : null;
+      dto.growthDurationSeconds =
+          timeToGrow.growthDuration != null ? timeToGrow.growthDuration.getSeconds() : null;
     }
 
     // Buildable
@@ -174,13 +179,23 @@ public class EntitySerializer {
     // Inventory
     InventoryComponent inventory = Mappers.inventory.get(entity);
     if (inventory != null) {
-      dto.inventory = inventory.inventory;
+      dto.inventory = inventory.info;
     }
 
     // Hotbar
     HotbarComponent hotbar = Mappers.hotbar.get(entity);
     if (hotbar != null) {
-      dto.hotbar = hotbar.hotbar;
+      dto.hotbar = hotbar.info;
+    }
+
+    // Inventory item
+    InventoryItemComponent item = Mappers.inventoryItem.get(entity);
+    if (item != null) {
+      dto.inventoryItemInventoryId = item.inventoryId;
+      dto.inventoryItemQuantity = item.quantity;
+      dto.inventoryItemType = item.type;
+      dto.inventoryItemSlotX = item.slotX;
+      dto.inventoryItemSlotY = item.slotY;
     }
 
     // Damage
@@ -190,7 +205,22 @@ public class EntitySerializer {
       dto.attackRange = damage.attackRange;
       dto.attackSpeed = damage.attackSpeed;
     }
+    
+    // Text
+    TextComponent text = Mappers.text.get(entity);
+    if (text != null) {
+      dto.text = text.getText();
+      dto.textOffsetX = text.offsetX;
+      dto.textOffsetY = text.offsetY;
+    }
 
+    // Inventory type entity
+    if (Mappers.partOfHotbar.has(entity)) {
+      dto.inventoryTypeEntity = InventoryType.HOTBAR;
+    } else if (Mappers.tradeable.has(entity)) {
+      dto.inventoryTypeEntity = InventoryType.TRADING;
+    }
+    
     dto.isCollidable = Mappers.collidable.has(entity);
     dto.isEnvironmentCollidable = Mappers.environmentCollider.has(entity);
     dto.isHidden = Mappers.hidden.has(entity);
@@ -201,6 +231,7 @@ public class EntitySerializer {
     dto.hasVelocity = Mappers.velocity.has(entity);
     dto.isClickable = Mappers.clickable.has(entity);
     dto.isActiveWorldEntity = Mappers.activeWorldEntity.has(entity);
+    dto.isHudEntity = Mappers.hud.has(entity);
 
     return dto;
   }
@@ -264,15 +295,16 @@ public class EntitySerializer {
     // entity.add(eating);
     // }
 
-    // Animation OR Sprite
+    // Animation
     if (dto.builds != null) {
       AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds, assetManager);
       if (anim != null) {
         entity.add(anim);
-      } else if (dto.texture != null) {
-        entity.add(new SpriteComponent(dto.texture));
       }
-    } else if (dto.texture != null) {
+    }
+
+    // Sprite
+    if (dto.texture != null) {
       entity.add(new SpriteComponent(dto.texture));
     }
 
@@ -308,7 +340,8 @@ public class EntitySerializer {
     if (dto.plantedTimestamp != null && dto.growthDurationSeconds != null) {
       Instant plantedTime = Instant.parse(dto.plantedTimestamp);
       Duration growthDuration = Duration.ofSeconds(dto.growthDurationSeconds);
-      TimeToGrowComponent timeToGrowComponent = new TimeToGrowComponent(plantedTime, growthDuration);
+      TimeToGrowComponent timeToGrowComponent =
+          new TimeToGrowComponent(plantedTime, growthDuration);
       entity.add(timeToGrowComponent);
     }
 
@@ -334,45 +367,61 @@ public class EntitySerializer {
 
     // Inventory
     if (dto.inventory != null) {
-      Inventory inventory = dto.inventory;
-      List<InventorySlot> inventorySlots = inventory.slots;
-      if (inventorySlots == null) {
-        inventorySlots = new ArrayList<>();
-      }
-      entity.add(new InventoryComponent(inventorySlots, inventory.width, inventory.height));
+      entity.add(
+          new InventoryComponent(
+              new InventoryInfo(
+                  dto.inventory.inventoryId, dto.inventory.width, dto.inventory.height, dto.inventory.inventoryType)));
     }
 
     // Hotbar
     if (dto.hotbar != null) {
-      entity.add(new HotbarComponent(dto.hotbar));
+      entity.add(
+          new HotbarComponent(
+              new InventoryInfo(dto.hotbar.inventoryId, dto.hotbar.width, dto.hotbar.height,
+                  dto.hotbar.inventoryType)));
     }
 
+    // Inventory item
+    if (dto.inventoryItemInventoryId != null) {
+      entity.add(new InventoryItemComponent(dto.inventoryItemType, dto.inventoryItemQuantity, dto.inventoryItemSlotX,
+          dto.inventoryItemSlotY, dto.inventoryItemInventoryId));
+
+      entity.remove(PositionComponent.class);
+    }
+    
     // Damage
     if (dto.damageAmount != null && dto.attackRange != null && dto.attackSpeed != null) {
       entity.add(new DamageComponent(dto.damageAmount, dto.attackRange, dto.attackSpeed));
     }
 
+    // Text
+    if (dto.text != null) {
+      entity.add(new TextComponent(dto.text, dto.textOffsetX, dto.textOffsetY));
+    }
+
+    // Inventory type entity
+    if (dto.inventoryTypeEntity != null) {
+      if (dto.inventoryTypeEntity == InventoryType.HOTBAR) {
+        entity.add(new PartOfHotbarComponent());
+      } else if (dto.inventoryTypeEntity == InventoryType.TRADING) {
+        entity.add(new TradeableComponent(dto.tradeablePrice));
+      }
+    }
+
     // Boolean tags
-    if (Boolean.TRUE.equals(dto.isCollidable))
-      entity.add(new CollidableComponent());
+    if (Boolean.TRUE.equals(dto.isCollidable)) entity.add(new CollidableComponent());
     if (Boolean.TRUE.equals(dto.isEnvironmentCollidable))
       entity.add(new EnvironmentCollidableComponent());
-    if (Boolean.TRUE.equals(dto.isHidden))
-      entity.add(new HiddenComponent());
-    if (Boolean.TRUE.equals(dto.occupiesTiles))
-      entity.add(new TileOccupierComponent());
-    if (Boolean.TRUE.equals(dto.isPlayer))
-      entity.add(new PlayerComponent());
-    if (Boolean.TRUE.equals(dto.hasInput))
-      entity.add(new InputComponent());
-    if (Boolean.TRUE.equals(dto.cameraShouldFollow))
-      entity.add(new CameraFollowComponent(camera));
-    if (Boolean.TRUE.equals(dto.hasVelocity))
-      entity.add(new VelocityComponent());
-    if (Boolean.TRUE.equals(dto.isClickable))
-      entity.add(new ClickableComponent());
-    if (Boolean.TRUE.equals(dto.isActiveWorldEntity))
-      entity.add(new ActiveWorldEntityComponent());
+    if (Boolean.TRUE.equals(dto.isHidden)) entity.add(new HiddenComponent());
+    if (Boolean.TRUE.equals(dto.occupiesTiles)) entity.add(new TileOccupierComponent());
+    if (Boolean.TRUE.equals(dto.isPlayer)) entity.add(new PlayerComponent());
+    if (Boolean.TRUE.equals(dto.hasInput)) entity.add(new InputComponent());
+    if (Boolean.TRUE.equals(dto.cameraShouldFollow)) entity.add(new CameraFollowComponent(camera));
+    if (Boolean.TRUE.equals(dto.hasVelocity)) entity.add(new VelocityComponent());
+    if (Boolean.TRUE.equals(dto.isClickable)) entity.add(new ClickableComponent());
+    if (Boolean.TRUE.equals(dto.isActiveWorldEntity)) entity.add(new ActiveWorldEntityComponent());
+    if (Boolean.TRUE.equals(dto.isHudEntity))
+      entity.add(new HudComponent());
 
     return entity;
   }
