@@ -8,7 +8,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
@@ -23,21 +22,12 @@ import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
-import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.AnimationSystem;
-import io.github.StarvingValley.models.systems.BuildGridRenderSystem;
-import io.github.StarvingValley.models.systems.BuildPlacementSystem;
-import io.github.StarvingValley.models.systems.BuildPreviewSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
-import io.github.StarvingValley.models.systems.CropGrowthSystem;
-import io.github.StarvingValley.models.systems.DurabilityRenderSystem;
-import io.github.StarvingValley.models.systems.EatingSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
-import io.github.StarvingValley.models.systems.HarvestingSystem;
-import io.github.StarvingValley.models.systems.HotbarItemClickSystem;
 import io.github.StarvingValley.models.systems.HudRenderSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
 import io.github.StarvingValley.models.systems.HungerSystem;
@@ -49,8 +39,6 @@ import io.github.StarvingValley.models.systems.InventorySystem;
 import io.github.StarvingValley.models.systems.MapRenderSystem;
 import io.github.StarvingValley.models.systems.MovementSystem;
 import io.github.StarvingValley.models.systems.RenderSystem;
-import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
-import io.github.StarvingValley.models.systems.RespawnSystem;
 import io.github.StarvingValley.models.systems.SpriteSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.TraderClickSystem;
@@ -78,7 +66,8 @@ public class VillageController {
 
     private StarvingValley game;
 
-    public VillageController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus, AssetManager assetManager) {
+    public VillageController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus,
+            AssetManager assetManager) {
         this.game = game;
         this.firebaseRepository = firebaseRepository;
         this.eventBus = eventBus;
@@ -142,16 +131,15 @@ public class VillageController {
         engine.addEntity(HudFactory.createEconomyBar(gameContext));
     }
 
-
     public void update(float deltaTime) {
         List<ScreenTransitionEvent> events = eventBus.getEvents(ScreenTransitionEvent.class);
         if (events.isEmpty())
             return;
 
-        if  (events.get(0).getTargetScreen() == ScreenType.FARM) {
+        if (events.get(0).getTargetScreen() == ScreenType.FARM) {
 
             ImmutableArray<Entity> players = engine.getEntitiesFor(
-                Family.all(PlayerComponent.class, PositionComponent.class).get() // currentMapComponent
+                    Family.all(PlayerComponent.class, PositionComponent.class).get() // currentMapComponent
             );
             if (players.size() == 0) {
                 return;
@@ -164,23 +152,26 @@ public class VillageController {
     private void addTownTraders() {
 
         TraderFactory.addTraderToEngine(engine, eventBus, 15, 10, List.of(new ItemTrade(PrefabType.SOIL, 4),
-            new ItemTrade(PrefabType.WHEAT_SEEDS, 15), new ItemTrade(PrefabType.BEETROOT_SEEDS, 20)), "DogBasic.png");
+                new ItemTrade(PrefabType.WHEAT_SEEDS, 15), new ItemTrade(PrefabType.BEETROOT_SEEDS, 20)),
+                "DogBasic.png");
 
-        TraderFactory.addTraderToEngine(engine, eventBus, 32, 24, List.of(new ItemTrade(PrefabType.WALL, 20)), "Bear.png");
+        TraderFactory.addTraderToEngine(engine, eventBus, 32, 24, List.of(new ItemTrade(PrefabType.WALL, 20)),
+                "Bear.png");
 
-        TraderFactory.addTraderToEngine(engine, eventBus, 9, 12, List.of(new ItemTrade(PrefabType.SOIL, 3)), "PinkCharacter.png");
+        TraderFactory.addTraderToEngine(engine, eventBus, 9, 12, List.of(new ItemTrade(PrefabType.SOIL, 3)),
+                "PinkCharacter.png");
 
         TraderFactory.addTraderToEngine(engine, eventBus, 14, 19, List.of(new ItemTrade(PrefabType.WHEAT_SEEDS, 10),
-            new ItemTrade(PrefabType.BEETROOT_SEEDS, 22)), "FoxBasic.png");
+                new ItemTrade(PrefabType.BEETROOT_SEEDS, 22)), "FoxBasic.png");
 
-        TraderFactory.addTraderToEngine(engine, eventBus, 20, 14, List.of(new ItemTrade(PrefabType.WALL, 22), new ItemTrade(PrefabType.SOIL, 2)), "OrangeCharacter.png");
+        TraderFactory.addTraderToEngine(engine, eventBus, 20, 14,
+                List.of(new ItemTrade(PrefabType.WALL, 22), new ItemTrade(PrefabType.SOIL, 2)), "OrangeCharacter.png");
 
     }
 
     public Entity getPlayer() {
         return gameContext.player;
     }
-
 
     public Engine getEngine() {
         return engine;

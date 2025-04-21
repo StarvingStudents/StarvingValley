@@ -10,6 +10,7 @@ import io.github.StarvingValley.models.components.CropTypeComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.StealingEvent;
 import io.github.StarvingValley.models.types.GameContext;
 
@@ -42,6 +43,7 @@ public class StealingSystem extends IteratingSystem {
     System.out.println(economy.balance);
 
     context.eventBus.publish(new StealingEvent(entity));
+    context.eventBus.publish(new EntityUpdatedEvent(context.player));
     getEngine().removeEntity(entity);
   }
 }
