@@ -121,7 +121,7 @@ public class VillageView extends ScreenAdapter {
 
         engine.update(delta);
         joystickOverlay.render();
-        eventDebugOverlay.render();
+        // eventDebugOverlay.render();
     }
 
     private boolean addedHotbar = false;

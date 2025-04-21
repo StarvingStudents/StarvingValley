@@ -134,7 +134,7 @@ public class FarmController {
         engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new DurabilityRenderSystem(gameContext));
         engine.addSystem(new HUDButtonPressSystem(gameContext));
-        engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
+        engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
         engine.addSystem(new EatingSystem(eventBus, gameContext));
         engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
@@ -151,6 +151,7 @@ public class FarmController {
         MapUtils.loadSyncedFarmEntities(gameContext, getCamera());
 
         engine.addEntity(HudFactory.createEconomyBar(gameContext));
+        engine.addEntity(HudFactory.createMenuButton(gameContext));
     }
 
     public void update(float deltaTime) {

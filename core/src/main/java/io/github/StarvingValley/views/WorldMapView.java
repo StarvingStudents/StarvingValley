@@ -106,7 +106,7 @@ public class WorldMapView extends ScreenAdapter {
 
     engine.update(delta);
     gameMenuController.render();
-    eventDebugOverlay.render();
+    // eventDebugOverlay.render();
   }
 
   @Override

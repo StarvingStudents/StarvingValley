@@ -104,7 +104,7 @@ public class VisitFarmView extends ScreenAdapter {
 
     engine.update(delta);
     joystickOverlay.render();
-    eventDebugOverlay.render();
+    // eventDebugOverlay.render();
   }
 
   @Override

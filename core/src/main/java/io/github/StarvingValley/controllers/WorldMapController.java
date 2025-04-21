@@ -80,7 +80,7 @@ public class WorldMapController {
     engine.addSystem(new SpriteSystem(gameContext));
     engine.addSystem(new HudRenderSystem());
     engine.addSystem(new HUDButtonPressSystem(gameContext));
-    engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
+    engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
     engine.addSystem(new SyncMarkingSystem(gameContext));
     engine.addSystem(new FirebaseSyncSystem(gameContext));
     engine.addSystem(new InputCleanupSystem());

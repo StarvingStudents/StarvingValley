@@ -205,7 +205,7 @@ public class FarmView extends ScreenAdapter {
     gameMenuController.render();
 
     notificationOverlay.render();
-    eventDebugOverlay.render();
+    // eventDebugOverlay.render();
   }
 
   @Override
