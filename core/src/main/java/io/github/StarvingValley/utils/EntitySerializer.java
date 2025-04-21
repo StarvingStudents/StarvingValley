@@ -229,7 +229,7 @@ public class EntitySerializer {
     return dto;
   }
 
-  public static Entity deserialize(SyncEntity dto, Entity camera, AssetManager assetManager) {
+  public static Entity deserialize(SyncEntity dto, Entity camera, Assets assets) {
     Entity entity = new Entity();
 
     // Position
@@ -290,7 +290,7 @@ public class EntitySerializer {
 
     // Animation
     if (dto.builds != null) {
-      AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds, assetManager);
+      AnimationComponent anim = AnimationFactory.createAnimationsForType(dto.builds, assets);
       if (anim != null) {
         entity.add(anim);
       }

@@ -125,7 +125,7 @@ public class HudFactory {
                 float y = (float) (Gdx.graphics.getHeight() - tileSize * 3 / 2);
 
                 return HudFactory.createHUDButton(x, y, tileSize, tileSize,
-                                "menu_button.png",
+                                "menu_icon.png",
                                 ButtonType.MENU_BUTTON);
         }
 }

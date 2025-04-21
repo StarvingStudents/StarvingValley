@@ -2,7 +2,6 @@ package io.github.StarvingValley.controllers;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.StarvingValley.config.Config;
@@ -27,6 +26,8 @@ import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.WorldMapTransitionSystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ScreenType;
+import io.github.StarvingValley.utils.AnimationUtils;
+import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 import io.github.StarvingValley.views.VisitFarmView;
 import java.util.List;
@@ -36,7 +37,6 @@ public class WorldMapController {
   private final Engine engine;
   private final SpriteBatch batch;
   private final EventBus eventBus;
-  private final AssetManager assetManager;
   private final IFirebaseRepository firebaseRepository;
   private final StarvingValley game;
   public GameContext gameContext;
@@ -49,16 +49,13 @@ public class WorldMapController {
       AssetManager assetManager) {
     this.firebaseRepository = firebaseRepository;
     this.eventBus = eventBus;
-    this.assetManager = assetManager;
     this.engine = new Engine();
     this.batch = new SpriteBatch();
     this.game = game;
-    gameContext = new GameContext();
-    gameContext.spriteBatch = this.batch;
-    gameContext.eventBus = this.eventBus;
-    gameContext.assetManager = this.assetManager;
-    gameContext.firebaseRepository = this.firebaseRepository;
-    gameContext.engine = this.engine;
+
+    gameContext = new GameContext(eventBus, batch, assetManager, firebaseRepository, engine, new Assets(assetManager));
+
+    AnimationUtils.loadTexturesForAnimation(assetManager);
     initGame();
   }
 
@@ -70,9 +67,6 @@ public class WorldMapController {
 
     engine.addEntity(camera);
 
-    // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
-    // batch etc), maybe we should have a GameContext class that holds them so we
-    // just pass around that?
     engine.addSystem(new InputSystem(gameContext));
     engine.addSystem(new WorldMapTransitionSystem(gameContext));
     engine.addSystem(new CameraSystem());

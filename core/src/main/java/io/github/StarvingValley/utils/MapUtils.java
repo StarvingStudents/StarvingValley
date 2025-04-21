@@ -59,7 +59,7 @@ public class MapUtils {
             boolean anyIsPlayer = false;
             for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
               SyncEntity syncEntity = entry.getValue();
-              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assets);
 
               // Replace static sprite with animation for players
               if (syncEntity.isPlayer) {
@@ -67,7 +67,7 @@ public class MapUtils {
                 context.player = entity;
                 Mappers.currScreen.get(entity).currentScreen = ScreenType.FARM;
                 AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,
-                context.assetManager);
+                    context.assets);
                 entity.add(anim);
               }
 
@@ -76,7 +76,7 @@ public class MapUtils {
             }
 
             if (!anyIsPlayer) {
-              Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+              Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assets, camera);
               player.add(new UnsyncedComponent());
               Mappers.currScreen.get(player).currentScreen = ScreenType.FARM;
               skipSpriteSyncOnLoad(player);
@@ -167,7 +167,7 @@ public class MapUtils {
               }
 
               Entity entity =
-                  EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+                  EntitySerializer.deserialize(syncEntity, camera, context.assets);
 
               entity.remove(SyncComponent.class);
 
@@ -192,16 +192,16 @@ public class MapUtils {
       if (!syncEntity.isPlayer)
         continue;
 
-      player = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+      player = EntitySerializer.deserialize(syncEntity, camera, context.assets);
       break;
     }
 
     if (player == null) {
-      player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+      player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assets, camera);
     }
 
     AnimationComponent anim =
-        AnimationFactory.createAnimationsForType(PrefabType.PLAYER, context.assetManager);
+        AnimationFactory.createAnimationsForType(PrefabType.PLAYER, context.assets);
     player.add(anim);
 
     return player;
@@ -215,7 +215,7 @@ public class MapUtils {
       if (syncEntity.inventoryItemInventoryId == null || !inventoryIds.contains(syncEntity.inventoryItemInventoryId))
         continue;
 
-      items.add(EntitySerializer.deserialize(syncEntity, camera, context.assetManager));
+      items.add(EntitySerializer.deserialize(syncEntity, camera, context.assets));
     }
 
     return items;

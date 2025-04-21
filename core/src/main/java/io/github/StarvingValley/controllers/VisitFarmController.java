@@ -40,19 +40,18 @@ import io.github.StarvingValley.models.systems.StealingSystem;
 import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.utils.AnimationUtils;
+import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 
 public class VisitFarmController {
   private final Engine engine;
   private final SpriteBatch batch;
   private final EventBus eventBus;
-  private final AssetManager assetManager;
-  private final IFirebaseRepository firebaseRepository;
   private final String visitedUserId;
   public GameContext gameContext;
   private Entity camera;
   private Entity map;
-  private Entity player;
   private StarvingValley game;
 
   public VisitFarmController(
@@ -62,20 +61,14 @@ public class VisitFarmController {
       EventBus eventBus,
       AssetManager assetManager) {
     this.visitedUserId = visitedUserId;
-    this.firebaseRepository = firebaseRepository;
     this.eventBus = eventBus;
-    this.assetManager = assetManager;
     this.engine = new Engine();
     this.batch = new SpriteBatch();
     this.game = game;
 
-    gameContext = new GameContext();
-    gameContext.spriteBatch = this.batch;
-    gameContext.eventBus = this.eventBus;
-    gameContext.assetManager = this.assetManager;
-    gameContext.firebaseRepository = this.firebaseRepository;
-    gameContext.engine = this.engine;
-
+    gameContext = new GameContext(eventBus, batch, assetManager, firebaseRepository, engine, new Assets(assetManager));
+    
+    AnimationUtils.loadTexturesForAnimation(assetManager);
     initVisitModeGame();
   }
 
@@ -113,10 +106,6 @@ public class VisitFarmController {
     engine.addSystem(new EventCleanupSystem(gameContext));
     engine.addSystem(new ActionAnimationSystem(gameContext));
 
-    System.out.println("AssetManager loaded assets:");
-    for (String asset : assetManager.getAssetNames()) {
-      System.out.println("- " + asset);
-    }
     TiledMapComponent tiledMap = Mappers.tiledMap.get(map);
     MapUtils.loadEnvCollidables(tiledMap.tiledMap, Config.UNIT_SCALE, engine);
 

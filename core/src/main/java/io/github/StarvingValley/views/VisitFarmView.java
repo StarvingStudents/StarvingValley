@@ -7,13 +7,13 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.controllers.VisitFarmController;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.utils.EventDebugger;
@@ -29,7 +29,6 @@ public class VisitFarmView extends ScreenAdapter {
   private Engine engine;
   private EventDebugOverlay eventDebugOverlay;
   private VisitFarmController controller;
-  private StarvingValley game;
 
   public VisitFarmView(StarvingValley game, IFirebaseRepository firebaseRepository, String userId) {
     _firebaseRepository = firebaseRepository;
@@ -37,30 +36,6 @@ public class VisitFarmView extends ScreenAdapter {
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
     eventBus = new EventBus(eventDebugger);
     assetManager = new AssetManager();
-    assetManager.load("DogBasic.png", Texture.class);
-    assetManager.load("tomato1.png", Texture.class);
-    assetManager.load("potato1.png", Texture.class);
-    assetManager.load("dirt.png", Texture.class);
-    assetManager.load("idle_down.png", Texture.class);
-    assetManager.load("idle_up.png", Texture.class);
-    assetManager.load("idle_left.png", Texture.class);
-    assetManager.load("idle_right.png", Texture.class);
-    assetManager.load("walking_down.png", Texture.class);
-    assetManager.load("walking_up.png", Texture.class);
-    assetManager.load("walking_left.png", Texture.class);
-    assetManager.load("walking_right.png", Texture.class);
-    assetManager.load("action_soil_down.png", Texture.class);
-    assetManager.load("action_soil_up.png", Texture.class);
-    assetManager.load("action_soil_left.png", Texture.class);
-    assetManager.load("action_soil_right.png", Texture.class);
-    assetManager.load("action_axe_down.png", Texture.class);
-    assetManager.load("action_axe_up.png", Texture.class);
-    assetManager.load("action_axe_left.png", Texture.class);
-    assetManager.load("action_axe_right.png", Texture.class);
-
-    assetManager.load("GameMenu.png", Texture.class);
-
-    assetManager.finishLoading();
 
     controller = new VisitFarmController(game, userId, _firebaseRepository, eventBus, assetManager);
 

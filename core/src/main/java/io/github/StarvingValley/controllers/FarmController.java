@@ -59,6 +59,7 @@ import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
+import io.github.StarvingValley.utils.AnimationUtils;
 import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 
@@ -67,8 +68,6 @@ public class FarmController {
     private final Engine engine;
     private final SpriteBatch batch;
     private final EventBus eventBus;
-    private final AssetManager assetManager;
-    private final IFirebaseRepository firebaseRepository;
     private GameContext gameContext;
 
     private Entity camera;
@@ -79,18 +78,12 @@ public class FarmController {
     public FarmController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus,
             AssetManager assetManager) {
         this.game = game;
-        this.firebaseRepository = firebaseRepository;
         this.eventBus = eventBus;
-        this.assetManager = assetManager;
         this.engine = new Engine();
         this.batch = new SpriteBatch();
-        gameContext = new GameContext();
-        gameContext.spriteBatch = this.batch;
-        gameContext.eventBus = this.eventBus;
-        gameContext.assetManager = this.assetManager;
-        gameContext.firebaseRepository = this.firebaseRepository;
-        gameContext.engine = this.engine;
-        gameContext.assets = new Assets(assetManager);
+
+        gameContext = new GameContext(eventBus, batch, assetManager, firebaseRepository, engine, new Assets(assetManager));
+        AnimationUtils.loadTexturesForAnimation(assetManager);
         initGame();
     }
 

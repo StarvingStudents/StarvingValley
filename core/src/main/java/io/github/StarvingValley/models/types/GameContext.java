@@ -19,4 +19,14 @@ public class GameContext {
     public IFirebaseRepository firebaseRepository;
     public Engine engine;
     public Assets assets;
+
+    public GameContext(EventBus eventBus, SpriteBatch spriteBatch,
+            AssetManager assetManager, IFirebaseRepository firebaseRepository, Engine engine, Assets assets) {
+        this.eventBus = eventBus;
+        this.spriteBatch = spriteBatch;
+        this.assetManager = assetManager;
+        this.firebaseRepository = firebaseRepository;
+        this.engine = engine;
+        this.assets = assets;
+    }
 }

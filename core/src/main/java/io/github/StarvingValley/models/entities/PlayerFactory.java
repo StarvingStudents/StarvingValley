@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.StarvingValley.config.Config;
@@ -37,11 +36,12 @@ import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.AnimationFactory;
+import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.InventoryUtils;
 
 public class PlayerFactory {
   public static Entity createPlayer(
-      float x, float y, float width, float height, float speed, AssetManager assetManager, Entity camera) {
+      float x, float y, float width, float height, float speed, Assets assets, Entity camera) {
 
     Entity entity = new Entity();
 
@@ -69,7 +69,7 @@ public class PlayerFactory {
 
     entity.add(cameraFollowComponent);
 
-    AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER, assetManager);
+    AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER, assets);
     entity.add(anim);
 
     return entity;

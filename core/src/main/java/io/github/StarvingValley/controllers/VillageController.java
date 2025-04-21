@@ -29,8 +29,6 @@ import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HudRenderSystem;
-import io.github.StarvingValley.models.systems.HungerRenderSystem;
-import io.github.StarvingValley.models.systems.HungerSystem;
 import io.github.StarvingValley.models.systems.InputCleanupSystem;
 import io.github.StarvingValley.models.systems.InputSystem;
 import io.github.StarvingValley.models.systems.InventoryDragSystem;
@@ -49,6 +47,8 @@ import io.github.StarvingValley.models.types.ItemTrade;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
+import io.github.StarvingValley.utils.AnimationUtils;
+import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 
 public class VillageController {
@@ -56,8 +56,6 @@ public class VillageController {
     private final Engine engine;
     private final SpriteBatch batch;
     private final EventBus eventBus;
-    private final AssetManager assetManager;
-    private final IFirebaseRepository firebaseRepository;
 
     public GameContext gameContext;
 
@@ -69,17 +67,14 @@ public class VillageController {
     public VillageController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus,
             AssetManager assetManager) {
         this.game = game;
-        this.firebaseRepository = firebaseRepository;
         this.eventBus = eventBus;
-        this.assetManager = assetManager;
         this.engine = new Engine();
         this.batch = new SpriteBatch();
-        this.gameContext = new GameContext();
-        this.gameContext.spriteBatch = this.batch;
-        this.gameContext.eventBus = this.eventBus;
-        this.gameContext.assetManager = this.assetManager;
-        this.gameContext.firebaseRepository = this.firebaseRepository;
-        this.gameContext.engine = this.engine;
+
+        this.gameContext = new GameContext(eventBus, batch, assetManager, firebaseRepository, engine,
+                new Assets(assetManager));
+                
+        AnimationUtils.loadTexturesForAnimation(assetManager);
         initGame();
     }
 

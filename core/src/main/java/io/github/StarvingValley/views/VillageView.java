@@ -3,13 +3,11 @@ package io.github.StarvingValley.views;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
@@ -22,13 +20,9 @@ import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
-import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.InventoryType;
-import io.github.StarvingValley.models.types.PrefabType;
-import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
 import io.github.StarvingValley.utils.InventoryUtils;
-import io.github.StarvingValley.utils.MapUtils;
 
 public class VillageView extends ScreenAdapter {
     public AssetManager assetManager;
@@ -49,38 +43,9 @@ public class VillageView extends ScreenAdapter {
         eventDebugOverlay = new EventDebugOverlay(eventDebugger);
         eventBus = new EventBus(eventDebugger);
 
-        // pre-load some assets that we know we always need.
-        // Potentially add assetManager.finishLoading(); to wait
         assetManager = new AssetManager();
-        assetManager.load("DogBasic.png", Texture.class);
-        assetManager.load("tomato1.png", Texture.class);
-        assetManager.load("potato1.png", Texture.class);
-        assetManager.load("dirt.png", Texture.class);
-        assetManager.load("idle_down.png", Texture.class);
-        assetManager.load("idle_up.png", Texture.class);
-        assetManager.load("idle_left.png", Texture.class);
-        assetManager.load("idle_right.png", Texture.class);
-        assetManager.load("walking_down.png", Texture.class);
-        assetManager.load("walking_up.png", Texture.class);
-        assetManager.load("walking_left.png", Texture.class);
-        assetManager.load("walking_right.png", Texture.class);
-        assetManager.load("action_soil_down.png", Texture.class);
-        assetManager.load("action_soil_up.png", Texture.class);
-        assetManager.load("action_soil_left.png", Texture.class);
-        assetManager.load("action_soil_right.png", Texture.class);
-        assetManager.load("action_axe_down.png", Texture.class);
-        assetManager.load("action_axe_up.png", Texture.class);
-        assetManager.load("action_axe_left.png", Texture.class);
-        assetManager.load("action_axe_right.png", Texture.class);
-
-        assetManager.load("GameMenu.png", Texture.class);
-
-        assetManager.finishLoading();
 
         controller = new VillageController(game, _firebaseRepository, eventBus, assetManager);
-        // to avoid
-        // problems with the temporal
-        // input handling
         engine = controller.getEngine();
 
         CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
