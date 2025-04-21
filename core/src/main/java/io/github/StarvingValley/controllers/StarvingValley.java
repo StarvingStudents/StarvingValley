@@ -2,21 +2,22 @@ package io.github.StarvingValley.controllers;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
+
+import io.github.StarvingValley.models.interfaces.AuthCallback;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.views.FarmView;
 import io.github.StarvingValley.views.VillageView;
 import io.github.StarvingValley.views.WorldMapView;
 
 public class StarvingValley extends Game {
-  IFirebaseRepository _firebaseRepository;
+  PlayerDataRepository _firebaseRepository;
   StarvingValley game;
 
   private boolean isAuthenticated = false;
   private ScreenType pendingScreenType;
 
-  public StarvingValley(IFirebaseRepository firebaseRepository) {
+  public StarvingValley(PlayerDataRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
   }
 

@@ -3,8 +3,8 @@ package io.github.StarvingValley.models.events;
 import com.badlogic.ashley.core.Entity;
 
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.Event;
 import io.github.StarvingValley.models.components.SyncComponent;
+import io.github.StarvingValley.models.interfaces.Event;
 
 /**
  * Abstract Event for entity and entity sync id

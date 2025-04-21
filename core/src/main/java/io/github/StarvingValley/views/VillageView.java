@@ -14,19 +14,19 @@ import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.controllers.VillageController;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.models.types.InventoryType;
 import io.github.StarvingValley.utils.EventDebugger;
 import io.github.StarvingValley.utils.InventoryUtils;
 
 public class VillageView extends ScreenAdapter {
     public AssetManager assetManager;
-    IFirebaseRepository _firebaseRepository;
+    PlayerDataRepository _firebaseRepository;
     private JoystickOverlay joystickOverlay;
     private InputEventAdapter inputEventAdapter;
 
@@ -37,7 +37,7 @@ public class VillageView extends ScreenAdapter {
     private final EventDebugger eventDebugger;
     private EventDebugOverlay eventDebugOverlay;
 
-    public VillageView(StarvingValley game, IFirebaseRepository firebaseRepository) {
+    public VillageView(StarvingValley game, PlayerDataRepository firebaseRepository) {
         _firebaseRepository = firebaseRepository;
         eventDebugger = new EventDebugger();
         eventDebugOverlay = new EventDebugOverlay(eventDebugger);

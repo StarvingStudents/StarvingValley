@@ -13,15 +13,15 @@ import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.controllers.VisitFarmController;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.utils.EventDebugger;
 
 public class VisitFarmView extends ScreenAdapter {
   private final EventDebugger eventDebugger;
   public AssetManager assetManager;
-  IFirebaseRepository _firebaseRepository;
+  PlayerDataRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
   private InputEventAdapter inputEventAdapter;
   private EventBus eventBus;
@@ -30,7 +30,7 @@ public class VisitFarmView extends ScreenAdapter {
   private EventDebugOverlay eventDebugOverlay;
   private VisitFarmController controller;
 
-  public VisitFarmView(StarvingValley game, IFirebaseRepository firebaseRepository, String userId) {
+  public VisitFarmView(StarvingValley game, PlayerDataRepository firebaseRepository, String userId) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);

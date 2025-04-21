@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
@@ -17,6 +16,7 @@ import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.AnimationSystem;
@@ -57,8 +57,8 @@ public class VisitFarmController {
   public VisitFarmController(
       StarvingValley game,
       String visitedUserId,
-      IFirebaseRepository firebaseRepository,
-      EventBus eventBus,
+      PlayerDataRepository firebaseRepository,
+          EventBus eventBus,
       AssetManager assetManager) {
     this.visitedUserId = visitedUserId;
     this.eventBus = eventBus;

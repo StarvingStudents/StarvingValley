@@ -10,7 +10,6 @@ import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.utils.DiffUtils;
 
 public class MovementSystem extends IteratingSystem {
   private GameContext context;
@@ -29,7 +28,7 @@ public class MovementSystem extends IteratingSystem {
     position.position.x += velocity.velocity.x;
     position.position.y += velocity.velocity.y;
 
-    if (DiffUtils.hasChanged(position.position, oldPosition))
+    if (!position.position.epsilonEquals(oldPosition, 0.0001f))
       context.eventBus.publish(new EntityUpdatedEvent(entity));
   }
 }

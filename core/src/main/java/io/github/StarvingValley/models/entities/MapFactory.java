@@ -57,10 +57,4 @@ public class MapFactory {
 
         return entity;
     }
-
-    public static Entity createEnvPlacementBlocker(float x, float y, int width, int height) {
-        Rectangle rect = new Rectangle(x, y, width, height);
-        
-        return createEnvPlacementBlocker(rect);
-    }
 }

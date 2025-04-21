@@ -6,8 +6,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.utils.Assets;
 
 public class GameContext {
@@ -16,12 +16,12 @@ public class GameContext {
     public EventBus eventBus;
     public SpriteBatch spriteBatch;
     public AssetManager assetManager;
-    public IFirebaseRepository firebaseRepository;
+    public PlayerDataRepository firebaseRepository;
     public Engine engine;
     public Assets assets;
 
     public GameContext(EventBus eventBus, SpriteBatch spriteBatch,
-            AssetManager assetManager, IFirebaseRepository firebaseRepository, Engine engine, Assets assets) {
+            AssetManager assetManager, PlayerDataRepository firebaseRepository, Engine engine, Assets assets) {
         this.eventBus = eventBus;
         this.spriteBatch = spriteBatch;
         this.assetManager = assetManager;

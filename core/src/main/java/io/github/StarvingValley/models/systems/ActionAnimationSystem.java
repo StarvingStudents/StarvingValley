@@ -11,12 +11,12 @@ import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.Event;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.events.EntityPlacedEvent;
 import io.github.StarvingValley.models.events.PlayerAttackedEntityEvent;
+import io.github.StarvingValley.models.interfaces.Event;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 

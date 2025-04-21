@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.StarvingValley.models.Mappers;

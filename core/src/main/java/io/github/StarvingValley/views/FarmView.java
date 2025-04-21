@@ -14,7 +14,6 @@ import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
@@ -23,6 +22,7 @@ import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
 import io.github.StarvingValley.models.events.NotificationEvent;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.models.types.InventoryType;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
@@ -32,7 +32,7 @@ import io.github.StarvingValley.utils.InventoryUtils;
 public class FarmView extends ScreenAdapter {
   private final EventDebugger eventDebugger;
   public AssetManager assetManager;
-  IFirebaseRepository _firebaseRepository;
+  PlayerDataRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
   private InputAdapter inputAdapter; // temp
   private InputEventAdapter inputEventAdapter;
@@ -45,7 +45,7 @@ public class FarmView extends ScreenAdapter {
 
   private GameMenuController gameMenuController;
 
-  public FarmView(StarvingValley game, IFirebaseRepository firebaseRepository) {
+  public FarmView(StarvingValley game, PlayerDataRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);

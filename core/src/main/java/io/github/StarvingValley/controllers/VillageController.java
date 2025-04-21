@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -22,6 +21,7 @@ import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.models.systems.AnimationSystem;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.EnvironmentCollisionSystem;
@@ -64,8 +64,8 @@ public class VillageController {
 
     private StarvingValley game;
 
-    public VillageController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus,
-            AssetManager assetManager) {
+    public VillageController(StarvingValley game, PlayerDataRepository firebaseRepository, EventBus eventBus,
+                    AssetManager assetManager) {
         this.game = game;
         this.eventBus = eventBus;
         this.engine = new Engine();

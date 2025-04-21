@@ -17,9 +17,7 @@ public class Config {
   public static final String MAP_NON_PLACEMENT_LAYER_NAME = "nonplacement";
   public static final float BOUNDS_BOTTOM_COLLISION_RATIO = 0.4f;
   public static final float BUILD_GRID_LINE_THICKNESS = 1f / Config.PIXELS_PER_TILE;
-  public static final float INVENTORY_SLOT_TILE_SIZE_MULTIPLIER = 1.2f;
   public static final float MAX_TAP_DISTANCE = 15f;
-  public static final float MAX_TAP_DURATION = 300;
   public static final float COLLISION_MARGIN = 0.1f;
   public static final int ATTACKABLE_FARMS = 5;
   public static final float STARTING_BALANCE = 100;

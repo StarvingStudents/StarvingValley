@@ -11,16 +11,16 @@ import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.controllers.WorldMapController;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.utils.EventDebugger;
 
 public class WorldMapView extends ScreenAdapter {
   private final EventDebugger eventDebugger;
   public AssetManager assetManager;
-  IFirebaseRepository _firebaseRepository;
+  PlayerDataRepository _firebaseRepository;
   private InputEventAdapter inputEventAdapter;
   private EventBus eventBus;
   private WorldMapController controller;
@@ -28,7 +28,7 @@ public class WorldMapView extends ScreenAdapter {
   private EventDebugOverlay eventDebugOverlay;
   private GameMenuController gameMenuController;
 
-  public WorldMapView(StarvingValley game, IFirebaseRepository firebaseRepository) {
+  public WorldMapView(StarvingValley game, PlayerDataRepository firebaseRepository) {
 
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();

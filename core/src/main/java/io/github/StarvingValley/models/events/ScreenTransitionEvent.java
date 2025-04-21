@@ -1,6 +1,6 @@
 package io.github.StarvingValley.models.events;
 
-import io.github.StarvingValley.models.Interfaces.Event;
+import io.github.StarvingValley.models.interfaces.Event;
 import io.github.StarvingValley.models.types.ScreenType;
 
 public class ScreenTransitionEvent implements Event {

@@ -3,7 +3,7 @@ package io.github.StarvingValley.models.events;
 import java.time.Duration;
 import java.time.Instant;
 
-import io.github.StarvingValley.models.Interfaces.Event;
+import io.github.StarvingValley.models.interfaces.Event;
 
 public class NotificationEvent implements Event {
     public String message;

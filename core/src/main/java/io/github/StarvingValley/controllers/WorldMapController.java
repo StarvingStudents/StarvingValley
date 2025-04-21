@@ -1,17 +1,20 @@
 package io.github.StarvingValley.controllers;
 
+import java.util.List;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import io.github.StarvingValley.config.Config;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
+import io.github.StarvingValley.models.interfaces.AuthCallback;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
+import io.github.StarvingValley.models.interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
@@ -30,22 +33,21 @@ import io.github.StarvingValley.utils.AnimationUtils;
 import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 import io.github.StarvingValley.views.VisitFarmView;
-import java.util.List;
 
 public class WorldMapController {
 
   private final Engine engine;
   private final SpriteBatch batch;
   private final EventBus eventBus;
-  private final IFirebaseRepository firebaseRepository;
+  private final PlayerDataRepository firebaseRepository;
   private final StarvingValley game;
   public GameContext gameContext;
   private Entity camera;
 
   public WorldMapController(
       StarvingValley game,
-      IFirebaseRepository firebaseRepository,
-      EventBus eventBus,
+      PlayerDataRepository firebaseRepository,
+          EventBus eventBus,
       AssetManager assetManager) {
     this.firebaseRepository = firebaseRepository;
     this.eventBus = eventBus;

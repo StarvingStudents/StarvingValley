@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Rectangle;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.AttackComponent;
 import io.github.StarvingValley.models.components.HotbarComponent;
@@ -29,6 +28,7 @@ import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.entities.WorldMapUserFactory;
+import io.github.StarvingValley.models.interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
