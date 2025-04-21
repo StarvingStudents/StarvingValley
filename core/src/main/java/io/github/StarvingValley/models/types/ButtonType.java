@@ -4,5 +4,6 @@ public enum ButtonType {
     EATING_BUTTON,
     FARM_TO_WORLD_MAP_BUTTON,
     WORLD_MAP_TO_FARM_BUTTON,
+    MENU_BUTTON,
     PICKUP_BUTTON
 }

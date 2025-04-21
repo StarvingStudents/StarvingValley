@@ -8,11 +8,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import io.github.StarvingValley.config.Config;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
-import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.models.Interfaces.PushCallback;
-import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
+import io.github.StarvingValley.models.interfaces.AuthCallback;
+import io.github.StarvingValley.models.interfaces.EntityDataCallback;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
+import io.github.StarvingValley.models.interfaces.PushCallback;
+import io.github.StarvingValley.models.interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.types.ScreenType;
 
@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class FirebaseRepository implements IFirebaseRepository {
+public class FirebaseRepository implements PlayerDataRepository {
 
   FirebaseDatabase _database;
   DatabaseReference _users;

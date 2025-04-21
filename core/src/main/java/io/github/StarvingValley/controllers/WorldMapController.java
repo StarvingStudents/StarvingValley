@@ -1,18 +1,20 @@
 package io.github.StarvingValley.controllers;
 
+import java.util.List;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import io.github.StarvingValley.config.Config;
-import io.github.StarvingValley.models.Interfaces.AuthCallback;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
-import io.github.StarvingValley.models.Interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.entities.CameraFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
 import io.github.StarvingValley.models.events.WorldMapFarmClickEvent;
+import io.github.StarvingValley.models.interfaces.AuthCallback;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
+import io.github.StarvingValley.models.interfaces.UserIdsCallback;
 import io.github.StarvingValley.models.systems.CameraSystem;
 import io.github.StarvingValley.models.systems.EventCleanupSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
@@ -27,38 +29,35 @@ import io.github.StarvingValley.models.systems.SyncMarkingSystem;
 import io.github.StarvingValley.models.systems.WorldMapTransitionSystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ScreenType;
+import io.github.StarvingValley.utils.AnimationUtils;
+import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 import io.github.StarvingValley.views.VisitFarmView;
-import java.util.List;
 
 public class WorldMapController {
 
   private final Engine engine;
   private final SpriteBatch batch;
   private final EventBus eventBus;
-  private final AssetManager assetManager;
-  private final IFirebaseRepository firebaseRepository;
+  private final PlayerDataRepository firebaseRepository;
   private final StarvingValley game;
   public GameContext gameContext;
   private Entity camera;
 
   public WorldMapController(
       StarvingValley game,
-      IFirebaseRepository firebaseRepository,
-      EventBus eventBus,
+      PlayerDataRepository firebaseRepository,
+          EventBus eventBus,
       AssetManager assetManager) {
     this.firebaseRepository = firebaseRepository;
     this.eventBus = eventBus;
-    this.assetManager = assetManager;
     this.engine = new Engine();
     this.batch = new SpriteBatch();
     this.game = game;
-    gameContext = new GameContext();
-    gameContext.spriteBatch = this.batch;
-    gameContext.eventBus = this.eventBus;
-    gameContext.assetManager = this.assetManager;
-    gameContext.firebaseRepository = this.firebaseRepository;
-    gameContext.engine = this.engine;
+
+    gameContext = new GameContext(eventBus, batch, assetManager, firebaseRepository, engine, new Assets(assetManager));
+
+    AnimationUtils.loadTexturesForAnimation(assetManager);
     initGame();
   }
 
@@ -70,9 +69,6 @@ public class WorldMapController {
 
     engine.addEntity(camera);
 
-    // TODO: Since there's some stuff we send to multiple systems (eventBus, camera,
-    // batch etc), maybe we should have a GameContext class that holds them so we
-    // just pass around that?
     engine.addSystem(new InputSystem(gameContext));
     engine.addSystem(new WorldMapTransitionSystem(gameContext));
     engine.addSystem(new CameraSystem());
@@ -80,7 +76,7 @@ public class WorldMapController {
     engine.addSystem(new SpriteSystem(gameContext));
     engine.addSystem(new HudRenderSystem());
     engine.addSystem(new HUDButtonPressSystem(gameContext));
-    engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
+    engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
     engine.addSystem(new SyncMarkingSystem(gameContext));
     engine.addSystem(new FirebaseSyncSystem(gameContext));
     engine.addSystem(new InputCleanupSystem());

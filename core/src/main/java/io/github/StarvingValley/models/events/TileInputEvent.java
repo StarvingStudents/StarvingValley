@@ -3,7 +3,7 @@ package io.github.StarvingValley.models.events;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.StarvingValley.models.Interfaces.Event;
+import io.github.StarvingValley.models.interfaces.Event;
 
 public abstract class TileInputEvent implements Event {
     public final GridPoint2 tile;

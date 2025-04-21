@@ -1,4 +1,4 @@
-package io.github.StarvingValley.models.Interfaces;
+package io.github.StarvingValley.models.interfaces;
 
 public interface PushCallback {
     void onSuccess();

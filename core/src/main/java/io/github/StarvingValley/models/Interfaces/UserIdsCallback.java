@@ -1,4 +1,4 @@
-package io.github.StarvingValley.models.Interfaces;
+package io.github.StarvingValley.models.interfaces;
 
 import java.util.List;
 public interface UserIdsCallback {

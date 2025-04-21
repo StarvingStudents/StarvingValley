@@ -9,7 +9,6 @@ import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.events.RespawnEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.utils.DiffUtils;
 
 public class HungerSystem extends IteratingSystem {
   private GameContext context;
@@ -31,7 +30,7 @@ public class HungerSystem extends IteratingSystem {
     }
 
     // Don't need to sync on every decimal change
-    if (DiffUtils.hasChanged((int) hunger.hungerPoints, (int) oldHunger))
+    if ((int) hunger.hungerPoints != (int) oldHunger)
       context.eventBus.publish(new EntityUpdatedEvent(entity));
   }
 }

@@ -10,6 +10,8 @@ import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
 import io.github.StarvingValley.models.components.TradeableComponent;
 import io.github.StarvingValley.models.events.AddItemToInventoryEvent;
+import io.github.StarvingValley.models.events.EntityUpdatedEvent;
+import io.github.StarvingValley.models.events.NotificationEvent;
 import io.github.StarvingValley.models.types.GameContext;
 
 public class TradingSystem extends IteratingSystem {
@@ -35,12 +37,15 @@ public class TradingSystem extends IteratingSystem {
         EconomyComponent economy = Mappers.economy.get(context.player);
 
         if (tradeable.price > economy.balance) {
+            context.eventBus.publish(new NotificationEvent("Missing " + (tradeable.price - economy.balance) + " coins"));
             return;
         }
 
         economy.balance -= tradeable.price;
 
-        context.eventBus.publish(new AddItemToInventoryEvent(context.player,
-                trading.type, 1));
+        context.eventBus.publish(new AddItemToInventoryEvent(context.player, trading.type, 1));
+        context.eventBus.publish(new EntityUpdatedEvent(context.player));
+
+        context.eventBus.publish(new NotificationEvent("Bought item!"));
     }
 }

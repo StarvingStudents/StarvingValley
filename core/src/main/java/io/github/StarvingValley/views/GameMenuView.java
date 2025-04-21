@@ -22,7 +22,7 @@ public class GameMenuView {
 
     public GameMenuView(GameMenuController controller, GameContext context) {
         this.controller = controller;
-        this.backgroundTexture = context.assetManager.get("GameMenu.png", Texture.class);
+        this.backgroundTexture = context.assets.getTexture("GameMenu.png");
         this.background = new Sprite(backgroundTexture);
 
         float width = Gdx.graphics.getWidth() * 0.6f;

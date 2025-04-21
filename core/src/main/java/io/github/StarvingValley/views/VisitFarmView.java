@@ -7,23 +7,23 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+
 import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.controllers.VisitFarmController;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.NotificationEvent;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.utils.EventDebugger;
 
 public class VisitFarmView extends ScreenAdapter {
   private final EventDebugger eventDebugger;
   public AssetManager assetManager;
-  IFirebaseRepository _firebaseRepository;
+  PlayerDataRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
   private InputEventAdapter inputEventAdapter;
   private EventBus eventBus;
@@ -31,48 +31,24 @@ public class VisitFarmView extends ScreenAdapter {
   private Engine engine;
   private EventDebugOverlay eventDebugOverlay;
   private VisitFarmController controller;
+
   private StarvingValley game;
   private NotificationOverlay notificationOverlay;
 
-  public VisitFarmView(StarvingValley game, IFirebaseRepository firebaseRepository, String userId) {
+  public VisitFarmView(StarvingValley game, PlayerDataRepository firebaseRepository, String userId) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
     eventBus = new EventBus(eventDebugger);
     notificationOverlay = new NotificationOverlay(eventBus);
     assetManager = new AssetManager();
-    assetManager.load("DogBasic.png", Texture.class);
-    assetManager.load("tomato1.png", Texture.class);
-    assetManager.load("potato1.png", Texture.class);
-    assetManager.load("dirt.png", Texture.class);
-    assetManager.load("idle_down.png", Texture.class);
-    assetManager.load("idle_up.png", Texture.class);
-    assetManager.load("idle_left.png", Texture.class);
-    assetManager.load("idle_right.png", Texture.class);
-    assetManager.load("walking_down.png", Texture.class);
-    assetManager.load("walking_up.png", Texture.class);
-    assetManager.load("walking_left.png", Texture.class);
-    assetManager.load("walking_right.png", Texture.class);
-    assetManager.load("action_soil_down.png", Texture.class);
-    assetManager.load("action_soil_up.png", Texture.class);
-    assetManager.load("action_soil_left.png", Texture.class);
-    assetManager.load("action_soil_right.png", Texture.class);
-    assetManager.load("action_axe_down.png", Texture.class);
-    assetManager.load("action_axe_up.png", Texture.class);
-    assetManager.load("action_axe_left.png", Texture.class);
-    assetManager.load("action_axe_right.png", Texture.class);
-
-    assetManager.load("GameMenu.png", Texture.class);
-
-    assetManager.finishLoading();
 
     controller = new VisitFarmController(game, userId, _firebaseRepository, eventBus, assetManager);
 
     engine = controller.getEngine();
 
     CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
-    inputEventAdapter =
-        new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
+    inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
   }
 
   @Override
@@ -110,7 +86,6 @@ public class VisitFarmView extends ScreenAdapter {
 
     engine.update(delta);
     joystickOverlay.render();
-    eventDebugOverlay.render();
     notificationOverlay.render();
   }
 

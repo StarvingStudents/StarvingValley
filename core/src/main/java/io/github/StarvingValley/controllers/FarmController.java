@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
@@ -21,6 +20,7 @@ import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.models.systems.ActionAnimationSystem;
 import io.github.StarvingValley.models.systems.AlphaPulseSystem;
 import io.github.StarvingValley.models.systems.AnimationSystem;
@@ -58,6 +58,7 @@ import io.github.StarvingValley.models.systems.VelocitySystem;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
+import io.github.StarvingValley.utils.AnimationUtils;
 import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
 import io.github.StarvingValley.models.systems.PickupButtonSystem;
@@ -68,8 +69,6 @@ public class FarmController {
     private final Engine engine;
     private final SpriteBatch batch;
     private final EventBus eventBus;
-    private final AssetManager assetManager;
-    private final IFirebaseRepository firebaseRepository;
     private GameContext gameContext;
 
     private Entity camera;
@@ -77,21 +76,15 @@ public class FarmController {
 
     private StarvingValley game;
 
-    public FarmController(StarvingValley game, IFirebaseRepository firebaseRepository, EventBus eventBus,
-            AssetManager assetManager) {
+    public FarmController(StarvingValley game, PlayerDataRepository firebaseRepository, EventBus eventBus,
+                    AssetManager assetManager) {
         this.game = game;
-        this.firebaseRepository = firebaseRepository;
         this.eventBus = eventBus;
-        this.assetManager = assetManager;
         this.engine = new Engine();
         this.batch = new SpriteBatch();
-        gameContext = new GameContext();
-        gameContext.spriteBatch = this.batch;
-        gameContext.eventBus = this.eventBus;
-        gameContext.assetManager = this.assetManager;
-        gameContext.firebaseRepository = this.firebaseRepository;
-        gameContext.engine = this.engine;
-        gameContext.assets = new Assets(assetManager);
+
+        gameContext = new GameContext(eventBus, batch, assetManager, firebaseRepository, engine, new Assets(assetManager));
+        AnimationUtils.loadTexturesForAnimation(assetManager);
         initGame();
     }
 
@@ -134,7 +127,7 @@ public class FarmController {
         engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new DurabilityRenderSystem(gameContext));
         engine.addSystem(new HUDButtonPressSystem(gameContext));
-        engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
+        engine.addSystem(new HUDButtonPressHandlingSystem(gameContext));
         engine.addSystem(new EatingSystem(eventBus, gameContext));
         engine.addSystem(new PickupButtonSystem(gameContext));
         engine.addSystem(new PickupSystem(gameContext));
@@ -153,6 +146,7 @@ public class FarmController {
         MapUtils.loadSyncedFarmEntities(gameContext, getCamera());
 
         engine.addEntity(HudFactory.createEconomyBar(gameContext));
+        engine.addEntity(HudFactory.createMenuButton(gameContext));
     }
 
     public void update(float deltaTime) {

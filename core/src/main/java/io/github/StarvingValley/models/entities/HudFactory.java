@@ -75,7 +75,7 @@ public class HudFactory {
         public static Entity createEconomyBar(GameContext context) {
                 float tileSize = TileUtils.getTileWidth();
 
-                float x = tileSize * 2/3;
+                float x = tileSize * 2;
                 float y = (float) (Gdx.graphics.getHeight() - tileSize * 3/2);
 
                 Entity entity = new Entity();
@@ -128,5 +128,16 @@ public class HudFactory {
                                 .add(textComponent);
 
                 return entity;
+        }
+
+        public static Entity createMenuButton(GameContext context) {
+                float tileSize = TileUtils.getTileWidth();
+
+                float x = tileSize * 2 / 3;
+                float y = (float) (Gdx.graphics.getHeight() - tileSize * 3 / 2);
+
+                return HudFactory.createHUDButton(x, y, tileSize, tileSize,
+                                "menu_icon.png",
+                                ButtonType.MENU_BUTTON);
         }
 }

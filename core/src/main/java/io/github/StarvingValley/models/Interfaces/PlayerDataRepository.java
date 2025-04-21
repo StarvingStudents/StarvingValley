@@ -1,12 +1,11 @@
-package io.github.StarvingValley.models.Interfaces;
+package io.github.StarvingValley.models.interfaces;
 
 import java.util.List;
 import java.util.Map;
 
 import io.github.StarvingValley.models.types.ScreenType;
 
-public interface IFirebaseRepository {
-  // Auth
+public interface PlayerDataRepository {
   void signInWithEmail(String email, String password, AuthCallback callback);
 
   void signOut();

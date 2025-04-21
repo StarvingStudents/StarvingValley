@@ -14,10 +14,10 @@ import com.badlogic.ashley.utils.ImmutableArray;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.PushCallback;
 import io.github.StarvingValley.models.components.SyncComponent;
 import io.github.StarvingValley.models.components.SyncDeletionRequestComponent;
 import io.github.StarvingValley.models.components.UnsyncedComponent;
+import io.github.StarvingValley.models.interfaces.PushCallback;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.utils.EntitySerializer;
 

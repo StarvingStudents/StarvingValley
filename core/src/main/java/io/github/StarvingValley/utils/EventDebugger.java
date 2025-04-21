@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import io.github.StarvingValley.models.Interfaces.Event;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
+import io.github.StarvingValley.models.interfaces.Event;
 
 public class EventDebugger {
     private static final int MAX_EVENTS = 10;

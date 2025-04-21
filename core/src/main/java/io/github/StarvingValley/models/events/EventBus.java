@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.StarvingValley.models.Interfaces.Event;
+import io.github.StarvingValley.models.interfaces.Event;
 import io.github.StarvingValley.utils.EventDebugger;
 
 /**

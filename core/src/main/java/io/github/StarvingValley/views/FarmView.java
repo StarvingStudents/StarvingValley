@@ -1,7 +1,5 @@
 package io.github.StarvingValley.views;
 
-import java.util.List;
-
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -9,7 +7,6 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 
 import io.github.StarvingValley.controllers.FarmController;
 import io.github.StarvingValley.controllers.GameMenuController;
@@ -17,18 +14,15 @@ import io.github.StarvingValley.controllers.InputEventController;
 import io.github.StarvingValley.controllers.JoystickController;
 import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.HotbarComponent;
 import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.entities.HudFactory;
-import io.github.StarvingValley.models.entities.TraderFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
-import io.github.StarvingValley.models.events.NotificationEvent;
+import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.models.types.InventoryType;
-import io.github.StarvingValley.models.types.ItemTrade;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.utils.BuildUtils;
 import io.github.StarvingValley.utils.EventDebugger;
@@ -37,7 +31,7 @@ import io.github.StarvingValley.utils.InventoryUtils;
 public class FarmView extends ScreenAdapter {
   private final EventDebugger eventDebugger;
   public AssetManager assetManager;
-  IFirebaseRepository _firebaseRepository;
+  PlayerDataRepository _firebaseRepository;
   private JoystickOverlay joystickOverlay;
   private InputAdapter inputAdapter; // temp
   private InputEventAdapter inputEventAdapter;
@@ -50,7 +44,7 @@ public class FarmView extends ScreenAdapter {
 
   private GameMenuController gameMenuController;
 
-  public FarmView(StarvingValley game, IFirebaseRepository firebaseRepository) {
+  public FarmView(StarvingValley game, PlayerDataRepository firebaseRepository) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
@@ -58,43 +52,13 @@ public class FarmView extends ScreenAdapter {
 
     notificationOverlay = new NotificationOverlay(eventBus);
 
-    // pre-load some assets that we know we always need.
-    // Potentially add assetManager.finishLoading(); to wait
     assetManager = new AssetManager();
-    // assetManager.load("DogBasic.png", Texture.class);
-    assetManager.load("tomato1.png", Texture.class);
-    assetManager.load("potato1.png", Texture.class);
-    assetManager.load("dirt.png", Texture.class);
-    assetManager.load("inventory_slot.png", Texture.class);
-    assetManager.load("inventory_slot_highlight.png", Texture.class);
-    assetManager.load("inventory_open_button.png", Texture.class);
-
-    assetManager.load("idle_down.png", Texture.class);
-    assetManager.load("idle_up.png", Texture.class);
-    assetManager.load("idle_left.png", Texture.class);
-    assetManager.load("idle_right.png", Texture.class);
-    assetManager.load("walking_down.png", Texture.class);
-    assetManager.load("walking_up.png", Texture.class);
-    assetManager.load("walking_left.png", Texture.class);
-    assetManager.load("walking_right.png", Texture.class);
-    assetManager.load("action_soil_down.png", Texture.class);
-    assetManager.load("action_soil_up.png", Texture.class);
-    assetManager.load("action_soil_left.png", Texture.class);
-    assetManager.load("action_soil_right.png", Texture.class);
-    assetManager.load("action_axe_down.png", Texture.class);
-    assetManager.load("action_axe_up.png", Texture.class);
-    assetManager.load("action_axe_left.png", Texture.class);
-    assetManager.load("action_axe_right.png", Texture.class);
-
-    assetManager.load("GameMenu.png", Texture.class);
-
-    assetManager.finishLoading();
 
     controller = new FarmController(game, _firebaseRepository, eventBus, assetManager);
 
     engine = controller.getEngine();
 
-    // TODO: Keeping this to make dev easier
+    // To make dev easier
     inputAdapter = new InputAdapter() {
       @Override
       public boolean keyDown(int keycode) {
@@ -171,14 +135,9 @@ public class FarmView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    // Temp until we have villageview
     engine.addEntity(HudFactory.createEatingButton());
     engine.addEntity(HudFactory.createFarmToWorldMapButton());
     engine.addEntity(HudFactory.createPickupButton());
-
-    eventBus.publish(new NotificationEvent("Press f to start farming mode."));
-    eventBus.publish(new NotificationEvent("Press c to plant beetroots."));
-    eventBus.publish(new NotificationEvent("Press e to plant wheat."));
   }
 
   @Override
@@ -205,7 +164,7 @@ public class FarmView extends ScreenAdapter {
     gameMenuController.render();
 
     notificationOverlay.render();
-    eventDebugOverlay.render();
+    // eventDebugOverlay.render();
   }
 
   @Override

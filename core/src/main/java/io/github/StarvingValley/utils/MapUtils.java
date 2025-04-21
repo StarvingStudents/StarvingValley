@@ -16,9 +16,10 @@ import com.badlogic.gdx.math.Rectangle;
 
 import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
-import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.AttackComponent;
+import io.github.StarvingValley.models.components.HotbarComponent;
+import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
@@ -27,6 +28,7 @@ import io.github.StarvingValley.models.dto.SyncEntity;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.entities.PlayerFactory;
 import io.github.StarvingValley.models.entities.WorldMapUserFactory;
+import io.github.StarvingValley.models.interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.PrefabType;
 import io.github.StarvingValley.models.types.ScreenType;
@@ -49,54 +51,6 @@ public class MapUtils {
     }
   }
 
-  // TODO: While we're waiting on firebase to fetch entities we should show a
-  // loading screen so we
-  // don't first load the map, then add the player which causes the camera to jump
-  public static void loadSyncedEntities(GameContext context, Entity camera) {
-    context.firebaseRepository.getAllEntities(
-        new EntityDataCallback() {
-          @Override
-          public void onSuccess(Map<String, SyncEntity> data) {
-            boolean anyIsPlayer = false;
-
-            for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
-              SyncEntity syncEntity = entry.getValue();
-
-              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
-
-              if (syncEntity.isPlayer) {
-                anyIsPlayer = true;
-                context.player = entity;
-
-                AnimationComponent anim = AnimationFactory.createAnimationsForType(
-                    PrefabType.PLAYER, context.assetManager);
-                entity.add(anim);
-              }
-
-              skipSpriteSyncOnLoad(entity);
-              context.engine.addEntity(entity);
-            }
-
-            if (!anyIsPlayer) {
-              Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
-              player.add(new UnsyncedComponent());
-              skipSpriteSyncOnLoad(player);
-              context.engine.addEntity(player);
-
-              context.player = player;
-            }
-          }
-
-          @Override
-          public void onFailure(String errorMessage) {
-            System.err.println("Failed to load your entities: " + errorMessage);
-          }
-        });
-  }
-
-  private static final float FARM_TO_VILLAGE_BOUNDARY = 39.5f;
-  private static final float VILLAGE_TO_FARM_BOUNDARY = 0f;
-
   public static void loadSyncedFarmEntities(GameContext context, Entity camera) {
     context.firebaseRepository.getAllEntities(
         new EntityDataCallback() {
@@ -105,7 +59,7 @@ public class MapUtils {
             boolean anyIsPlayer = false;
             for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
               SyncEntity syncEntity = entry.getValue();
-              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assets);
 
               // Replace static sprite with animation for players
               if (syncEntity.isPlayer) {
@@ -113,7 +67,7 @@ public class MapUtils {
                 context.player = entity;
                 Mappers.currScreen.get(entity).currentScreen = ScreenType.FARM;
                 AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,
-                    context.assetManager);
+                    context.assets);
                 entity.add(anim);
               }
 
@@ -122,12 +76,15 @@ public class MapUtils {
             }
 
             if (!anyIsPlayer) {
-              Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+              Entity player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assets, camera);
               player.add(new UnsyncedComponent());
               Mappers.currScreen.get(player).currentScreen = ScreenType.FARM;
               skipSpriteSyncOnLoad(player);
               context.engine.addEntity(player);
               context.player = player;
+
+              // Give new players items to get started
+              PlayerFactory.initializePlayerInventory(context.engine, player, context.eventBus);
             }
           }
 
@@ -148,6 +105,20 @@ public class MapUtils {
             skipSpriteSyncOnLoad(player);
             context.engine.addEntity(player);
             context.player = player;
+
+            HotbarComponent hotbar = Mappers.hotbar.get(player);
+            InventoryComponent inventory = Mappers.inventory.get(player);
+
+            List<String> inventoryIds = new ArrayList<>();
+            if (hotbar != null)
+              inventoryIds.add(hotbar.info.inventoryId);
+            if (inventory != null)
+              inventoryIds.add(inventory.info.inventoryId);
+
+            List<Entity> inventoryItems = getItemsForInventories(data, camera, context, inventoryIds);
+            for (Entity itemEntity : inventoryItems) {
+              context.engine.addEntity(itemEntity);
+            }
           }
 
           @Override
@@ -195,7 +166,8 @@ public class MapUtils {
                 continue;
               }
 
-              Entity entity = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+              Entity entity =
+                  EntitySerializer.deserialize(syncEntity, camera, context.assets);
 
               entity.remove(SyncComponent.class);
 
@@ -211,7 +183,8 @@ public class MapUtils {
         });
   }
 
-  private static Entity getPlayer(Map<String, SyncEntity> data, Entity camera, GameContext context) {
+  private static Entity getPlayer(
+      Map<String, SyncEntity> data, Entity camera, GameContext context) {
     Entity player = null;
 
     for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
@@ -219,18 +192,33 @@ public class MapUtils {
       if (!syncEntity.isPlayer)
         continue;
 
-      player = EntitySerializer.deserialize(syncEntity, camera, context.assetManager);
+      player = EntitySerializer.deserialize(syncEntity, camera, context.assets);
       break;
     }
 
     if (player == null) {
-      player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assetManager, camera);
+      player = PlayerFactory.createPlayer(35, 15, 1, 1, 5f, context.assets, camera);
     }
 
-    AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER, context.assetManager);
+    AnimationComponent anim =
+        AnimationFactory.createAnimationsForType(PrefabType.PLAYER, context.assets);
     player.add(anim);
 
     return player;
+  }
+
+  private static List<Entity> getItemsForInventories(
+      Map<String, SyncEntity> data, Entity camera, GameContext context, List<String> inventoryIds) {
+    List<Entity> items = new ArrayList<>();
+    for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
+      SyncEntity syncEntity = entry.getValue();
+      if (syncEntity.inventoryItemInventoryId == null || !inventoryIds.contains(syncEntity.inventoryItemInventoryId))
+        continue;
+
+      items.add(EntitySerializer.deserialize(syncEntity, camera, context.assets));
+    }
+
+    return items;
   }
 
   // Currently only supports rectangles as we might not need polygons
@@ -239,8 +227,7 @@ public class MapUtils {
     List<Rectangle> result = new ArrayList<>();
 
     MapLayer layer = map.getLayers().get(mapLayerName);
-    if (layer == null)
-      return result;
+    if (layer == null) return result;
 
     for (MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
       Rectangle scaledHitbox = getScaledHitbox(object, unitScale);
@@ -283,12 +270,13 @@ public class MapUtils {
     int gridHeight = 2;
     for (int y = 0; y < gridHeight; y++) {
       for (int x = 0; x < gridWidth; x++) {
-        gridPositions.add(new int[] { x, y });
+        gridPositions.add(new int[] {x, y});
       }
     }
     Collections.shuffle(gridPositions);
 
-    int farmsToCreate = Math.min(Config.ATTACKABLE_FARMS, Math.min(data.size(), gridPositions.size()));
+    int farmsToCreate =
+        Math.min(Config.ATTACKABLE_FARMS, Math.min(data.size(), gridPositions.size()));
     for (int i = 0; i < farmsToCreate; i++) {
       int[] pos = gridPositions.get(i);
 

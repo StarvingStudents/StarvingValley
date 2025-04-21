@@ -1,7 +1,8 @@
 package io.github.StarvingValley.models.events;
 
 import com.badlogic.ashley.core.Entity;
-import io.github.StarvingValley.models.Interfaces.Event;
+
+import io.github.StarvingValley.models.interfaces.Event;
 
 public class PlayerAttackedEntityEvent implements Event {
     private final Entity entity;

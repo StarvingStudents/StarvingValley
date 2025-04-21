@@ -1,5 +1,7 @@
 package io.github.StarvingValley.config;
 
+import java.util.Set;
+
 import com.badlogic.gdx.math.GridPoint2;
 
 public class Config {
@@ -15,9 +17,7 @@ public class Config {
   public static final String MAP_NON_PLACEMENT_LAYER_NAME = "nonplacement";
   public static final float BOUNDS_BOTTOM_COLLISION_RATIO = 0.4f;
   public static final float BUILD_GRID_LINE_THICKNESS = 1f / Config.PIXELS_PER_TILE;
-  public static final float INVENTORY_SLOT_TILE_SIZE_MULTIPLIER = 1.2f;
   public static final float MAX_TAP_DISTANCE = 15f;
-  public static final float MAX_TAP_DURATION = 300;
   public static final float COLLISION_MARGIN = 0.1f;
   public static final int ATTACKABLE_FARMS = 5;
   public static final float STARTING_BALANCE = 100;
@@ -30,4 +30,5 @@ public class Config {
   public static final float VILLAGE_TO_FARM_BOUNDARY = 0f;
   public static final float ATTACK_DURATION = 60f; // in seconds
   public static final GridPoint2 DEFAULT_SPAWN_LOCATION = new GridPoint2(35, 15);
+  public static final Set<String> VALID_DIRECTIONS = Set.of("up", "down", "left", "right");
 }
