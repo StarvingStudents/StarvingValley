@@ -172,8 +172,8 @@ public class FarmView extends ScreenAdapter {
     Gdx.input.setInputProcessor(multiplexer);
 
     // Temp until we have villageview
-    engine.addEntity(HUDButtonFactory.createEatingButton());
-    engine.addEntity(HUDButtonFactory.createFarmToWorldMapButton());
+    engine.addEntity(HudFactory.createEatingButton());
+    engine.addEntity(HudFactory.createFarmToWorldMapButton());
 
 
     eventBus.publish(new NotificationEvent("Press f to start farming mode."));
