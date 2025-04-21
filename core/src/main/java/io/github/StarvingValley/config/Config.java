@@ -1,5 +1,7 @@
 package io.github.StarvingValley.config;
 
+import java.util.Set;
+
 import com.badlogic.gdx.math.GridPoint2;
 
 public class Config {
@@ -29,4 +31,5 @@ public class Config {
   public static final float VILLAGE_TO_FARM_BOUNDARY = 0f;
   public static final float ATTACK_DURATION = 60f; // in seconds
   public static final GridPoint2 DEFAULT_SPAWN_LOCATION = new GridPoint2(35, 15);
+  public static final Set<String> VALID_DIRECTIONS = Set.of("up", "down", "left", "right");
 }

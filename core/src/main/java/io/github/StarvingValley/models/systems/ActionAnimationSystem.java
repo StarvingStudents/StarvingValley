@@ -1,16 +1,17 @@
 package io.github.StarvingValley.models.systems;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import io.github.StarvingValley.models.Interfaces.Event;
+import io.github.StarvingValley.config.Config;
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.Interfaces.Event;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.BuildableComponent;
 import io.github.StarvingValley.models.components.PlayerComponent;
@@ -72,6 +73,11 @@ public class ActionAnimationSystem extends EntitySystem {
         if (anim.currentAnimation.contains("_")) {
             String[] parts = anim.currentAnimation.split("_");
             if (parts.length > 1) direction = parts[1];
+        }
+
+        // Avoid invalid animations while action animation is currently running
+        if (!Config.VALID_DIRECTIONS.contains(direction)) {
+            return;
         }
 
         anim.currentAnimation = "action_" + actionBase + "_" + direction;
