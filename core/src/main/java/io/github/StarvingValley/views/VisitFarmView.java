@@ -17,6 +17,7 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.NotificationEvent;
 import io.github.StarvingValley.utils.EventDebugger;
 
 public class VisitFarmView extends ScreenAdapter {
@@ -31,12 +32,14 @@ public class VisitFarmView extends ScreenAdapter {
   private EventDebugOverlay eventDebugOverlay;
   private VisitFarmController controller;
   private StarvingValley game;
+  private NotificationOverlay notificationOverlay;
 
   public VisitFarmView(StarvingValley game, IFirebaseRepository firebaseRepository, String userId) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
     eventBus = new EventBus(eventDebugger);
+    notificationOverlay = new NotificationOverlay(eventBus);
     assetManager = new AssetManager();
     assetManager.load("DogBasic.png", Texture.class);
     assetManager.load("tomato1.png", Texture.class);
@@ -86,6 +89,7 @@ public class VisitFarmView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
     engine.addEntity(HudFactory.createWorldMapToFarmButton());
+    eventBus.publish(new NotificationEvent("You have 1 minute to steal as many crops as you can!"));
   }
 
   @Override
@@ -107,6 +111,7 @@ public class VisitFarmView extends ScreenAdapter {
     engine.update(delta);
     joystickOverlay.render();
     eventDebugOverlay.render();
+    notificationOverlay.render();
   }
 
   @Override
