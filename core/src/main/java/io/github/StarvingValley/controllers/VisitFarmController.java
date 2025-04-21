@@ -13,6 +13,7 @@ import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.components.CameraComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
@@ -130,6 +131,9 @@ public class VisitFarmController {
 
     ScreenTransitionEvent event = events.get(0);
     game.requestViewSwitch(event.getTargetScreen());
+
+    engine.addEntity(HudFactory.createEconomyBar(gameContext));
+    engine.addEntity(HudFactory.createAttackTimerDisplay(gameContext));
   }
 
   public Engine getEngine() {

@@ -375,7 +375,7 @@ public class InventoryUtils {
 
             TextComponent text = Mappers.text.get(item);
             if (text != null) {
-                text.text = "$" + trade.price;
+                text.setText("$" + trade.price);
             }
         }
 
@@ -493,7 +493,7 @@ public class InventoryUtils {
         TextComponent textComponent = Mappers.text.get(item);
 
         itemComponent.quantity = newQuantity;
-        textComponent.text = String.valueOf(newQuantity);
+        textComponent.setText(String.valueOf(newQuantity));
     }
 
     public static boolean isHotbar(Engine engine, String inventoryId) {

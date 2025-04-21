@@ -202,7 +202,7 @@ public class EntitySerializer {
     // Text
     TextComponent text = Mappers.text.get(entity);
     if (text != null) {
-      dto.text = text.text;
+      dto.text = text.getText();
       dto.textOffsetX = text.offsetX;
       dto.textOffsetY = text.offsetY;
     }

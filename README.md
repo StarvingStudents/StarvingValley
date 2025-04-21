@@ -7,6 +7,13 @@
 2. Place it into the `/android` folder
 
 
+## Deployment
+We created a Makefile for taking the friction out of building and deploying. To use it: 
+1. Make sure your ANDROID_HOME environment variable points to your SDK
+2. Run `make all` to build the game
+3. Run `make install-apk` to install the game on your android emulator.
+4. In the future once you will also be able to deploy the app to Play Store directly by running `make publish-apk`
+ 
 
 ## Credits
 

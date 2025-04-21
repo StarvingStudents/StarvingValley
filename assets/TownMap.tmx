@@ -42,11 +42,6 @@
    eJzVl8eP1DAUh22JKlElqui997+IKg1Nc0KwgsMQeu+99w5CuxeEhOht6GXpcASucKR91sSKMXHaTHbFT/vJyZvn5xfbz5sI8f+rDoqOtjnk+eOHtc2hRX77A37CL/itDJI/+bdPU6sF47eEVtAa2kBb2XTjT4Pp1nU7xm8PHaAjdILOMty31irBHJhrXXdh/K7QDbpDD+gpw31LOeTlkto3jVAW+ewhFbMgKvXzjef9nnBvlP288tAXg68p+pV9XCrxbIvBgyUpa0DN0wwRnHmq1Xs06hzUa+fSUvJYBsthRca61HmoddR7dApMdfjHrd1K8lgFq2FNxpx0HmZus2A2TM4Qby15rIP1sKGK86vOyE2p6DMze8hMMtfnIM9zCA7DEcez9cLeG/pAX+jn8NuIfRNshi0p50mvj9JR+h6D43AiJM5C6I99AAyEQTBYVuy2tmLfBtthRxVrd5K+p+A0nPHj2OfDEOxDYRgMhxHWeJ/9dif2XbAb9qTMSe0XvX5n6XsOzsMFR5yR2EfBaBgDYx1+e7Hvg/1wIMM8mesXp3HEHw8TYCJMyuGdwKzzuLM3bN+47EnqxSWzzmtx9mrF1Uucin5bi7NXK6xeksp8/3KdvU+4fgrP4LkV/yr31+A63DB+S1IvLulzuxjh84KYL6ERXlnxb3J/C27DnRrv9/kRv71mrDfwFt5Z497l/h7ch3IONWjqIvGv+LyHD/ARPkG9DHwewEN4BI+NPvU55NcgK99tC8S/bYMMfPQ7qieC772C4RP2vVCoIqewfDwrJ08Eeel8TB+9X00fpah3M5cuGetgc1km99F5mPM1T6T735GX9HxF1ZLWH8b9tXI=
   </data>
  </layer>
- <layer id="8" name="characters" width="37" height="30">
-  <data encoding="base64" compression="zlib">
-   eJzt08kJACAQA8C1/169KrACP4J4MFNBSEgEsFNPpxPAm7LvfKHZ8SrVHsuK7gCYGHpLBLY=
-  </data>
- </layer>
  <objectgroup id="6" name="colisiones">
   <object id="178" x="0.75" y="129" width="14.5" height="13.5"/>
   <object id="179" x="1" y="162" width="13.25" height="12.25"/>
@@ -187,11 +182,6 @@
   <object id="322" x="590" y="448.364" width="1.45455" height="31.0909"/>
   <object id="323" x="0" y="174" width="2" height="305"/>
   <object id="324" x="-0.5" y="47.5" width="3" height="81.5"/>
-  <object id="325" x="516" y="88.25" width="8.25" height="8"/>
-  <object id="326" x="324.25" y="233.5" width="7.5" height="5.75"/>
-  <object id="327" x="273.75" y="183.75" width="12.75" height="8"/>
-  <object id="328" x="225.25" y="311" width="13" height="9.25"/>
-  <object id="329" x="145.5" y="279.25" width="12.5" height="9"/>
   <object id="331" x="57.5" y="141.5" width="3.75" height="3"/>
   <object id="332" x="69.5" y="140.5" width="3.75" height="4"/>
  </objectgroup>

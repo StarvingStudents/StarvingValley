@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ClickableComponent;
@@ -21,11 +22,11 @@ import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.InventoryUtils;
 
 public class TraderFactory {
-    public static Entity create(Engine engine, EventBus eventBus, float x, float y) {
+    public static Entity create(Engine engine, EventBus eventBus, float x, float y, String texturePath) {
         Entity trader = new Entity();
         trader
                 .add(new SizeComponent(1f, 1f))
-                .add(new SpriteComponent("DogBasic.png"))
+                .add(new SpriteComponent(texturePath))
                 .add(new TradingComponent())
                 .add(new InventoryComponent(new InventoryInfo(4, 1, InventoryType.TRADING)))
                 .add(new PositionComponent(x, y))
@@ -35,8 +36,8 @@ public class TraderFactory {
         return trader;
     }
 
-    public static Entity addTraderToEngine(Engine engine, EventBus eventBus, float x, float y, List<ItemTrade> trades) {
-        Entity trader = create(engine, eventBus, x, y);
+    public static Entity addTraderToEngine(Engine engine, EventBus eventBus, float x, float y, List<ItemTrade> trades, String texturePath) {
+        Entity trader = create(engine, eventBus, x, y, texturePath);
         engine.addEntity(trader);
 
         InventoryComponent inventory = Mappers.inventory.get(trader);

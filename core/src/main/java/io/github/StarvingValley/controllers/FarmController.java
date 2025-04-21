@@ -17,6 +17,7 @@ import io.github.StarvingValley.models.components.PlayerComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.TiledMapComponent;
 import io.github.StarvingValley.models.entities.CameraFactory;
+import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.entities.MapFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.ScreenTransitionEvent;
@@ -148,6 +149,8 @@ public class FarmController {
         MapUtils.loadPlacementBlockers(tiledMap.tiledMap, Config.UNIT_SCALE, WorldLayer.TERRAIN, engine);
 
         MapUtils.loadSyncedFarmEntities(gameContext, getCamera());
+
+        engine.addEntity(HudFactory.createEconomyBar(gameContext));
     }
 
     public void update(float deltaTime) {

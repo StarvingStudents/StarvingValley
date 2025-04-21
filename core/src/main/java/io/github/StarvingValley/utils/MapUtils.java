@@ -112,7 +112,8 @@ public class MapUtils {
                 anyIsPlayer = true;
                 context.player = entity;
                 Mappers.currScreen.get(entity).currentScreen = ScreenType.FARM;
-                AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,context.assetManager);
+                AnimationComponent anim = AnimationFactory.createAnimationsForType(PrefabType.PLAYER,
+                    context.assetManager);
                 entity.add(anim);
               }
 
