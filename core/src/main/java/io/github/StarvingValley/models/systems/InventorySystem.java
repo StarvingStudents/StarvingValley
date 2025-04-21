@@ -1,5 +1,10 @@
 package io.github.StarvingValley.models.systems;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 
@@ -8,6 +13,7 @@ import io.github.StarvingValley.models.events.AddItemToInventoryEvent;
 import io.github.StarvingValley.models.events.RemoveItemFromInventoryEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.InventoryInfo;
+import io.github.StarvingValley.models.types.ItemStack;
 import io.github.StarvingValley.utils.InventoryUtils;
 
 public class InventorySystem extends EntitySystem {
@@ -19,8 +25,17 @@ public class InventorySystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        for (AddItemToInventoryEvent event : context.eventBus.getEvents(AddItemToInventoryEvent.class)) {
-            handleAdd(event);
+        List<AddItemToInventoryEvent> addEvents = context.eventBus.getEvents(AddItemToInventoryEvent.class);
+        Map<Entity, List<ItemStack>> groupedStacksToAdd = new HashMap<>();
+
+        for (AddItemToInventoryEvent addEvent : addEvents) {
+            groupedStacksToAdd
+                    .computeIfAbsent(addEvent.inventoryOwner, k -> new ArrayList<>())
+                    .add(new ItemStack(addEvent.itemType, addEvent.quantity));
+        }
+
+        for (Map.Entry<Entity, List<ItemStack>> entry : groupedStacksToAdd.entrySet()) {
+            handleAdd(entry.getKey(), entry.getValue());
         }
 
         for (RemoveItemFromInventoryEvent event : context.eventBus.getEvents(RemoveItemFromInventoryEvent.class)) {
@@ -28,32 +43,29 @@ public class InventorySystem extends EntitySystem {
         }
     }
 
-    private void handleAdd(AddItemToInventoryEvent event) {
-        Entity owner = event.inventoryOwner;
-        boolean added = false;
+    private void handleAdd(Entity owner, List<ItemStack> itemsToAdd) {
+        if (itemsToAdd.isEmpty())
+            return;
 
         InventoryInfo hotbar = Mappers.hotbar.has(owner) ? Mappers.hotbar.get(owner).info : null;
         InventoryInfo inventory = Mappers.inventory.has(owner) ? Mappers.inventory.get(owner).info : null;
 
-        if (hotbar != null && InventoryUtils.hasStackOfType(getEngine(), hotbar.inventoryId, event.itemType)) {
-            added = InventoryUtils.addItemToInventory(getEngine(), hotbar, event.itemType, event.quantity,
-                    context.eventBus) != null;
+        List<ItemStack> remaining = itemsToAdd;
+
+        if (hotbar != null) {
+            remaining = InventoryUtils.addToExistingStacks(getEngine(), hotbar, remaining, context.eventBus);
         }
 
-        if (!added && inventory != null
-                && InventoryUtils.hasStackOfType(getEngine(), inventory.inventoryId, event.itemType)) {
-            added = InventoryUtils.addItemToInventory(getEngine(), inventory, event.itemType, event.quantity,
-                    context.eventBus) != null;
+        if (!remaining.isEmpty() && inventory != null) {
+            remaining = InventoryUtils.addToExistingStacks(getEngine(), inventory, remaining, context.eventBus);
         }
 
-        if (!added && hotbar != null) {
-            added = InventoryUtils.addItemToInventory(getEngine(), hotbar, event.itemType, event.quantity,
-                    context.eventBus) != null;
+        if (!remaining.isEmpty() && hotbar != null) {
+            remaining = InventoryUtils.addItemsToInventory(getEngine(), hotbar, remaining, context.eventBus);
         }
 
-        if (!added && inventory != null) {
-            added = InventoryUtils.addItemToInventory(getEngine(), inventory, event.itemType, event.quantity,
-                    context.eventBus) != null;
+        if (!remaining.isEmpty() && inventory != null) {
+            remaining = InventoryUtils.addItemsToInventory(getEngine(), inventory, remaining, context.eventBus);
         }
     }
 
