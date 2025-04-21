@@ -80,10 +80,5 @@ public class PickupSystem extends EntitySystem {
             context.eventBus.publish(new EntityRemovedEvent(closestEntity));
             getEngine().removeEntity(closestEntity);
         }
-
-        // Remove ClickedComponent from all clicked buttons
-        for (Entity button : clickedButtons) {
-            button.remove(ClickedComponent.class);
-        }
     }
 } 
