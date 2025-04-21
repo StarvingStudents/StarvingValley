@@ -1,6 +1,7 @@
 package io.github.StarvingValley.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -203,25 +204,52 @@ public class InventoryUtils {
         return null;
     }
 
-    public static Entity addItemToInventory(
+    public static List<ItemStack> addToExistingStacks(
             Engine engine,
             InventoryInfo inventory,
-            PrefabType type,
-            int quantity, EventBus eventBus) {
+            List<ItemStack> itemsToAdd,
+            EventBus eventBus) {
 
-        List<Entity> items = getItemsForInventory(engine, inventory.inventoryId);
+        List<Entity> itemsInInventory = getItemsForInventory(engine, inventory.inventoryId);
+        List<ItemStack> remaining = new ArrayList<>();
 
-        for (Entity e : items) {
-            InventoryItemComponent item = Mappers.inventoryItem.get(e);
-            if (item.type.equals(type)) {
-                setItemQuantity(e, item.quantity + quantity);
-                eventBus.publish(new EntityUpdatedEvent(e));
-                return e;
+        for (ItemStack itemToAdd : itemsToAdd) {
+            boolean merged = false;
+
+            for (Entity inventoryItemEntity : itemsInInventory) {
+                InventoryItemComponent itemInInventory = Mappers.inventoryItem.get(inventoryItemEntity);
+                if (itemInInventory.type.equals(itemToAdd.type)) {
+                    setItemQuantity(inventoryItemEntity, itemInInventory.quantity + itemToAdd.quantity);
+                    eventBus.publish(new EntityUpdatedEvent(inventoryItemEntity));
+                    merged = true;
+                    break;
+                }
+            }
+
+            if (!merged) {
+                remaining.add(itemToAdd);
             }
         }
 
+        return remaining;
+    }
+
+    public static List<ItemStack> addItemsToInventory(
+            Engine engine,
+            InventoryInfo inventory,
+            List<ItemStack> itemsToAdd,
+            EventBus eventBus) {
+        itemsToAdd = addToExistingStacks(engine, inventory, itemsToAdd, eventBus);
+
+        if (itemsToAdd.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Entity> itemsInInventory = getItemsForInventory(engine, inventory.inventoryId);
+        List<ItemStack> remaining = new ArrayList<>();
+
         Set<GridPoint2> occupied = new HashSet<>();
-        for (Entity e : items) {
+        for (Entity e : itemsInInventory) {
             InventoryItemComponent item = Mappers.inventoryItem.get(e);
             occupied.add(new GridPoint2(item.slotX, item.slotY));
         }
@@ -229,35 +257,45 @@ public class InventoryUtils {
         float slotSize = getSlotSize();
         float itemSize = getItemSize();
 
-        for (int y = 0; y < inventory.height; y++) {
-            for (int x = 0; x < inventory.width; x++) {
-                GridPoint2 pos = new GridPoint2(x, y);
-                if (!occupied.contains(pos)) {
-                    Entity item = InventoryFactory.createInventoryItem(
-                            new InventoryItemComponent(type, quantity, x, y, inventory.inventoryId),
-                            (int) (itemSize),
-                                    inventory.inventoryId);
+        for (ItemStack itemToAdd : itemsToAdd) {
+            boolean placed = false;
 
-                    if (inventory.inventoryType == InventoryType.HOTBAR) {
-                        item.add(new PartOfHotbarComponent());
+            for (int y = 0; y < inventory.height && !placed; y++) {
+                for (int x = 0; x < inventory.width && !placed; x++) {
+                    GridPoint2 pos = new GridPoint2(x, y);
+                    if (!occupied.contains(pos)) {
+                        Entity item = InventoryFactory.createInventoryItem(
+                                new InventoryItemComponent(
+                                        itemToAdd.type, itemToAdd.quantity, x, y, inventory.inventoryId),
+                                (int) itemSize,
+                                inventory.inventoryId);
+
+                        if (inventory.inventoryType == InventoryType.HOTBAR) {
+                            item.add(new PartOfHotbarComponent());
+                        }
+
+                        if (inventory.isOpen) {
+                            float posX = inventory.startX + x * slotSize;
+                            float posY = inventory.startY + (inventory.height - 1 - y) * slotSize;
+                            Vector2 itemPos = applyItemSizeToSlotPosition(posX, posY);
+                            item.add(new PositionComponent(itemPos.x, itemPos.y));
+                        }
+
+                        engine.addEntity(item);
+                        eventBus.publish(new EntityAddedEvent(item));
+
+                        occupied.add(pos);
+                        placed = true;
                     }
-
-                    if (inventory.isOpen) {
-                        float posX = inventory.startX + x * slotSize;
-                        float posY = inventory.startY + (inventory.height - 1 - y) * slotSize;
-
-                        Vector2 itemPos = applyItemSizeToSlotPosition(posX, posY);
-
-                        item.add(new PositionComponent(itemPos.x, itemPos.y));
-                    }
-                    engine.addEntity(item);
-                    eventBus.publish(new EntityAddedEvent(item));
-                    return item;
                 }
+            }
+
+            if (!placed) {
+                remaining.add(itemToAdd);
             }
         }
 
-        return null;
+        return remaining;
     }
 
     public static boolean removeItemFromInventory(
