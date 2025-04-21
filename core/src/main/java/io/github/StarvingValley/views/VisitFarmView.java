@@ -15,6 +15,7 @@ import io.github.StarvingValley.controllers.VisitFarmController;
 import io.github.StarvingValley.models.Interfaces.IFirebaseRepository;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.utils.EventDebugger;
 
@@ -84,6 +85,7 @@ public class VisitFarmView extends ScreenAdapter {
     multiplexer.addProcessor(joystickInputAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
+    engine.addEntity(HudFactory.createWorldMapToFarmButton());
   }
 
   @Override
