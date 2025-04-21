@@ -123,7 +123,6 @@ public class FarmController {
         engine.addSystem(new MovementSystem(gameContext));
         engine.addSystem(new CameraSystem());
         engine.addSystem(new CropGrowthSystem(gameContext));
-        engine.addSystem(new HarvestingSystem(gameContext));
         engine.addSystem(new TradingSystem(gameContext));
         engine.addSystem(new RenderSystem(gameContext));
         engine.addSystem(new BuildGridRenderSystem(gameContext));

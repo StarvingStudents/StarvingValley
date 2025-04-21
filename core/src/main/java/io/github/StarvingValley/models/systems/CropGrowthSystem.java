@@ -44,11 +44,6 @@ public class CropGrowthSystem extends IteratingSystem {
       context.eventBus.publish(new EntityUpdatedEvent(cropEntity));
     }
 
-    // Add PickupComponent when crop reaches final growth stage
-    if (growthStage.growthStage == 3 && !Mappers.pickup.has(cropEntity)) {
-      cropEntity.add(new PickupComponent(1.5f));
-    }
-
     switch (growthStage.growthStage) {
       case 1:
         if (cropType.cropType == CropTypeComponent.CropType.WHEAT) {
@@ -69,9 +64,11 @@ public class CropGrowthSystem extends IteratingSystem {
       case 3:
         if (cropType.cropType == CropTypeComponent.CropType.WHEAT) {
           spriteComponent.setTexturePath("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\wheat_3.png");
+          cropEntity.add(new PickupComponent(1.5f));
           // sizeComponent.height = 2f;
         } else if (cropType.cropType == CropTypeComponent.CropType.BEETROOT) {
           spriteComponent.setTexturePath("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\beetroot_3.png");
+          cropEntity.add(new PickupComponent(1.5f));
         }
         break;
       default:
