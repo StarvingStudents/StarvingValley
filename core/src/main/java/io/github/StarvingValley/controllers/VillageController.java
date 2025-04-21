@@ -110,9 +110,7 @@ public class VillageController {
         engine.addSystem(new CameraSystem());
         engine.addSystem(new TraderClickSystem(gameContext));
         engine.addSystem(new RenderSystem(gameContext));
-        engine.addSystem(new HungerSystem(gameContext));
         engine.addSystem(new SpriteSystem(gameContext));
-        engine.addSystem(new HungerRenderSystem(gameContext));
         engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));

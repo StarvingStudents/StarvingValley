@@ -19,6 +19,8 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.Interfaces.EntityDataCallback;
 import io.github.StarvingValley.models.components.AnimationComponent;
 import io.github.StarvingValley.models.components.AttackComponent;
+import io.github.StarvingValley.models.components.HotbarComponent;
+import io.github.StarvingValley.models.components.InventoryComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.SyncComponent;
@@ -103,6 +105,20 @@ public class MapUtils {
             skipSpriteSyncOnLoad(player);
             context.engine.addEntity(player);
             context.player = player;
+
+            HotbarComponent hotbar = Mappers.hotbar.get(player);
+            InventoryComponent inventory = Mappers.inventory.get(player);
+
+            List<String> inventoryIds = new ArrayList<>();
+            if (hotbar != null)
+              inventoryIds.add(hotbar.info.inventoryId);
+            if (inventory != null)
+              inventoryIds.add(inventory.info.inventoryId);
+
+            List<Entity> inventoryItems = getItemsForInventories(data, camera, context, inventoryIds);
+            for (Entity itemEntity : inventoryItems) {
+              context.engine.addEntity(itemEntity);
+            }
           }
 
           @Override
@@ -189,6 +205,20 @@ public class MapUtils {
     player.add(anim);
 
     return player;
+  }
+
+  private static List<Entity> getItemsForInventories(
+      Map<String, SyncEntity> data, Entity camera, GameContext context, List<String> inventoryIds) {
+    List<Entity> items = new ArrayList<>();
+    for (Map.Entry<String, SyncEntity> entry : data.entrySet()) {
+      SyncEntity syncEntity = entry.getValue();
+      if (syncEntity.inventoryItemInventoryId == null || !inventoryIds.contains(syncEntity.inventoryItemInventoryId))
+        continue;
+
+      items.add(EntitySerializer.deserialize(syncEntity, camera, context.assetManager));
+    }
+
+    return items;
   }
 
   // Currently only supports rectangles as we might not need polygons
