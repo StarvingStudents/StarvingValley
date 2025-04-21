@@ -14,6 +14,7 @@ import io.github.StarvingValley.models.components.SpriteComponent;
 import io.github.StarvingValley.models.components.TimeToGrowComponent;
 import io.github.StarvingValley.models.events.EntityUpdatedEvent;
 import io.github.StarvingValley.models.types.GameContext;
+import io.github.StarvingValley.config.Config;
 
 public class CropGrowthSystem extends IteratingSystem {
   private GameContext context;
@@ -64,11 +65,11 @@ public class CropGrowthSystem extends IteratingSystem {
       case 3:
         if (cropType.cropType == CropTypeComponent.CropType.WHEAT) {
           spriteComponent.setTexturePath("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\wheat_3.png");
-          cropEntity.add(new PickupComponent(1.5f));
+          cropEntity.add(new PickupComponent(Config.DEFAULT_PICKUP_RANGE));
           // sizeComponent.height = 2f;
         } else if (cropType.cropType == CropTypeComponent.CropType.BEETROOT) {
           spriteComponent.setTexturePath("Sprout Lands - Sprites - Basic pack\\Sprout Lands - Sprites - Basic pack\\beetroot_3.png");
-          cropEntity.add(new PickupComponent(1.5f));
+          cropEntity.add(new PickupComponent(Config.DEFAULT_PICKUP_RANGE));
         }
         break;
       default:

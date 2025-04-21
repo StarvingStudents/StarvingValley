@@ -22,6 +22,7 @@ public class Config {
   public static final float DEFAULT_ATTACK_RANGE =
       100.03f; // TODO: This should probably be in tiles not pixels
   public static final float DEFAULT_ATTACK_SPEED = 1.5f;
+  public static final float DEFAULT_PICKUP_RANGE = 1.5f;
   public static final float DEFAULT_DAMAGE_AMOUNT = 10f;
   public static final float FARM_TO_VILLAGE_BOUNDARY = 39.5f;
   public static final float VILLAGE_TO_FARM_BOUNDARY = 0f;

@@ -37,7 +37,6 @@ import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HUDButtonPressHandlingSystem;
 import io.github.StarvingValley.models.systems.HUDButtonPressSystem;
-import io.github.StarvingValley.models.systems.HarvestingSystem;
 import io.github.StarvingValley.models.systems.HotbarItemClickSystem;
 import io.github.StarvingValley.models.systems.HudRenderSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
@@ -128,7 +127,6 @@ public class FarmController {
         engine.addSystem(new CameraSystem());
         engine.addSystem(new CropGrowthSystem(gameContext));
         engine.addSystem(new TradingSystem(gameContext));
-        engine.addSystem(new HarvestingSystem(gameContext));
         engine.addSystem(new TraderClickSystem(gameContext));
         engine.addSystem(new RenderSystem(gameContext));
         engine.addSystem(new BuildGridRenderSystem(gameContext));

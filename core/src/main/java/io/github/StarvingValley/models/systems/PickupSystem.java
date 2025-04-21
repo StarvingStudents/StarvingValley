@@ -1,8 +1,8 @@
 package io.github.StarvingValley.models.systems;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Vector2;
 
@@ -16,47 +16,61 @@ import io.github.StarvingValley.models.events.PickupButtonPressedEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemStack;
 
-public class PickupSystem extends IteratingSystem {
+public class PickupSystem extends EntitySystem {
     private GameContext context;
 
     public PickupSystem(GameContext context) {
-        super(Family.all(PickupComponent.class, PositionComponent.class).get());
         this.context = context;
     }
 
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+    public void update(float deltaTime) {
         if (!hasPickupButtonPressed()) {
             return;
         }
 
+        // Get all pickupable entities
+        ImmutableArray<Entity> pickupableEntities = getEngine().getEntitiesFor(
+            Family.all(PickupComponent.class, PositionComponent.class).get());
+
+        // Find the closest pickupable entity
+        Entity closestEntity = null;
+        float closestDistance = Float.MAX_VALUE;
+
         if (context.player == null) {
             return;
         }
+
         PositionComponent playerPos = Mappers.position.get(context.player);
         if (playerPos == null) {
             return;
         }
 
-        PositionComponent entityPos = Mappers.position.get(entity);
-        PickupComponent pickup = Mappers.pickup.get(entity);
+        for (Entity entity : pickupableEntities) {
+            PositionComponent entityPos = Mappers.position.get(entity);
+            PickupComponent pickup = Mappers.pickup.get(entity);
 
-        // Calculate distance between player and entity
-        float distance = Vector2.dst(
-            playerPos.position.x, playerPos.position.y,
-            entityPos.position.x, entityPos.position.y
-        );
+            float distance = Vector2.dst(
+                playerPos.position.x, playerPos.position.y,
+                entityPos.position.x, entityPos.position.y);
 
-        if (distance <= pickup.pickupRange) {
-            DropComponent drops = Mappers.drop.get(entity);
+            if (distance <= pickup.pickupRange && distance < closestDistance) {
+                closestEntity = entity;
+                closestDistance = distance;
+            }
+        }
+
+        // If we found a pickupable entity, pick it up
+        if (closestEntity != null) {
+            DropComponent drops = Mappers.drop.get(closestEntity);
             if (drops != null && drops.drops != null) {
                 for (ItemStack drop : drops.drops) {
-                    context.eventBus.publish(new AddItemToInventoryEvent(drop));
+                    context.eventBus.publish(new AddItemToInventoryEvent(context.player, drop.type, drop.quantity));
                 }
             }
 
-            context.eventBus.publish(new EntityRemovedEvent(entity));
-            getEngine().removeEntity(entity);
+            context.eventBus.publish(new EntityRemovedEvent(closestEntity));
+            getEngine().removeEntity(closestEntity);
         }
     }
 
