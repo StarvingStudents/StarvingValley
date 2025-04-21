@@ -60,12 +60,8 @@ public class EatingSystem extends IteratingSystem {
                 float foodPoints = 0;
 
                 // Get the food points from the selected item:
-                if (selectedFoodItem.getComponent(InventoryItemComponent.class).type == PrefabType.WHEAT) {
-                    foodPoints = prototype.getComponent(FoodItemComponent.class).foodPoints;
-                } else if (selectedFoodItem.getComponent(InventoryItemComponent.class).type == PrefabType.BEETROOT) {
-                    foodPoints = prototype.getComponent(FoodItemComponent.class).foodPoints;
-                }
-                System.out.println(foodPoints);
+
+                foodPoints = prototype.getComponent(FoodItemComponent.class).foodPoints;
 
                 // Update hunger points:
                 hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
