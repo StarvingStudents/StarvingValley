@@ -1,4 +1,3 @@
-# Variables
 GRADLEW = ./gradlew
 BUILD_DIR = android/build/outputs/apk
 UNSIGNED_APK = $(BUILD_DIR)/debug/android-debug.apk
