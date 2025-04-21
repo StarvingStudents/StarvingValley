@@ -97,7 +97,7 @@ public class CropFactory {
         createHarvestingComponent(),
         createCropType(CropTypeComponent.CropType.WHEAT),
         createItemType(PrefabType.WHEAT_CROP),
-        createDrop(Arrays.asList(new ItemStack(PrefabType.WHEAT_SEEDS, 2))),
+        createDrop(Arrays.asList(new ItemStack(PrefabType.WHEAT_SEEDS, 2), new ItemStack(PrefabType.WHEAT, 5))),
         createBuildable(PrefabType.WHEAT_CROP)
     };
   }
@@ -111,7 +111,7 @@ public class CropFactory {
         createHarvestingComponent(),
         createCropType(CropTypeComponent.CropType.BEETROOT),
         createItemType(PrefabType.BEETROOT_CROP),
-        createDrop(Arrays.asList(new ItemStack(PrefabType.BEETROOT_SEEDS, 2))),
+        createDrop(Arrays.asList(new ItemStack(PrefabType.BEETROOT_SEEDS, 2), new ItemStack(PrefabType.BEETROOT, 5))),
         createBuildable(PrefabType.BEETROOT_CROP)
     };
   }

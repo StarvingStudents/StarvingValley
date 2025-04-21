@@ -18,6 +18,8 @@ public class EntityFactoryRegistry {
         factories.put(PrefabType.BEETROOT_SEEDS, () -> SeedFactory.create(PrefabType.BEETROOT_SEEDS, PrefabType.BEETROOT_CROP));
         factories.put(PrefabType.WHEAT_SEEDS, () -> SeedFactory.create(PrefabType.WHEAT_SEEDS, PrefabType.WHEAT_CROP));
         factories.put(PrefabType.WALL, () -> WallFactory.createWall());
+        factories.put(PrefabType.WHEAT, () -> FoodItemFactory.createFoodItem(PrefabType.WHEAT, 5));
+        factories.put(PrefabType.BEETROOT, () -> FoodItemFactory.createFoodItem(PrefabType.BEETROOT, 20));
     }
 
     public static Entity create(PrefabType type) {
