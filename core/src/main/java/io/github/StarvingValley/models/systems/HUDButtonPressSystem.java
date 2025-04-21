@@ -15,6 +15,7 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ButtonComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
+import io.github.StarvingValley.models.components.PickupButtonComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.events.TapEvent;

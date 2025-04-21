@@ -7,14 +7,16 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.StarvingValley.models.Mappers;
+import io.github.StarvingValley.models.components.ClickedComponent;
 import io.github.StarvingValley.models.components.DropComponent;
+import io.github.StarvingValley.models.components.PickupButtonComponent;
 import io.github.StarvingValley.models.components.PickupComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.events.AddItemToInventoryEvent;
 import io.github.StarvingValley.models.events.EntityRemovedEvent;
-import io.github.StarvingValley.models.events.PickupButtonPressedEvent;
 import io.github.StarvingValley.models.types.GameContext;
 import io.github.StarvingValley.models.types.ItemStack;
+import io.github.StarvingValley.models.types.PrefabType;
 
 public class PickupSystem extends EntitySystem {
     private GameContext context;
@@ -25,19 +27,15 @@ public class PickupSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        if (!hasPickupButtonPressed()) {
+        if (context.player == null) {
             return;
         }
 
-        // Get all pickupable entities
-        ImmutableArray<Entity> pickupableEntities = getEngine().getEntitiesFor(
-            Family.all(PickupComponent.class, PositionComponent.class).get());
+        // Check if pickup button was clicked
+        ImmutableArray<Entity> clickedButtons = getEngine().getEntitiesFor(
+            Family.all(PickupButtonComponent.class, ClickedComponent.class).get());
 
-        // Find the closest pickupable entity
-        Entity closestEntity = null;
-        float closestDistance = Float.MAX_VALUE;
-
-        if (context.player == null) {
+        if (clickedButtons.size() == 0) {
             return;
         }
 
@@ -46,6 +44,14 @@ public class PickupSystem extends EntitySystem {
             return;
         }
 
+        // Get all pickupable entities
+        ImmutableArray<Entity> pickupableEntities = getEngine().getEntitiesFor(
+            Family.all(PickupComponent.class, PositionComponent.class).get());
+
+        Entity closestEntity = null;
+        float closestDistance = Float.MAX_VALUE;
+
+        // Find closest pickupable entity
         for (Entity entity : pickupableEntities) {
             PositionComponent entityPos = Mappers.position.get(entity);
             PickupComponent pickup = Mappers.pickup.get(entity);
@@ -55,26 +61,29 @@ public class PickupSystem extends EntitySystem {
                 entityPos.position.x, entityPos.position.y);
 
             if (distance <= pickup.pickupRange && distance < closestDistance) {
-                closestEntity = entity;
                 closestDistance = distance;
+                closestEntity = entity;
             }
         }
 
-        // If we found a pickupable entity, pick it up
+        // Process pickup if an entity is in range
         if (closestEntity != null) {
-            DropComponent drops = Mappers.drop.get(closestEntity);
-            if (drops != null && drops.drops != null) {
-                for (ItemStack drop : drops.drops) {
-                    context.eventBus.publish(new AddItemToInventoryEvent(context.player, drop.type, drop.quantity));
+            DropComponent drop = Mappers.drop.get(closestEntity);
+            if (drop != null && drop.drops != null) {
+                // Add items to inventory
+                for (ItemStack itemStack : drop.drops) {
+                    context.eventBus.publish(new AddItemToInventoryEvent(context.player, itemStack.type, itemStack.quantity));
                 }
             }
 
+            // Remove the entity
             context.eventBus.publish(new EntityRemovedEvent(closestEntity));
             getEngine().removeEntity(closestEntity);
         }
-    }
 
-    private boolean hasPickupButtonPressed() {
-        return !context.eventBus.getEvents(PickupButtonPressedEvent.class).isEmpty();
+        // Remove ClickedComponent from all clicked buttons
+        for (Entity button : clickedButtons) {
+            button.remove(ClickedComponent.class);
+        }
     }
 } 

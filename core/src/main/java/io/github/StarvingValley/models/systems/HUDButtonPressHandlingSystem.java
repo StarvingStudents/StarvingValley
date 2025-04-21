@@ -12,7 +12,6 @@ import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.ButtonComponent;
 import io.github.StarvingValley.models.components.ClickedComponent;
-import io.github.StarvingValley.models.events.PickupButtonPressedEvent;
 
 public class HUDButtonPressHandlingSystem extends IteratingSystem {
 
@@ -45,10 +44,6 @@ public class HUDButtonPressHandlingSystem extends IteratingSystem {
 
         if (button.buttonType == ButtonType.WORLD_MAP_TO_FARM_BUTTON) {
             context.eventBus.publish(new ScreenTransitionEvent(ScreenType.FARM));
-        }
-
-        if (button.buttonType == ButtonType.PICKUP_BUTTON) {
-            context.eventBus.publish(new PickupButtonPressedEvent());
         }
     }
 }

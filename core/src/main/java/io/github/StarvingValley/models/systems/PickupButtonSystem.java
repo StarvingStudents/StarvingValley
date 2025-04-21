@@ -64,15 +64,5 @@ public class PickupButtonSystem extends EntitySystem {
         buttonSprite.sprite.setColor(hasPickupableInRange ? 
             new Color(0.8f, 0.6f, 0.2f, 1f) : // Light brown
             new Color(0.5f, 0.5f, 0.5f, 1f));  // Grey
-
-        // Handle button click
-        ImmutableArray<Entity> clickedButtons = getEngine().getEntitiesFor(
-            Family.all(PickupButtonComponent.class, ClickedComponent.class).get());
-
-        if (clickedButtons.size() > 0) {
-            for (Entity button : clickedButtons) {
-                button.remove(ClickedComponent.class);
-            }
-        }
     }
 } 
