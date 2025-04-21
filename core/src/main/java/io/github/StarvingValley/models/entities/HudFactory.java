@@ -10,6 +10,7 @@ import io.github.StarvingValley.models.components.ButtonComponent;
 import io.github.StarvingValley.models.components.ClickableComponent;
 import io.github.StarvingValley.models.components.EconomyComponent;
 import io.github.StarvingValley.models.components.HudComponent;
+import io.github.StarvingValley.models.components.PickupButtonComponent;
 import io.github.StarvingValley.models.components.PositionComponent;
 import io.github.StarvingValley.models.components.SizeComponent;
 import io.github.StarvingValley.models.components.SpriteComponent;
@@ -58,6 +59,17 @@ public class HudFactory {
                                 (int) (Gdx.graphics.getHeight() * 0.15),
                                 "world_map_to_farm_button.png",
                                 ButtonType.WORLD_MAP_TO_FARM_BUTTON);
+        }
+
+        public static Entity createPickupButton() {
+                Entity button = HudFactory.createHUDButton((int) (Gdx.graphics.getWidth() * 0.15),
+                        (int) (Gdx.graphics.getHeight() * 0.2), (int) (Gdx.graphics.getHeight()
+                                * 0.15),
+                        (int) (Gdx.graphics.getHeight() * 0.15),
+                        "pickup_button.png",
+                        ButtonType.PICKUP_BUTTON);
+                button.add(new PickupButtonComponent());
+                return button;
         }
 
         public static Entity createEconomyBar(GameContext context) {

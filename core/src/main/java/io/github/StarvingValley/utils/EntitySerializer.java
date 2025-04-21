@@ -46,6 +46,7 @@ import io.github.StarvingValley.models.components.TradeableComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.dto.SyncEntity;
+import io.github.StarvingValley.models.components.PickupComponent;
 import io.github.StarvingValley.models.types.InventoryInfo;
 import io.github.StarvingValley.models.types.InventoryType;
 
@@ -161,6 +162,12 @@ public class EntitySerializer {
     DropComponent drop = Mappers.drop.get(entity);
     if (drop != null && drop.drops != null && drop.drops.size() > 0) {
       dto.drops = drop.drops;
+    }
+
+    // Pickup
+    PickupComponent pickup = Mappers.pickup.get(entity);
+    if (pickup != null) {
+      dto.pickupRange = pickup.pickupRange;
     }
 
     // Economy
@@ -346,6 +353,11 @@ public class EntitySerializer {
     // Drop
     if (dto.drops != null && dto.drops.size() > 0) {
       entity.add(new DropComponent(dto.drops));
+    }
+
+    // Pickup
+    if (dto.pickupRange != null) {
+      entity.add(new PickupComponent(dto.pickupRange));
     }
 
     // Economy

@@ -37,7 +37,6 @@ import io.github.StarvingValley.models.systems.FarmToVillageTransitionSystem;
 import io.github.StarvingValley.models.systems.FirebaseSyncSystem;
 import io.github.StarvingValley.models.systems.HUDButtonPressHandlingSystem;
 import io.github.StarvingValley.models.systems.HUDButtonPressSystem;
-import io.github.StarvingValley.models.systems.HarvestingSystem;
 import io.github.StarvingValley.models.systems.HotbarItemClickSystem;
 import io.github.StarvingValley.models.systems.HudRenderSystem;
 import io.github.StarvingValley.models.systems.HungerRenderSystem;
@@ -61,6 +60,8 @@ import io.github.StarvingValley.models.types.ScreenType;
 import io.github.StarvingValley.models.types.WorldLayer;
 import io.github.StarvingValley.utils.Assets;
 import io.github.StarvingValley.utils.MapUtils;
+import io.github.StarvingValley.models.systems.PickupButtonSystem;
+import io.github.StarvingValley.models.systems.PickupSystem;
 
 public class FarmController {
 
@@ -125,7 +126,6 @@ public class FarmController {
         engine.addSystem(new MovementSystem(gameContext));
         engine.addSystem(new CameraSystem());
         engine.addSystem(new CropGrowthSystem(gameContext));
-        engine.addSystem(new HarvestingSystem(gameContext));
         engine.addSystem(new TraderClickSystem(gameContext));
         engine.addSystem(new RenderSystem(gameContext));
         engine.addSystem(new BuildGridRenderSystem(gameContext));
@@ -136,6 +136,8 @@ public class FarmController {
         engine.addSystem(new HUDButtonPressSystem(gameContext));
         engine.addSystem(new HUDButtonPressHandlingSystem(gameContext, game));
         engine.addSystem(new EatingSystem(eventBus, gameContext));
+        engine.addSystem(new PickupButtonSystem(gameContext));
+        engine.addSystem(new PickupSystem(gameContext));
         engine.addSystem(new HudRenderSystem());
         engine.addSystem(new SyncMarkingSystem(gameContext));
         engine.addSystem(new FirebaseSyncSystem(gameContext));

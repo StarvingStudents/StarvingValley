@@ -174,6 +174,7 @@ public class FarmView extends ScreenAdapter {
     // Temp until we have villageview
     engine.addEntity(HudFactory.createEatingButton());
     engine.addEntity(HudFactory.createFarmToWorldMapButton());
+    engine.addEntity(HudFactory.createPickupButton());
 
     eventBus.publish(new NotificationEvent("Press f to start farming mode."));
     eventBus.publish(new NotificationEvent("Press c to plant beetroots."));
