@@ -14,7 +14,9 @@ import io.github.StarvingValley.controllers.StarvingValley;
 import io.github.StarvingValley.controllers.VisitFarmController;
 import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.CameraComponent;
+import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.NotificationEvent;
 import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.utils.EventDebugger;
 
@@ -30,11 +32,15 @@ public class VisitFarmView extends ScreenAdapter {
   private EventDebugOverlay eventDebugOverlay;
   private VisitFarmController controller;
 
+  private StarvingValley game;
+  private NotificationOverlay notificationOverlay;
+
   public VisitFarmView(StarvingValley game, PlayerDataRepository firebaseRepository, String userId) {
     _firebaseRepository = firebaseRepository;
     eventDebugger = new EventDebugger();
     eventDebugOverlay = new EventDebugOverlay(eventDebugger);
     eventBus = new EventBus(eventDebugger);
+    notificationOverlay = new NotificationOverlay(eventBus);
     assetManager = new AssetManager();
 
     controller = new VisitFarmController(game, userId, _firebaseRepository, eventBus, assetManager);
@@ -42,8 +48,7 @@ public class VisitFarmView extends ScreenAdapter {
     engine = controller.getEngine();
 
     CameraComponent cameraComponent = Mappers.camera.get(controller.getCamera());
-    inputEventAdapter =
-        new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
+    inputEventAdapter = new InputEventAdapter(new InputEventController(cameraComponent.camera, eventBus));
   }
 
   @Override
@@ -59,6 +64,8 @@ public class VisitFarmView extends ScreenAdapter {
     multiplexer.addProcessor(joystickInputAdapter);
 
     Gdx.input.setInputProcessor(multiplexer);
+    engine.addEntity(HudFactory.createWorldMapToFarmButton());
+    eventBus.publish(new NotificationEvent("You have 1 minute to steal as many crops as you can!"));
   }
 
   @Override
@@ -79,7 +86,7 @@ public class VisitFarmView extends ScreenAdapter {
 
     engine.update(delta);
     joystickOverlay.render();
-    // eventDebugOverlay.render();
+    notificationOverlay.render();
   }
 
   @Override

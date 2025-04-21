@@ -58,6 +58,7 @@ import io.github.StarvingValley.models.components.UnsyncedComponent;
 import io.github.StarvingValley.models.components.VelocityComponent;
 import io.github.StarvingValley.models.components.WorldLayerComponent;
 import io.github.StarvingValley.models.components.WorldMapFarmComponent;
+import io.github.StarvingValley.models.components.PickupComponent;
 
 public class Mappers {
     public static final ComponentMapper<PositionComponent> position = ComponentMapper.getFor(PositionComponent.class);
@@ -145,4 +146,6 @@ public class Mappers {
                         .getFor(PartOfHotbarComponent.class);
         public static final ComponentMapper<InventoryToggleButtonComponent> inventoryToggleButton = ComponentMapper
                         .getFor(InventoryToggleButtonComponent.class);
+  public static final ComponentMapper<PickupComponent> pickup =
+      ComponentMapper.getFor(PickupComponent.class);
 }

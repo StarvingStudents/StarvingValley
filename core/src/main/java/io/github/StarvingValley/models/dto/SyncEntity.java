@@ -92,6 +92,8 @@ public class SyncEntity {
 
     public ScreenType screen;
 
+    public Float pickupRange;
+
     // Required: no-arg constructor for Firebase
     public SyncEntity() {
     }

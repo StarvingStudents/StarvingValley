@@ -2,6 +2,7 @@ package io.github.StarvingValley.models.systems;
 
 import java.util.List;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -11,12 +12,14 @@ import io.github.StarvingValley.models.Mappers;
 import io.github.StarvingValley.models.components.FoodItemComponent;
 import io.github.StarvingValley.models.components.HungerComponent;
 import io.github.StarvingValley.models.components.InventoryItemComponent;
-import io.github.StarvingValley.models.components.InventorySelectedItemComponent;
+import io.github.StarvingValley.models.components.SelectedHotbarEntryComponent;
 import io.github.StarvingValley.models.entities.EntityFactoryRegistry;
 import io.github.StarvingValley.models.events.EatingButtonPressedEvent;
 import io.github.StarvingValley.models.events.EventBus;
+import io.github.StarvingValley.models.events.RemoveItemFromInventoryEvent;
 import io.github.StarvingValley.models.types.GameContext;
-import io.github.StarvingValley.models.entities.BuildPreviewFactory;
+import io.github.StarvingValley.models.types.PrefabType;
+import io.github.StarvingValley.utils.InventoryUtils;
 
 public class EatingSystem extends IteratingSystem {
     private EventBus eventBus;
@@ -32,40 +35,48 @@ public class EatingSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         List<EatingButtonPressedEvent> events = eventBus.getEvents(EatingButtonPressedEvent.class);
         if (events.size() > 0) {
+            Engine engine = getEngine();
 
-            Entity playerEntity = context.player;
-            HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
+            ImmutableArray<Entity> selectedAnyItems = engine
+                    .getEntitiesFor(Family.all(SelectedHotbarEntryComponent.class, InventoryItemComponent.class).get());
 
-            // TODO: Combine with inventory system
-            // Held item should have InventorySelectedItemComponent
-            // Edible items should have FoodItemComponent (foodItem)
+            if (selectedAnyItems.size() > 0
+                    && (selectedAnyItems.get(0).getComponent(InventoryItemComponent.class).type == PrefabType.WHEAT
+                            || selectedAnyItems.get(0)
+                                    .getComponent(InventoryItemComponent.class).type == PrefabType.BEETROOT)) {
 
-            ImmutableArray<Entity> selectedItemEntities = getEngine()
-                    .getEntitiesFor(
-                            Family.all(InventorySelectedItemComponent.class, InventoryItemComponent.class).get());
+                Entity playerEntity = context.player;
+                HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
+                Entity selectedFoodItem = selectedAnyItems.get(0);
 
-            if (selectedItemEntities.size() == 0) {
-                return;
+                InventoryItemComponent item = Mappers.inventoryItem.get(selectedFoodItem);
+
+                Entity prototype = EntityFactoryRegistry
+                        .create(selectedFoodItem.getComponent(InventoryItemComponent.class).type);
+                if (!Mappers.foodItem.has(prototype)) {
+                    return;
+                }
+
+                float foodPoints = 0;
+
+                // Get the food points from the selected item:
+
+                foodPoints = prototype.getComponent(FoodItemComponent.class).foodPoints;
+
+                // Update hunger points:
+                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
+                        foodPoints);
+
+                context.eventBus.publish(new RemoveItemFromInventoryEvent(context.player,
+                        selectedFoodItem.getComponent(InventoryItemComponent.class).type, 1));
+
+                if (item.quantity <= 1) {
+                    engine.removeEntity(selectedFoodItem);
+                    InventoryUtils.unselectSelectedHotbarItems(engine);
+                }
+            } else if (selectedAnyItems.size() == 0) {
+                InventoryUtils.unselectSelectedHotbarItems(engine);
             }
-
-            Entity selectedItemEntity = selectedItemEntities.first();
-
-            // Check that that entity has foodItem component
-            Entity prototype = EntityFactoryRegistry
-                    .create(selectedItemEntity.getComponent(InventoryItemComponent.class).type);
-            if (!Mappers.foodItem.has(prototype)) {
-                return;
-            }
-
-            // Get the food points from the selected item:
-            FoodItemComponent foodItem = selectedItemEntity.getComponent(FoodItemComponent.class);
-            float foodPoints = foodItem.foodPoints;
-
-            // Update hunger points:
-            hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
-                    foodPoints);
-
-            // TODO : Remove the consumed food item from the inventory:
         }
     }
 }

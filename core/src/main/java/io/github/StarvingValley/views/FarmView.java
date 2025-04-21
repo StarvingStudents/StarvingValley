@@ -135,9 +135,9 @@ public class FarmView extends ScreenAdapter {
 
     Gdx.input.setInputProcessor(multiplexer);
 
-    // Temp until we have villageview
     engine.addEntity(HudFactory.createEatingButton());
     engine.addEntity(HudFactory.createFarmToWorldMapButton());
+    engine.addEntity(HudFactory.createPickupButton());
   }
 
   @Override
