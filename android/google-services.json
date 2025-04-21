@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "196015143386",
+    "firebase_url": "https://starving-valley-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "starving-valley",
+    "storage_bucket": "starving-valley.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196015143386:android:69be97cc196f56b75f28e3",
+        "android_client_info": {
+          "package_name": "io.github.StarvingValley"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDC3-ZQ8htfJvE7ycyJMRD0843zuk_oauA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
