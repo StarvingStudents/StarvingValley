@@ -1,17 +1,18 @@
 package io.github.StarvingValley.views;
 
+import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
-
-import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
 
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.NotificationEvent;
@@ -31,7 +32,7 @@ public class NotificationOverlay {
     private static final int PADDING = 20;
     private static final int Y_OFFSET = 50;
     private static final int CORNER_RADIUS = 20;
-    private static final Color BG_COLOR = new Color(0.2f, 0.2f, 0.2f, 1);
+    private static final Color BG_COLOR = new Color(0.2f, 0.2f, 0.2f, 0.4f);
 
     public NotificationOverlay(EventBus eventBus) {
         this.eventBus = eventBus;
@@ -68,7 +69,8 @@ public class NotificationOverlay {
         float boxWidth = layout.width + (PADDING * 2);
         float boxHeight = layout.height + (PADDING * 2);
 
-        Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(BG_COLOR);
         shapeRenderer.rect(boxX + CORNER_RADIUS, boxY, boxWidth - 2*CORNER_RADIUS, boxHeight);
@@ -83,6 +85,8 @@ public class NotificationOverlay {
         batch.begin();
         font.draw(batch, layout, textX, textY);
         batch.end();
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 }
 

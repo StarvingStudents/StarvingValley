@@ -36,6 +36,7 @@ public class VillageView extends ScreenAdapter {
 
     private final EventDebugger eventDebugger;
     private EventDebugOverlay eventDebugOverlay;
+    private NotificationOverlay notificationOverlay;
 
     public VillageView(StarvingValley game, PlayerDataRepository firebaseRepository) {
         _firebaseRepository = firebaseRepository;
@@ -44,6 +45,7 @@ public class VillageView extends ScreenAdapter {
         eventBus = new EventBus(eventDebugger);
 
         assetManager = new AssetManager();
+        notificationOverlay = new NotificationOverlay(eventBus);
 
         controller = new VillageController(game, _firebaseRepository, eventBus, assetManager);
         engine = controller.getEngine();
@@ -86,6 +88,7 @@ public class VillageView extends ScreenAdapter {
 
         engine.update(delta);
         joystickOverlay.render();
+        notificationOverlay.render();
         // eventDebugOverlay.render();
     }
 

@@ -21,7 +21,6 @@ import io.github.StarvingValley.models.entities.HudFactory;
 import io.github.StarvingValley.models.events.EventBus;
 import io.github.StarvingValley.models.events.InventoryCloseEvent;
 import io.github.StarvingValley.models.events.InventoryOpenEvent;
-import io.github.StarvingValley.models.events.NotificationEvent;
 import io.github.StarvingValley.models.interfaces.PlayerDataRepository;
 import io.github.StarvingValley.models.types.InventoryType;
 import io.github.StarvingValley.models.types.PrefabType;
@@ -139,11 +138,6 @@ public class FarmView extends ScreenAdapter {
     // Temp until we have villageview
     engine.addEntity(HudFactory.createEatingButton());
     engine.addEntity(HudFactory.createFarmToWorldMapButton());
-
-
-    eventBus.publish(new NotificationEvent("Press f to start farming mode."));
-    eventBus.publish(new NotificationEvent("Press c to plant beetroots."));
-    eventBus.publish(new NotificationEvent("Press e to plant wheat."));
   }
 
   @Override
