@@ -122,6 +122,8 @@ public class VisitFarmController {
 
     MapUtils.loadSyncedEntitiesForUser(gameContext, camera, visitedUserId);
     MapUtils.loadPlayerForAttack(gameContext, camera);
+    engine.addEntity(HudFactory.createEconomyBar(gameContext));
+    engine.addEntity(HudFactory.createAttackTimerDisplay(gameContext));
   }
 
   public void update(float deltaTime) {
@@ -131,9 +133,6 @@ public class VisitFarmController {
 
     ScreenTransitionEvent event = events.get(0);
     game.requestViewSwitch(event.getTargetScreen());
-
-    engine.addEntity(HudFactory.createEconomyBar(gameContext));
-    engine.addEntity(HudFactory.createAttackTimerDisplay(gameContext));
   }
 
   public Engine getEngine() {
