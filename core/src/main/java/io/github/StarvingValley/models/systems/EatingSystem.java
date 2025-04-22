@@ -40,37 +40,27 @@ public class EatingSystem extends IteratingSystem {
             ImmutableArray<Entity> selectedAnyItems = engine
                     .getEntitiesFor(Family.all(SelectedHotbarEntryComponent.class, InventoryItemComponent.class).get());
 
-            if (selectedAnyItems.size() > 0
-                    && (selectedAnyItems.get(0).getComponent(InventoryItemComponent.class).type == PrefabType.WHEAT
-                            || selectedAnyItems.get(0)
-                                    .getComponent(InventoryItemComponent.class).type == PrefabType.BEETROOT)) {
-
-                Entity playerEntity = context.player;
-                HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
+            if (selectedAnyItems.size() > 0) {
                 Entity selectedFoodItem = selectedAnyItems.get(0);
+                InventoryItemComponent itemComp = selectedFoodItem.getComponent(InventoryItemComponent.class);
 
-                InventoryItemComponent item = Mappers.inventoryItem.get(selectedFoodItem);
-
-                Entity prototype = EntityFactoryRegistry
-                        .create(selectedFoodItem.getComponent(InventoryItemComponent.class).type);
+                Entity prototype = EntityFactoryRegistry.create(itemComp.type);
                 if (!Mappers.foodItem.has(prototype)) {
                     return;
                 }
 
-                float foodPoints = 0;
+                Entity playerEntity = context.player;
+                HungerComponent hunger = playerEntity.getComponent(HungerComponent.class);
 
-                // Get the food points from the selected item:
-
-                foodPoints = prototype.getComponent(FoodItemComponent.class).foodPoints;
+                float foodPoints = prototype.getComponent(FoodItemComponent.class).foodPoints;
 
                 // Update hunger points:
-                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints +
-                        foodPoints);
+                hunger.hungerPoints = Math.min(hunger.maxHungerPoints, hunger.hungerPoints + foodPoints);
 
                 context.eventBus.publish(new RemoveItemFromInventoryEvent(context.player,
                         selectedFoodItem.getComponent(InventoryItemComponent.class).type, 1));
 
-                if (item.quantity <= 1) {
+                if (itemComp.quantity <= 1) {
                     engine.removeEntity(selectedFoodItem);
                     InventoryUtils.unselectSelectedHotbarItems(engine);
                 }
